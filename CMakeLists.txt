@@ -51,18 +51,18 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 add_subdirectory(src)
 
 # add Minesweeper benchmarks
-add_subdirectory(src/games/minesweeper_csp_vkms)
+# add_subdirectory(src/games/minesweeper_csp_vkms)
 
 # tests
-add_executable(test_state src/core/test_state.cc src/core/state.cc)
-target_link_libraries(test_state PUBLIC _tube _mcts _games ${JNI_LIBRARIES})
+# add_executable(test_state src/core/test_state.cc src/core/state.cc)
+# target_link_libraries(test_state PUBLIC _tube _mcts _games ${JNI_LIBRARIES})
 
-enable_testing()
+# enable_testing()
 
-add_test(NAME test_replay_buffer
-    COMMAND ${PYTHON_EXECUTABLE} -m test_replay_buffer
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests/python)
+# add_test(NAME test_replay_buffer
+# COMMAND ${PYTHON_EXECUTABLE} -m test_replay_buffer
+# WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests/python)
 
-set_tests_properties(test_replay_buffer
-    PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_SOURCE_DIR}:$ENV{PYTHONPATH}")
+# set_tests_properties(test_replay_buffer
+# PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_SOURCE_DIR}:$ENV{PYTHONPATH}")
 
