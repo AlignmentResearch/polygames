@@ -289,7 +289,7 @@ class ModelParams:
                     help="Global pooling - this will, for the models that support it, "
                     "add global pooling over some channels after convolutional layers. "
                     "The parameter is the proportion of the channels that should be pooled. "
-                    "Eg. 0.1 will specify that we should pool 10% of the channels"
+                    "Eg. 0.1 will specify that we should pool 10%% of the channels"
                 )
             ),
             batchnorm_momentum=ArgFields(
