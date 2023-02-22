@@ -8,6 +8,8 @@ To get the code up and running, see the dockerfile and instructions in https://g
 
 ## Checkpoints
 
+The following URL contains a list of download links for checkpoints of different models on different games. Note, however, that they were saved using an old version of PyTorch, and we are currently unable to use them.
+
 http://dl.fbaipublicfiles.com/polygames/checkpoints/list.txt.
 
 ## Content
