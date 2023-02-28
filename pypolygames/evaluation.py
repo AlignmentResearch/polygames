@@ -31,6 +31,7 @@ from .env_creation_helpers import (
 
 def create_plotter(eval_params: EvalParams) -> utils.Plotter:
     checkpoint_dir = eval_params.checkpoint_dir
+    checkpoint_dir = str(checkpoint_dir)
     if checkpoint_dir[-1] == "/":
         checkpoint_dir = checkpoint_dir[:-1]
     plot_env = os.path.basename(checkpoint_dir)
