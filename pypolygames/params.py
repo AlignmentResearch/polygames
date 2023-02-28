@@ -522,7 +522,7 @@ class SimulationParams:
             yield param, arg_field
 
 
-@dataclass
+@dataclass(repr=False)
 class ExecutionParams:
     checkpoint_dir: Path = None
     save_dir: str = None  # keep for deprecation warning
@@ -540,6 +540,10 @@ class ExecutionParams:
     opponent_model_path: Path = None
     tournament_mode: bool = False
     rnn_seqlen: int = 0
+
+    def __repr__(self):
+        return f"{self.saving_period}_{self.human_first}_{self.time_ratio}_" \
+               f"{self.total_time}_{self.seed}_{self.opponent_model_path}"
 
     def __setattr__(self, attr, value):
         if value is None:

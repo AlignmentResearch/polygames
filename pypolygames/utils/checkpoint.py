@@ -24,6 +24,40 @@ from ..params import (
     ExecutionParams,
 )
 
+
+# These were added to allow for loading of old checkpoints
+import dataclasses
+import pypolygames
+import tube
+
+from typing import TypedDict
+
+
+class BufferType(TypedDict):
+    first: str
+    second: torch.Tensor
+
+@dataclasses.dataclass
+class MyReplayBuffer:
+    capacity: int
+    size: int
+    nextIdx: int
+    rngState: str
+    buffer: BufferType
+
+    def __getstate__(self):
+            pass
+
+    def __setstate__(self, x):
+        self.capacity = x[0]
+        self.size = x[1]
+        self.nextIdx = x[2]
+        self.rngState = x[3]
+        self.buffer = x[4]
+
+tube.ReplayBuffer = MyReplayBuffer
+
+
 Checkpoint = Dict[
     str,
     Union[
