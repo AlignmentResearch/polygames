@@ -1,58 +1,27 @@
-[![CircleCI](https://circleci.com/gh/facebookincubator/Polygames.svg?style=svg)](https://circleci.com/gh/facebookincubator/Polygames)
-
 # Polygames
 
-This README is a work in progress, please feel very free to post issues - we are happy to help.
-Save up computational power: you can find checkpoints here: http://dl.fbaipublicfiles.com/polygames/checkpoints/list.txt (feel free to open an issue for discussing which checkpoint you should use for which game/problem!).
+This repository is a fork of https://github.com/facebookarchive/Polygames.
 
-For Nix users: see [this doc](./nix/README.md).
+## Installation
 
-## Requirement:
+To get the code up and running, see the dockerfile and instructions in https://github.com/AlignmentResearch/polygames-scripts.
+
+## Checkpoints
+
+The following URL contains a list of download links for checkpoints of different models on different games: http://dl.fbaipublicfiles.com/polygames/checkpoints/list.txt.
+
+In order to run an evaluation of one of the checkpoints, run 
 ```
-C++17 compatible compiler
-miniconda3
-```
-
-## Compilation Guide:
-
-### First install conda and pytorch
-
-Create a fresh conda environment with python3.7, install pytorch and dependencies.
-
-```
-# create a fresh conda environment with python3
-# you will need to have miniconda3 set up
-conda create --name [your env name] python=3.7 pip
-
-conda activate [your env name] # Or source activate [your env name], depending on conda version.
-
-conda install numpy pyyaml mkl mkl-include setuptools cmake cffi typing
-conda install pytorch cudatoolkit=10.1 -c pytorch
-conda install -c conda-forge tensorboardx
-conda install -c conda-forge openjdk  # optional
-conda install -c conda-forge graphviz # optional
-
-pip install visdom
-pip install torchviz				  # optional
-
+python -m pypolygames eval --checkpoint <path_to_checkpoint>
 ```
 
-### Clone the repo and build
-
-
-```
-git clone --recursive https://github.com/facebookincubator/polygames
-cd polygames
-
-mkdir build
-cd build
-
-cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON
-make -j
+In order to load from a checkpoint and keep training, run
 
 ```
+python -m pypolygames train --init_checkpoint <path_to_checkpoint>
+```
 
-Ludii support can be disabled by appending `-DWITH_LUDII=OFF` to the cmake command (required if you don't have jdk)
+For more information, add the `--help` flag to your call to see how to use the different commands.
 
 ## Content
 
