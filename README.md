@@ -8,9 +8,20 @@ To get the code up and running, see the dockerfile and instructions in https://g
 
 ## Checkpoints
 
-The following URL contains a list of download links for checkpoints of different models on different games. Note, however, that they were saved using an old version of PyTorch, and we are currently unable to use them.
+The following URL contains a list of download links for checkpoints of different models on different games: http://dl.fbaipublicfiles.com/polygames/checkpoints/list.txt.
 
-http://dl.fbaipublicfiles.com/polygames/checkpoints/list.txt.
+In order to run an evaluation of one of the checkpoints, run 
+```
+python -m pypolygames eval --checkpoint <path_to_checkpoint>
+```
+
+In order to load from a checkpoint and keep training, run
+
+```
+python -m pypolygames train --init_checkpoint <path_to_checkpoint>
+```
+
+For more information, add the `--help` flag to your call to see how to use the different commands.
 
 ## Content
 
