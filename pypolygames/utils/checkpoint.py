@@ -3,17 +3,20 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import copy
+import dataclasses
 import glob
-import time
 import gzip
 import zipfile
 import re
-import copy
-from pathlib import Path
-from typing import Iterator, Dict, Union, Any
+import time
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+from typing import Any, Dict, Iterator, TypedDict, Union
 
+import pypolygames
 import torch
+import tube
 
 from .command_history import CommandHistory
 from ..params import (
@@ -23,6 +26,33 @@ from ..params import (
     SimulationParams,
     ExecutionParams,
 )
+
+
+class BufferType(TypedDict):
+    first: str
+    second: torch.Tensor
+
+@dataclasses.dataclass
+class DummyReplayBuffer:
+    capacity: int
+    size: int
+    nextIdx: int
+    rngState: str
+    buffer: BufferType
+
+    def __getstate__(self):
+        pass
+
+    def __setstate__(self, x):
+        self.capacity = x[0]
+        self.size = x[1]
+        self.nextIdx = x[2]
+        self.rngState = x[3]
+        self.buffer = x[4]
+
+# This is added to allow for loading of old checkpoints
+tube.ReplayBuffer = DummyReplayBuffer
+
 
 Checkpoint = Dict[
     str,
@@ -101,6 +131,16 @@ def load_checkpoint(checkpoint_path: Path) -> Checkpoint:
             "The checkpoint file extension must be either "
             "'.pt', '.gz', '.pt.gz' or '.zip'"
         )
+
+    # If the ExecutionParams contains device instead of devices, update it to fit the new naming
+    if hasattr(checkpoint['execution_params'], 'device'):
+        checkpoint['execution_params'].devices = checkpoint['execution_params'].device  # it's a list of strings so this is a full copy
+        del checkpoint['execution_params'].device
+
+    # If the checkpoint contained a replay buffer, ignore it
+    if 'replay_buffer' in checkpoint:
+        del checkpoint['replay_buffer']
+
     return checkpoint
 
 
