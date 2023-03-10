@@ -48,4 +48,3 @@ class NoGoAction : public GameAction {
     position_ = id;
   }
 };
-#include "nogo_action.cc"

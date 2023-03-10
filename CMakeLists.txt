@@ -44,7 +44,9 @@ endif()
 message(STATUS "Adding PyTorch compilation flags: ${TORCH_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
+include_directories(src/third_party/pybind11/include/)
 add_subdirectory(src)
+add_subdirectory(tests)
 
 # tests
 add_executable(test_state src/core/test_state.cc src/core/state.cc)

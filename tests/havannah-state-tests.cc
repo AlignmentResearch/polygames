@@ -21,8 +21,8 @@ namespace Havannah {
    public Havannah::State<SIZE, PIE, EXTENDED> {
   public:
    StateTest<SIZE, PIE, EXTENDED>(int seed, int history, bool turnFeatures) :
-    Havannah::State<SIZE, PIE, EXTENDED>(seed, history, turnFeatures) {}
-   GameStatus GetStatus() { return ::State::_status; };
+   Havannah::State<SIZE, PIE, EXTENDED>(seed) {}
+   GameStatus GetStatus() { return Havannah::State<SIZE, PIE, EXTENDED>::_status; };
  };
 
 };
@@ -186,11 +186,11 @@ TEST(HavannahStateGroup, init_2) {
   int i = expectedAction.first;
   int j = expectedAction.second;
   int h = i*fullsize + j;
-  ASSERT_EQ(0, action->GetX());
-  ASSERT_EQ(i, action->GetY());
-  ASSERT_EQ(j, action->GetZ());
-  ASSERT_EQ(h, action->GetHash());
-  ASSERT_EQ(k, action->GetIndex());
+  ASSERT_EQ(0, action.GetX());
+  ASSERT_EQ(i, action.GetY());
+  ASSERT_EQ(j, action.GetZ());
+  ASSERT_EQ(h, action.GetHash());
+  ASSERT_EQ(k, action.GetIndex());
  }
 
 }

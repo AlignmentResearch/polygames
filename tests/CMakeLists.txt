@@ -1,41 +1,22 @@
-cmake_minimum_required( VERSION 3.3 )
-project( polygames-tests )
-set(CMAKE_CXX_STANDARD 17)
-
-execute_process(
-    COMMAND python -c "import torch; import os; print(os.path.dirname(torch.__file__), end='')"
-    OUTPUT_VARIABLE TorchPath
-)
-set(CMAKE_PREFIX_PATH ${TorchPath})
-find_package(Torch REQUIRED)
-include_directories(${TORCH_INCLUDE_DIRS})
-
-find_package( PythonInterp 3.7 REQUIRED )
-find_package( PythonLibs 3.7 REQUIRED )
-include_directories( ${PYTHON_INCLUDE_DIRS} )
-
-find_package (Threads)
-
-find_package( GTest REQUIRED )
-include_directories( ${GTEST_INCLUDE_DIRS} )
-
-find_package(JNI REQUIRED)
-include_directories( ${JNI_INCLUDE_DIRS})
-
 include_directories(
- ../games
- ../torchRL
- ../torchRL/third_party/fmt/include
- ../torchRL/tube/src_cpp
+../src
+ ../src/games
+ ../src/games/weakschur
+ ../src/third_party
+ ../src/third_party/fmt/include
+ ../src/tube/src_cpp
+ ../src/third_party/pybind11/include/
  )
 
 add_executable( polygames-tests
- ../core/game.cc
- ../core/state.cc
- ../torchRL/mcts/mcts.cc
- ../torchRL/mcts/node.cc
- ../torchRL/tube/src_cpp/data_channel.cc
- ../torchRL/tube/src_cpp/replay_buffer.cc
+ ../src/core/game.cc
+ ../src/core/state.cc
+ ../src/core/model_manager.cc
+ ../src/mcts/mcts.cc
+ ../src/mcts/storage.cc
+ ../src/mcts/node.cc
+ ../src/tube/src_cpp/data_channel.cc
+ ../src/core/replay_buffer.cc
  tests.cc
 
  # Include your tests here.
@@ -45,17 +26,72 @@ add_executable( polygames-tests
  hex-state-tests.cc
  hex-tests.cc
 
- ludii-game-tests.cc
- ../games/ludii/jni_utils.cc
- ../games/ludii/ludii_game_wrapper.cc
- ../games/ludii/ludii_state_wrapper.cc
+ # TODO: add and fix tests
+ #ludii-game-tests.cc
+ #../src/games/ludii/jni_utils.cc
+ #../src/games/ludii/ludii_game_wrapper.cc
+ #../src/games/ludii/ludii_state_wrapper.cc
+
+
+ #    ../build/src/third_party/fmt/libfmt.a
+  ../src/distributed/network.cc
+  ../src/distributed/rdma_nop.cc
+  ../src/distributed/distributed.cc
+  ../src/common/thread_id.cc
+  ../src/common/threads.cc
+  ../src/games/weakschur/WeakSchur.cpp
+  ../src/games/weakschur/SchurMatrix.cpp
+  ../src/games/weakschur/SchurVector.cpp
+  ../src/games/breakthrough.cc
+  ../src/games/amazons.cc
+../src/games/breakthrough.cc
+../src/games/chess.cc
+../src/games/chinesecheckers.cc
+../src/games/game_base.cc
+../src/games/gomoku_swap2.cc
+../src/games/mastermind_state.cc
+../src/games/minesweeper.cc
+../src/games/nogo_action.cc
+../src/games/nogo_game.cc
+../src/games/nogo_state.cc
+../src/games/othello_opt.cc
+../src/games/tristan_nogo.cc
+../src/games/yinsh.cc
  )
+
+#link_directories(/polygames/build/src/third_party/fmt)
+
+#file(GLOB _zstd_SOURCES ../src/third_party/zstd/lib/common/*.c ../src/third_party/zstd/lib/compress/*.c ../src/third_party/zstd/lib/decompress/*.c)
+#add_library(_zstd OBJECT ${_zstd_SOURCES})
+
+#target_include_directories(_zstd BEFORE PUBLIC ../src/third_party/zstd/lib ../src/third_party/zstd/lib/common)
+
+
+#find_package(GTest CONFIG REQUIRED)
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  # Specify the commit you depend on and update it regularly.
+  URL https://github.com/google/googletest/archive/5376968f6948923e2411081fd9372e71a59d8e77.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+
+target_include_directories(polygames-tests PUBLIC ${PYTHON_INCLUDE_DIRS})
 
 target_link_libraries( polygames-tests 
     ${CMAKE_THREAD_LIBS_INIT}
     ${GTEST_LIBRARIES}
     ${JNI_LIBRARIES}
     ${TORCH_LIBRARIES}
+    $<TARGET_OBJECTS:_zstd>
+    python3.10
+    fmt
+    gtest_main
+    gtest
+    libpolygames
     )
 
 install (TARGETS polygames-tests DESTINATION bin)

@@ -23,7 +23,7 @@ TEST(Connectfour, init_1) {
  ASSERT_EQ(GameStatus::player0Turn, GameStatus(state.getCurrentPlayer()));
 
  for (int i=0; i<7; ++i) {
-  auto a_i = std::dynamic_pointer_cast<ActionForConnectFour>(state.GetLegalActions()[i]);
+  auto a_i = &state.GetLegalActions()[i];
   ASSERT_EQ(i, a_i->GetX());
   ASSERT_EQ(0, a_i->GetY());
   ASSERT_EQ(0, a_i->GetZ());
@@ -77,7 +77,7 @@ TEST(Connectfour, play_1) {
  StateForConnectFour state(0);
  state.Initialize();
 
- ActionForConnectFour action(1, 7);
+ _Action action(0, 0, 1, 7);
  state.ApplyAction(action);
 
  ASSERT_EQ((std::vector<int64_t>{3, 6, 7}), state.GetFeatureSize());
@@ -85,7 +85,7 @@ TEST(Connectfour, play_1) {
  ASSERT_EQ(GameStatus::player1Turn, GameStatus(state.getCurrentPlayer()));
 
  for (int i=0; i<7; ++i) {
-  auto a_i = std::dynamic_pointer_cast<ActionForConnectFour>(state.GetLegalActions()[i]);
+  auto a_i = &state.GetLegalActions()[i];
   ASSERT_EQ(i, a_i->GetX());
   ASSERT_EQ(0, a_i->GetY());
   ASSERT_EQ(0, a_i->GetZ());
