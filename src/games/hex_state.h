@@ -42,8 +42,7 @@ template <int SIZE, bool PIE> class State : public core::State {
 
 template <int SIZE, bool PIE>
 Hex::State<SIZE, PIE>::State(int seed)
-    : core::State(seed) {
-}
+  : core::State(seed){}
 
 template <int SIZE, bool PIE> void Hex::State<SIZE, PIE>::findActions() {
   auto legalIndices = _board.findLegalIndices();
@@ -86,7 +85,7 @@ void Hex::State<SIZE, PIE>::ApplyAction(const _Action& action) {
   // TODO assert action is in legal actions ?
   if (not lastIndex or *lastIndex != index) {
     Color currentColor = _board.getCurrentColor();
-    _features[((currentColor * SIZE) + i) * SIZE + j] = 1.f;
+    _features.at(((currentColor * SIZE) + i) * SIZE + j) = 1.f;
   }
 
   // play move

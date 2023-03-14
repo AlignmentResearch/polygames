@@ -19,7 +19,7 @@ void printPlane(T data, int c, int ni, int nj) {
  
  for (int i=0; i<ni; i++) {
   for (int j=0; j<nj; j++) {
-   std::cout << data[(c*ni + i)*nj +j] << " ";
+   std::cout << data.at((c*ni + i)*nj +j) << " ";
   }
  std::cout << std::endl;
  }
