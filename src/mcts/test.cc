@@ -6,6 +6,8 @@
  */
 
 #include "actor.h"
+// #include "core/actor.h"
+#include "core/state.h"
 #include "mcts.h"
 #include "types.h"
 #include "utils.h"
@@ -16,49 +18,70 @@
 #include <iostream>
 #include <random>
 
+using namespace core;
 using namespace mcts;
 std::atomic<int> seed(0);
 
 class TicTacToeState : public State {
  public:
   TicTacToeState()
-      : State()
-      , rng_(seed++) {
-    board.resize(9);
-    std::fill(board.begin(), board.end(), 0);
+      : State(seed++) {
+    board.clear();
+    board.resize(9, 0);
     currentPlayer = 1;
+    Initialize();
+    std::cout << "called constructor. now board is " << board << std::endl;
   }
 
-  int getCurrentPlayer() const override {
+  virtual void Initialize() override {
+    currentPlayer = 1;
+    this->_legalActions = getLegalActions();
+    _actionSize = {(int)_legalActions.size(), 1, 1};
+    _featSize = {9, 1, 1};
+    _features.clear();
+    _features.resize(_featSize[0] * _featSize[1] * _featSize[2]);
+    std::fill(_features.begin(), _features.end(), 1.0f);
+  }
+
+  virtual std::unique_ptr<core::State> clone_() const override {
+    return std::make_unique<TicTacToeState>(*this);
+  }
+
+  virtual void ApplyAction(const _Action& action) override {
+    forward(action);
+  }
+  
+  int getCurrentPlayer() const  {
     return currentPlayer;
   }
 
-  uint64_t getHash() const override {
+  uint64_t getHash() const  {
     return 0;
   }
 
-  float getReward(int player) const override {
+  float getReward(int player) const  {
     int r = winner;
     if (r == 0)
       r = checkWinner();
     return r * player;
   };
 
-  // bool isStochastic() const override {
+  // bool isStochastic() const  {
   //   return false;
   // };
 
-  std::vector<int> getLegalActions() const {
-    std::vector<int> actions;
+  std::vector<_Action> getLegalActions() const {  // so this is just seeing where hasn't been played yet
+    std::vector<_Action> actions;
     for (int i = 0; i < 9; i++) {
-      if (board[i] == 0) {
-        actions.push_back(i);
+      if (board.at(i) == 0) {
+        _Action action(0, i, 0, 0);  // int index, int x, int y, int z
+        actions.push_back(action);
       }
     }
     return actions;
   }
 
-  float getRandomRolloutReward(int player) const override {
+  float getRandomRolloutReward(int player) const  {
     int numRandomRollout = 100;
     int totalReward = 0;
     for (int i = 0; i < numRandomRollout; ++i) {
@@ -86,15 +109,15 @@ class TicTacToeState : public State {
     return totalReward / (float)numRandomRollout;
   }
 
-  bool operator==(const State&) const override {
+  bool operator==(const State&) const  {
     return false;
   }
 
-  int getStepIdx() const override {
+  int getStepIdx() const  {
     return moveIdx;
   }
 
-  std::unique_ptr<State> clone() const override {
+  std::unique_ptr<State> clone() const  {
     auto other = std::make_unique<TicTacToeState>();
     other->moveIdx = moveIdx;
     other->board = board;
@@ -103,22 +126,34 @@ class TicTacToeState : public State {
     // return std::make_unique<TicTacToeState>(other);
   }
 
-  const std::vector<mcts::Action>& getMoves() const override {
-    return {};
-  }
+  // const std::vector<mcts::Action>& getMoves() const  {
+  //   return {};
+  // }
 
-  bool forward(const Action& a) override {
-    assert(a >= 0 && a <= 8);
-    if (board[a] != 0) {
+  bool forward(const _Action& a)  {
+    int ticTacToeMove = a.GetX();
+    assert(ticTacToeMove >= 0 && ticTacToeMove <= 8);
+    if (board[ticTacToeMove] != 0) {
       winner = -currentPlayer;
     }
-    board[a] = currentPlayer;
+    board[ticTacToeMove] = currentPlayer;
     currentPlayer = -currentPlayer;
     moveIdx += 1;
     return true;
   }
 
-  bool terminated() const override {
+  bool forward(mcts::Action ticTacToeMove) {
+    assert(ticTacToeMove >= 0 && ticTacToeMove <= 8);
+    if (board[ticTacToeMove] != 0) {
+      winner = -currentPlayer;
+    }
+    board[ticTacToeMove] = currentPlayer;
+    currentPlayer = -currentPlayer;
+    moveIdx += 1;
+    return true;
+  }
+
+  bool terminated() const  {
     return winner != 0 || checkWinner() != 0 || moveIdx == 9;
   }
 
@@ -183,12 +218,14 @@ class TicTacToeState : public State {
   std::mt19937 rng_;
 };
 
-class TestActor : public Actor {
+class TestActor : public core::Actor {
  public:
-  TestActor() {
+  // null, feature size, action size, empty, 0, ...
+  TestActor() : Actor(NULL, {9, 1, 1}, {9, 1, 1}, {}, 0, false, false, false, NULL) {
+    // TODO: understand above
   }
 
-  PiVal& evaluate(const State& s, PiVal& pival) override {
+  PiVal& evaluate(const State& s, PiVal& pival)  {
     const auto& state = dynamic_cast<const TicTacToeState*>(&s);
     const auto& actions = state->getLegalActions();
     std::vector<float> pi;
@@ -208,6 +245,7 @@ int main(int argc, char* argv[]) {
   // args are thread, rollouts
   assert(argc == 3);
   TicTacToeState state;
+  state.Initialize();
   MctsOption option;
   // option.numThread = 2;
   option.numRolloutPerThread = std::stoi(std::string(argv[2]));
@@ -218,13 +256,14 @@ int main(int argc, char* argv[]) {
   for (int i = 0; i < 2; ++i) {
     players.push_back(std::make_unique<MctsPlayer>(option));
     for (int j = 0; j < std::stoi(std::string(argv[1])); ++j) {
-      players.at(i)->addActor(std::make_shared<TestActor>());
+      players.at(i)->setActor(std::make_shared<TestActor>());
     }
   }
 
   int i = 0;
   while (!state.terminated()) {
     int playerIdx = state.getCurrentPlayer() == 1 ? 0 : 1;
+    assert(!state.GetLegalActions().empty());
     MctsResult result = players.at(playerIdx)->actMcts(state);
     std::cout << "best action is " << result.bestAction << std::endl;
     state.forward(result.bestAction);

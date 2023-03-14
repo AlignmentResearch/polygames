@@ -27,6 +27,7 @@ Node* Storage::newNode() {
 
 void Storage::freeNode(Node* node) {
   --allocated;
+  assert(allocated >= 0);
   if (allocated == 0) {
     chunkIndex = 0;
     subIndex = 0;

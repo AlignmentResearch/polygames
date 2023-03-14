@@ -10,6 +10,7 @@
 #include <havannah_state.h>
 #include <gtest/gtest.h>
 #include "utils.h"
+#include "core/state.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // helpers
@@ -21,7 +22,15 @@ namespace Havannah {
    public Havannah::State<SIZE, PIE, EXTENDED> {
   public:
    StateTest<SIZE, PIE, EXTENDED>(int seed, int history, bool turnFeatures) :
-   Havannah::State<SIZE, PIE, EXTENDED>(seed) {}
+   Havannah::State<SIZE, PIE, EXTENDED>(seed) {
+      // nhowe added
+      // currently, actively, trying to get the turnFeatures to work properly given it's deprecated
+      // std::list<core::FeatureOptions> featopts;
+      // featopts.emplace_back();
+      // core::FeatureOptions& opt = featopts.back();
+      // opt.turnFeaturesMultiChannel = turnFeatures;
+      // state_->setFeatures(&opt);
+   }
    GameStatus GetStatus() { return Havannah::State<SIZE, PIE, EXTENDED>::_status; };
  };
 
@@ -36,10 +45,11 @@ TEST(HavannahStateGroup, init_0) {
 
  const int size = 5;
  const int history = 0;
+ // NOTE: set turnFeatures to false since it's no longer supported it seems
  const bool turnFeatures = true;
- const int fullsize = 2*size - 1;
- const int nbChannels = 3*(1+history) + (turnFeatures ? 1 : 0);
- const int nbActions = fullsize*fullsize - size*(size-1);
+ const int fullsize = 2*size - 1;  // 9
+ const int nbChannels = 3*(1+history) + (turnFeatures ? 1 : 0);  // 4
+ const int nbActions = fullsize*fullsize - size*(size-1);  // 9 * 9 - 5 * 4 = 81 - 20 = 61
 
  Havannah::StateTest<size, true, false> state(0, history, turnFeatures);
 
@@ -60,12 +70,21 @@ TEST(HavannahStateGroup, init_0) {
  };
  const int f2 = fullsize*fullsize;
  std::copy(boardFeatures.begin(), boardFeatures.end(), expectedFeatures.begin() + 2*f2);
+ // so the 2 * f2 skips the first two boards. Where is the last square coming from?
 
- // DEBUG
- // std::cout << "*** expected ***" << std::endl;
- // printPlanes<const std::vector<float>&>(expectedFeatures, nbChannels, fullsize, fullsize);
- // std::cout << "*** actual ***" << std::endl;
- // printPlanes<const std::vector<float>&>(state.GetFeatures(), nbChannels, fullsize, fullsize);
+// DEBUG
+//  std::cout << "GetFeatures returns" << std::endl;
+//  const std::vector<float>& features = state.GetFeatures();
+//  for (float feature : features) {
+//     std::cout << feature << " ";
+//  }
+//  std::cout << "is the vector empty?" << features.empty() << std::endl;
+//  std::cout << "----------------" << std::endl;
+
+ std::cout << "*** expected ***" << std::endl;
+ printPlanes<std::vector<float>>(expectedFeatures, nbChannels, fullsize, fullsize);
+ std::cout << "*** actual ***" << std::endl;
+ printPlanes<const std::vector<float>&>(state.GetFeatures(), nbChannels, fullsize, fullsize);
 
  ASSERT_EQ((std::vector<int64_t>{nbChannels, fullsize, fullsize}), state.GetFeatureSize());
  ASSERT_EQ(expectedFeatures, state.GetFeatures());

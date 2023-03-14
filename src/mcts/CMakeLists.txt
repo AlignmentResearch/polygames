@@ -18,6 +18,6 @@ pybind11_add_module(mcts pybind.cc)
 target_link_libraries(mcts PUBLIC libpolygames)
 
 # tests
-#add_executable(test_mcts test.cc)
-#target_link_libraries(test_mcts PUBLIC _mcts)
+add_executable(test_mcts test.cc)
+target_link_libraries(test_mcts PUBLIC _mcts libpolygames python3.10)
 

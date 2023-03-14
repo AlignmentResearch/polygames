@@ -141,7 +141,7 @@ class State {
 
   template <typename T> void initializeAs() {
     _typeId = &typeid(T);
-    _copyImpl = [](State* dst, const State* src) { *(T*)dst = *(T*)src; };
+    // _copyImpl = [](State* dst, const State* src) { *(T*)dst = *(T*)src; };
   }
 
   virtual void newGame(unsigned long seed) {
@@ -632,7 +632,11 @@ class State {
   bool _stochasticReset;
 
   const std::type_info* _typeId = nullptr;
-  void (*_copyImpl)(State* dst, const State* src) = nullptr;
+  // void (*_copyImpl)(State* dst, const State* src) = nullptr;
+
+  void _copyImpl(State* dst, const State* src) {
+    *dst = *src; 
+  }
 
   std::minstd_rand _rng;
 

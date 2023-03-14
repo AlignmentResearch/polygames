@@ -7,7 +7,8 @@
 
 #pragma once
 
-#include "mcts/state.h"
+#include "core/actor.h"
+#include "core/state.h"
 #include "mcts/utils.h"
 
 #include <functional>
@@ -23,13 +24,13 @@ class Actor {
   Actor(const Actor&) = delete;
   Actor& operator=(const Actor&) = delete;
 
-  virtual PiVal evaluate(const State& s) = 0;
+  virtual PiVal evaluate(const core::State& s) = 0;
 
   virtual ~Actor() {
   }
 
   virtual void evaluate(
-      const std::vector<const State*>& s,
+      const std::vector<const core::State*>& s,
       const std::function<void(size_t, PiVal)>& resultCallback) {
     for (size_t i = 0; i != s.size(); ++i) {
       resultCallback(i, evaluate(*s[i]));
@@ -39,10 +40,10 @@ class Actor {
   virtual void terminate() {
   }
 
-  virtual void recordMove(const mcts::State* state) {
+  virtual void recordMove(const core::State* state) {
   }
 
-  virtual void result(const State* state, float reward) {
+  virtual void result(const core::State* state, float reward) {
   }
 
   virtual bool isTournamentOpponent() const {

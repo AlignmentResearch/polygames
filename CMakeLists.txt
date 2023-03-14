@@ -2,8 +2,13 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.3)
 project(polygames)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS
-    "${CMAKE_CXX_FLAGS} -fsized-deallocation -O3 -ffast-math")
+#set(CMAKE_CXX_FLAGS
+	#"${CMAKE_CXX_FLAGS} -fsized-deallocation -O3 -ffast-math")
+	#"${CMAKE_CXX_FLAGS} -fsized-deallocation -ffast-math")
+
+# TODO: remove this once things start working
+#set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
