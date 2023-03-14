@@ -22,17 +22,26 @@ RUN apt-get update -q \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Remote development niceties: Alacritty terminal and sshd
+# Remote development niceties:
+## Alacritty terminal, ssh keys dir
 RUN wget https://github.com/alacritty/alacritty/releases/download/v0.11.0/alacritty.info \
     && tic -xe alacritty,alacritty-direct alacritty.info \
     && rm alacritty.info \
-    && mkdir /run/sshd && mkdir /root/.ssh
+    && mkdir /run/sshd && mkdir /root/.ssh \
+## Unison synchronizer
+RUN wget https://github.com/bcpierce00/unison/releases/download/v2.52.1/unison-v2.52.1+ocaml-4.14.0+x86_64.linux.tar.gz \
+    && mkdir unison-work \
+    && tar xf unison-v2.52.1+ocaml-4.14.0+x86_64.linux.tar.gz -C unison-work \
+    && mv unison-work/bin/unison* /usr/local/bin \
+    && rm -rf unison*
 
 # Copy code
 RUN git clone --recursive --branch dockerfile https://github.com/AlignmentResearch/polygames /polygames
 WORKDIR /polygames
-RUN mv docker-dev/authorized_keys /root/authorized_keys
 RUN pip install -r docker-dev/requirements.txt
+
+# Copy SSH keys to the right place
+RUN mv docker-dev/authorized_keys /root/.ssh/authorized_keys
 
 RUN mkdir /polygames/build
 WORKDIR /polygames/build
