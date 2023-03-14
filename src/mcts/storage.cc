@@ -3,8 +3,8 @@
 
 namespace mcts {
 
-std::mutex freeStoragesMutex;
-std::list<Storage*> freeStorages;
+static std::mutex freeStoragesMutex;
+static std::list<Storage*> freeStorages;
 
 Node* Storage::newNode() {
   if (chunkIndex >= chunks.size()) {

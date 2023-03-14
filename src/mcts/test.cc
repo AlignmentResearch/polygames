@@ -30,7 +30,6 @@ class TicTacToeState : public State {
     board.resize(9, 0);
     currentPlayer = 1;
     Initialize();
-    std::cout << "called constructor. now board is " << board << std::endl;
   }
 
   virtual void Initialize() override {
