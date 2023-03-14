@@ -127,7 +127,8 @@ class State {
   void setSeed(int seed) {
     _rng.seed(seed);
   }
-  State(int seed) {
+  State(int seed)
+    : _status(core::GameStatus::player0Turn) {
     _rng.seed(seed);
     _stochasticReset = false;
     _hash = 0;
