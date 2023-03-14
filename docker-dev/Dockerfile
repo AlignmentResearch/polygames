@@ -27,12 +27,11 @@ RUN wget https://github.com/alacritty/alacritty/releases/download/v0.11.0/alacri
     && tic -xe alacritty,alacritty-direct alacritty.info \
     && rm alacritty.info \
     && mkdir /run/sshd && mkdir /root/.ssh
-COPY ~/.ssh/authorized_keys /root/.ssh/authorized_keys
-RUN chmod 600 /root/.ssh/authorized_keys
 
 # Copy code
 RUN git clone --recursive --branch dockerfile https://github.com/AlignmentResearch/polygames /polygames
 WORKDIR /polygames
+RUN mv docker-dev/authorized_keys /root/authorized_keys
 RUN pip install -r docker-dev/requirements.txt
 
 RUN mkdir /polygames/build
