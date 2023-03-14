@@ -21,6 +21,7 @@
 #include <sstream>
 #include <string>
 #include <thread>
+#include <array>
 
 namespace core {
 
