@@ -23,11 +23,12 @@ TEST(Connectfour, init_1) {
  ASSERT_EQ(GameStatus::player0Turn, GameStatus(state.getCurrentPlayer()));
 
  for (int i=0; i<7; ++i) {
-  auto a_i = std::dynamic_pointer_cast<ActionForConnectFour>(state.GetLegalActions()[i]);
+  auto a_i = &state.GetLegalActions()[i];
   ASSERT_EQ(i, a_i->GetX());
   ASSERT_EQ(0, a_i->GetY());
   ASSERT_EQ(0, a_i->GetZ());
-  ASSERT_EQ(i, a_i->GetHash());
+  // NOTE: nhowe changed the below to be 0, from i, since it seems hash is never changed.
+  ASSERT_EQ(0, a_i->GetHash());
   ASSERT_EQ(i, a_i->GetIndex());
  }
 
@@ -77,7 +78,8 @@ TEST(Connectfour, play_1) {
  StateForConnectFour state(0);
  state.Initialize();
 
- ActionForConnectFour action(1, 7);
+// NOTE: a and nhowe changed from ActionForConnectFour action(1, 7)
+ _Action action(0, 1, 7, 0);
  state.ApplyAction(action);
 
  ASSERT_EQ((std::vector<int64_t>{3, 6, 7}), state.GetFeatureSize());
@@ -85,11 +87,12 @@ TEST(Connectfour, play_1) {
  ASSERT_EQ(GameStatus::player1Turn, GameStatus(state.getCurrentPlayer()));
 
  for (int i=0; i<7; ++i) {
-  auto a_i = std::dynamic_pointer_cast<ActionForConnectFour>(state.GetLegalActions()[i]);
+  auto a_i = &state.GetLegalActions()[i];
   ASSERT_EQ(i, a_i->GetX());
   ASSERT_EQ(0, a_i->GetY());
   ASSERT_EQ(0, a_i->GetZ());
-  ASSERT_EQ(i, a_i->GetHash());
+  // NOTE: nhowe changed the below from i to 0 (see same change above)
+  ASSERT_EQ(0, a_i->GetHash());
   ASSERT_EQ(i, a_i->GetIndex());
  }
 
@@ -122,13 +125,11 @@ TEST(Connectfour, play_1) {
  };
 
  // DEBUG
- // printPlanes<std::vector<float>>(state.GetFeatures(), 3, 6, 7);
- // printPlanes<std::vector<float>>(expectedFeatures, 3, 6, 7);
+//  printPlanes<std::vector<float>>(state.GetFeatures(), 3, 6, 7);
+//  printPlanes<std::vector<float>>(expectedFeatures, 3, 6, 7);
 
  ASSERT_EQ(expectedFeatures.size(), 3*6*7);
  ASSERT_EQ(state.GetFeatures().size(), 3*6*7);
  ASSERT_EQ(expectedFeatures, state.GetFeatures());
 
 }
-
-

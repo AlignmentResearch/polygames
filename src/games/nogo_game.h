@@ -53,4 +53,3 @@ class NoGoGame : public GameBase<NoGoState, NoGoAction> {
                               bool with_comments,
                               std::vector<std::string>& comments);
 };
-#include "nogo_game.cc"

@@ -843,6 +843,7 @@ struct BatchExecutor {
             // state->history().c_str());
             if (randint(256) == 0) {
               fmt::printf(
+                  // "game ended normally, but we're not saying how");
                   "game ended normally: %s\n", state->history().c_str());
             }
           }

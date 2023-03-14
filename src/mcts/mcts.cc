@@ -166,6 +166,7 @@ int computeRolloutsImpl(const std::vector<Node*>& rootNode,
 
   std::vector<RolloutState> states(rootNode.size());
 
+  threads::init(1);  // NOTE we added this
   async::Task task(threads::threads);
 
   size_t stride =

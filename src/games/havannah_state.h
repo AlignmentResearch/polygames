@@ -60,6 +60,7 @@ Havannah::Action<SIZE>::Action(int i, int j, int indexInActions) {
 template <int SIZE, bool PIE, bool EXTENDED>
 Havannah::State<SIZE, PIE, EXTENDED>::State(int seed)
     : core::State(seed) {
+      Initialize();
 }
 
 template <int SIZE, bool PIE, bool EXTENDED>

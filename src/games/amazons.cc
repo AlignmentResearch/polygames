@@ -13,6 +13,7 @@
 // - Email:  yumjelly@gmail.com
 
 #include "amazons.h"
+#include <unordered_map>
 
 namespace Amazons {
 

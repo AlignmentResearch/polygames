@@ -695,8 +695,11 @@ def run_training(
     optim = create_optimizer(
         model=ddpmodel if ddpmodel is not None else model,
         optim_params=optim_params,
-        optim_state_dict=checkpoint.get("optim_state_dict", None),
+        optim_state_dict=None,  # testing this as per conversation with Adria
     )
+    # print("the ddpmodel was", ddpmodel)
+    # print("the optim params were", optim_params)
+    # print("the optim state dict is", optim_state_dict)
 
     print("creating training environment...")
     context, model_manager, get_train_reward, is_client = create_training_environment(

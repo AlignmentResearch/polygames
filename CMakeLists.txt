@@ -2,8 +2,13 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.3)
 project(polygames)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS
-    "${CMAKE_CXX_FLAGS} -fsized-deallocation -O3 -ffast-math")
+#set(CMAKE_CXX_FLAGS
+	#"${CMAKE_CXX_FLAGS} -fsized-deallocation -O3 -ffast-math")
+	#"${CMAKE_CXX_FLAGS} -fsized-deallocation -ffast-math")
+
+# TODO: remove this once things start working
+#set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -44,7 +49,9 @@ endif()
 message(STATUS "Adding PyTorch compilation flags: ${TORCH_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
+include_directories(src/third_party/pybind11/include/)
 add_subdirectory(src)
+add_subdirectory(tests)
 
 # tests
 add_executable(test_state src/core/test_state.cc src/core/state.cc)
