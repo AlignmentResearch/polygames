@@ -18,8 +18,8 @@ add_library(_tube
 )
 target_include_directories(_tube PUBLIC ${TORCH_INCLUDE_DIRS})
 target_include_directories(_tube PUBLIC ${PYTHON_INCLUDE_DIRS})
-target_link_directories(_tube PUBLIC ${TORCH_LIB_DIRS})
-target_link_libraries(_tube PUBLIC ${TORCH_LIBRARIES} fmt zmq)
+target_link_directories(_tube PUBLIC ${TORCH_INSTALL_PREFIX}/lib)
+target_link_libraries(_tube PUBLIC ${TORCH_LIBRARIES} fmt zmq torch_python)
 
 #target_include_directories(_tube PUBLIC ../third_party ../third_party/zstd/lib ../third_party/zstd/lib/common)
 
