@@ -5,8 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "actor.h"
-// #include "core/actor.h"
 #include "core/state.h"
 #include "mcts.h"
 #include "types.h"
