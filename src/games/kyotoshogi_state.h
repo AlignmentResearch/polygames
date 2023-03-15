@@ -26,6 +26,7 @@ class StateForKyotoshogi : public core::State {
  public:
   StateForKyotoshogi(int seed)
       : State(seed) {
+    initializeAs<StateForKyotoshogi>(this);
   }
   KSPiece board[KSDx][KSDy];
   unsigned long long hash;

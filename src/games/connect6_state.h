@@ -41,6 +41,7 @@ class StateForConnect6 : public core::State, C6Board {
 
   StateForConnect6(int seed)
       : State(seed) {
+    initializeAs<StateForConnect6<version> >(this);
   }
 
   virtual void Initialize() override {

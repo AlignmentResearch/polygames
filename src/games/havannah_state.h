@@ -61,6 +61,7 @@ template <int SIZE, bool PIE, bool EXTENDED>
 Havannah::State<SIZE, PIE, EXTENDED>::State(int seed)
     : core::State(seed) {
       Initialize();
+    initializeAs<Havannah::State<SIZE, PIE, EXTENDED> >(this);
 }
 
 template <int SIZE, bool PIE, bool EXTENDED>

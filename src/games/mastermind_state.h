@@ -219,6 +219,7 @@ bool State<SIZE, HORIZON, ARITY>::unicity(int real[],
 template <int SIZE, int HORIZON, int ARITY>
 Mastermind::State<SIZE, HORIZON, ARITY>::State(int seed)
     : core::State(seed) {
+  initializeAs<Mastermind::State<SIZE, HORIZON, ARITY> >(this);
   mmverbose = false;
   if (mmverbose) {
     std::cerr << " cretion" << std::endl;
