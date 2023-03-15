@@ -144,6 +144,7 @@ class State {
 
   template <typename T> void initializeAs(T *_obj) {
     // _obj is unused, just to type check that we apply it to a class of type T
+    (void)_obj;
 
     _copyImpl = [](State* dst, const State* src) {
       // marginally more expensive than static_cast but safer
