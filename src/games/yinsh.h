@@ -39,6 +39,7 @@ class StateForYinsh : public core::State {
  public:
   StateForYinsh(int seed)
       : State(seed) {
+    initializeAs<StateForYinsh>(this);
   }
   void Initialize() override;
   // virtual unique_ptr<core::State> clone_() const override;

@@ -28,6 +28,7 @@ class TicTacToeState : public State {
     board.resize(9, 0);
     currentPlayer = 1;
     Initialize();
+    initializeAs<TicTacToeState>(this);
   }
 
   virtual void Initialize() override {

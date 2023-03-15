@@ -42,7 +42,9 @@ template <int SIZE, bool PIE> class State : public core::State {
 
 template <int SIZE, bool PIE>
 Hex::State<SIZE, PIE>::State(int seed)
-  : core::State(seed){}
+  : core::State(seed){
+  initializeAs<Hex::State<SIZE, PIE> >(this);
+}
 
 template <int SIZE, bool PIE> void Hex::State<SIZE, PIE>::findActions() {
   auto legalIndices = _board.findLegalIndices();

@@ -90,6 +90,7 @@ template <int M, int N, int K> class State : public core::State {
 template <int M, int N, int K>
 State<M, N, K>::State(int seed)
     : core::State(seed) {
+  initializeAs<State<M, N, K> >(this);
   std::call_once(setupCalled, [&] { setupBoard(_rng); });
 }
 

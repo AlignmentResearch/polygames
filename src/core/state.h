@@ -127,6 +127,7 @@ class State {
   void setSeed(int seed) {
     _rng.seed(seed);
   }
+  State() = delete;
   State(int seed)
     : _status(core::GameStatus::player0Turn) {
     _rng.seed(seed);
@@ -141,9 +142,14 @@ class State {
   virtual ~State() {
   }
 
-  template <typename T> void initializeAs() {
-    _typeId = &typeid(T);
-    // _copyImpl = [](State* dst, const State* src) { *(T*)dst = *(T*)src; };
+  template <typename T> void initializeAs(T *_obj) {
+    // _obj is unused, just to type check that we apply it to a class of type T
+    (void)_obj;
+
+    _copyImpl = [](State* dst, const State* src) {
+      // marginally more expensive than static_cast but safer
+      *dynamic_cast<T*>(dst) = *dynamic_cast<const T*>(src);
+    };
   }
 
   virtual void newGame(unsigned long seed) {
@@ -608,11 +614,14 @@ class State {
   }
 
   void copy(const State& src) {
+    if(_copyImpl == nullptr) {
+      throw std::runtime_error("copy not initialized, you must call state.initializeAs<state-type>");
+    }
     _copyImpl(this, &src);
   }
 
   const std::type_info& typeId() const {
-    return *_typeId;
+    return typeid(*this);
   }
 
   virtual bool isOnePlayerGame() const {
@@ -633,12 +642,8 @@ class State {
   bool _stochastic;
   bool _stochasticReset;
 
-  const std::type_info* _typeId = nullptr;
-  // void (*_copyImpl)(State* dst, const State* src) = nullptr;
+  void (*_copyImpl)(State* dst, const State* src) = nullptr;
 
-  void _copyImpl(State* dst, const State* src) {
-    *dst = *src; 
-  }
 
   std::minstd_rand _rng;
 

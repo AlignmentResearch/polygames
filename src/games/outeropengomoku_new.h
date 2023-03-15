@@ -18,6 +18,7 @@ class StateForOOGomoku : public core::State {
  public:
   StateForOOGomoku(int seed)
       : State(seed) {
+    initializeAs<StateForOOGomoku>(this);
   }
 
   virtual void Initialize() override {

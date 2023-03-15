@@ -22,7 +22,6 @@ namespace Ludii {
 // javap -s <ClassName.class>
 
 LudiiGameWrapper::LudiiGameWrapper(const std::string lud_path) {
-
   JNIEnv* jenv = JNIUtils::GetEnv();
   jclass ludiiGameWrapperClass = JNIUtils::LudiiGameWrapperClass();
 

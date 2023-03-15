@@ -72,6 +72,7 @@ class StateForEinstein : public core::State {
 
   StateForEinstein(int seed)
       : State(seed) {
+    initializeAs<StateForEinstein>(this);
     _stochasticReset = true;
   }
   /*~StateForEinstein() {
