@@ -71,7 +71,7 @@ class StateForConnectFour : public core::State {
   void featurize() {
     int player = 1 + getCurrentPlayer();
     int otherPlayer = player == 1 ? 2 : 1;
-    for (int i = 0; i != (int)board.size(); ++i) {
+    for (int i = 0; i < (int)board.size(); ++i) {
       int v = board[i];
       _features[i] = v == player;
       _features[board.size() + i] = v == otherPlayer;
@@ -80,9 +80,10 @@ class StateForConnectFour : public core::State {
 
   void findActions() {
     clearActions();
-    for (int i = 0; i != boardWidth; ++i) {
-      if (height[i] != boardHeight) {
+    for (int i = 0; i < boardWidth; ++i) {
+      if (height[i] < boardHeight) {
         addAction(i, 0, 0);
+        std::cout << 1 + getCurrentPlayer() << "adding action (" << i << height[i] << ")" << std::endl << std::flush;
       }
     }
   }

@@ -33,7 +33,8 @@ def games(olympiads: bool = False) -> tp.List[str]:
             "Tristannogo",
             "GameOfTheAmazons",
         ] + list(pies)
-    filepath = Path(__file__).parents[2] / "core" / "game.h"
+    filepath = Path(__file__).parents[2] / "src" / "core" / "game.h"
+    print("we think the filepath should be", filepath)
     assert filepath.exists()
     pattern = r".*if\s*?\(\s*?isGameNameMatched\s*?\(\s*?\{\s*?\"(?P<name>\w+)\"[^}]*\}\s*?\)\s*?\)\s*?\{.*"
     iterator = re.finditer(pattern, filepath.read_text())
