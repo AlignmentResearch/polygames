@@ -8,7 +8,7 @@ RUN apt-get update -q \
     wget \
     git \
     python3 python3-dev python3-pip python3-setuptools python-is-python3 \
-    cmake \
+    cmake pkg-config \
     libmkl-core libmkl-intel-thread libmkl-intel-ilp64 \
     vim \
     tmux \
