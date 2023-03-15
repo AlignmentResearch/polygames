@@ -37,7 +37,7 @@ RUN wget https://github.com/bcpierce00/unison/releases/download/v2.52.1/unison-v
     && rm -rf unison*
 
 # Following https://stackoverflow.com/questions/35134713/disable-cache-for-specific-run-commands, build with
-# docker build --build-arg CACHEBUST=`git rev-parse ${GITHUB_REF}`
+# docker build --build-arg CACHEBUST="$(git ls-remote origin refs/heads/dockerfile)"
 ARG CACHEBUST=0
 # Copy code
 RUN git clone --recursive --branch dockerfile https://github.com/AlignmentResearch/polygames /polygames

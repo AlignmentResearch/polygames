@@ -11,7 +11,10 @@ execute_process(
 
 find_package(PythonInterp 3.7 REQUIRED)
 find_package(PythonLibs 3.7 REQUIRED)
-find_package(ZeroMQ 5.2.4 REQUIRED)
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(ZeroMQ REQUIRED libzmq>=4.3)
+
 
 # lib for other c++ programs
 add_library(_tube
