@@ -167,6 +167,7 @@ template <int SIZE> unsigned long long Hex::Hash<SIZE>::getValue() const {
 ///////////////////////////////////////////////////////////////////////////////
 
 template <int SIZE, bool PIE> Hex::Board<SIZE, PIE>::Board() {
+  reset();
   //_hash.init();
 }
 

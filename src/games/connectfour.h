@@ -18,6 +18,7 @@ class StateForConnectFour : public core::State {
  public:
   StateForConnectFour(int seed)
       : State(seed) {
+    initializeAs<StateForConnectFour>(this);
   }
 
   virtual void Initialize() override {

@@ -321,6 +321,7 @@ State::State(int seed)
     : core::State(seed)
     , Game() {
   // fprintf(stderr,"State(int seed)\n");
+  initializeAs<ChineseCheckers::State>(this);
   call_once(setupCalled, [&] { setupBoard(_rng); });
 }
 

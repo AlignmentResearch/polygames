@@ -62,6 +62,7 @@ class State : public core::State {
  public:
   State(int seed)
       : core::State(seed) {
+    initializeAs<State>(this);
   }
 
   ChessBoard board;

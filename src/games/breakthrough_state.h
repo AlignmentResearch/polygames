@@ -30,6 +30,7 @@ class StateForBreakthrough : public core::State, BTBoard {
  public:
   StateForBreakthrough(int seed)
       : State(seed) {
+        initializeAs<StateForBreakthrough<fixedPolicy> >(this);
   }
 
   virtual ~StateForBreakthrough() {

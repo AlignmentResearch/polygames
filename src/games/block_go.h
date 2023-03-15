@@ -89,6 +89,7 @@ class StateForBlockGo : public core::State {
 
   StateForBlockGo(int seed)
       : State(seed) {
+    initializeAs<StateForBlockGo>(this);
   }
 
   virtual void Initialize() override {

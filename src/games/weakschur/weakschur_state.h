@@ -52,6 +52,7 @@ template <int NBSUBSETS, int MAXNUMBER>
 weakschur::State<NBSUBSETS, MAXNUMBER>::State(int seed)
     : core::State(seed)
     , _weakschur(NBSUBSETS, MAXNUMBER) {
+  initializeAs<weakschur::State<NBSUBSETS, MAXNUMBER> >(this);
 }
 
 template <int NBSUBSETS, int MAXNUMBER>

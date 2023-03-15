@@ -46,6 +46,7 @@ class StateForDiceshogi : public core::State {
  public:
   StateForDiceshogi(int seed)
       : State(seed) {
+    initializeAs<StateForDiceshogi>(this);
     _stochasticReset = true;
   }
 

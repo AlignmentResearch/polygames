@@ -46,9 +46,9 @@ TEST(HavannahStateGroup, init_0) {
  const int size = 5;
  const int history = 0;
  // NOTE: set turnFeatures to false since it's no longer supported it seems
- const bool turnFeatures = true;
+ const bool turnFeatures = false;
  const int fullsize = 2*size - 1;  // 9
- const int nbChannels = 3*(1+history) + (turnFeatures ? 1 : 0);  // 4
+ const int nbChannels = 3*(1+history) + (turnFeatures ? 1 : 0);  // 3
  const int nbActions = fullsize*fullsize - size*(size-1);  // 9 * 9 - 5 * 4 = 81 - 20 = 61
 
  Havannah::StateTest<size, true, false> state(0, history, turnFeatures);

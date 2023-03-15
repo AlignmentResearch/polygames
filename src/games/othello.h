@@ -107,6 +107,7 @@ template <int BR> class State : public core::State {
 template <int BR>
 State<BR>::State(int seed)
     : core::State(seed) {
+  initializeAs<State<BR> >(this);
   std::call_once(setupCalled, [&] { setupBoard(_rng); });
 }
 

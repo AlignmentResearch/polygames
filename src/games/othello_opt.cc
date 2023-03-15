@@ -43,6 +43,7 @@ template <size_t SIZE>
 State<SIZE>::State(int seed)
     : core::State(seed)
     , _hasher(hashBook) {
+  initializeAs<State<SIZE> >(this);
   std::call_once(hashBookConfigured, [this]() { hashBook.setup(_rng); });
 }  // State<SIZE>::State
 

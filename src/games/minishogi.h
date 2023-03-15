@@ -44,6 +44,7 @@ class StateForMinishogi : public core::State, public Shogi {
   StateForMinishogi(int seed)
       : State(seed)
       , Shogi() {
+    initializeAs<StateForMinishogi<version> >(this);
   }
 
   virtual void Initialize() override {

@@ -26,6 +26,7 @@ class StateForTristannogo : public core::State, NogoBoard {
  public:
   StateForTristannogo(int seed)
       : State(seed) {
+        initializeAs<StateForTristannogo>(this);
   }
 
   virtual ~StateForTristannogo() {

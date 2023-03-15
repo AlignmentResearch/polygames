@@ -34,6 +34,7 @@ class StateForDiceshogi : public core::State, public Shogi {
       : State(seed)
       , Shogi() {
     _stochasticReset = true;
+    initializeAs<StateForDiceshogi>(this);
   }
 
   virtual void Initialize() override {

@@ -360,10 +360,10 @@ template <size_t WIDTH, size_t HEIGHT, size_t MINES> class SolutionSetSampler {
     assert(tail + 1 == head);
     // if unconstrained set does not have a fixed number of mines to sample
     // swap it with the last one
-    if (_solutionSetsOrder[head] == _unconstrVarSetIdx) {
+    if (_solutionSetsOrder.at(head) == _unconstrVarSetIdx) {
       size_t tmp = _solutionSetsOrder.back();
       _solutionSetsOrder.back() = _unconstrVarSetIdx;
-      _solutionSetsOrder[head] = tmp;
+      _solutionSetsOrder.at(head) = tmp;
     }
     _firstBranchingSet = head;
   }  // computeSolutionSetsOrder
