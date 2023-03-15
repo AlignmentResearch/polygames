@@ -32,6 +32,7 @@ class StateForSurakarta : public core::State, public SKBoard {
  public:
   StateForSurakarta(int seed)
       : State(seed) {
+    initializeAs<StateForSurakarta>(this);
   }
 
   virtual void Initialize() override {

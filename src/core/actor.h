@@ -24,6 +24,14 @@ class PiVal {
     reset();
   }
 
+  // NOTE: we added this in
+  PiVal(int player, float value, std::vector<float> pi) {
+    reset();
+    playerId = player;
+    value = value;
+    logitPolicy = torch::tensor(pi);
+  }
+
   void reset() {
     playerId = -999;
     value = 0.0f;

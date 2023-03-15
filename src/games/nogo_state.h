@@ -45,4 +45,3 @@ class NoGoState : public GameState {
   Position FindParent(Position p);
   void InitNeighborList();
 };
-#include "nogo_state.cc"

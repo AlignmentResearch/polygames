@@ -119,6 +119,7 @@ template <typename R> void Game::setupBoard(const R& re) {
 State::State(int seed)
     : core::State(seed)
     , Game() {
+  initializeAs<State>(this);
   std::call_once(setupCalled, [&] { setupBoard(_rng); });
 }
 

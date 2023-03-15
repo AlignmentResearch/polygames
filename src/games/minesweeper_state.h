@@ -44,6 +44,7 @@ class State : public core::State {
   State(int seed)
       : core::State(seed)
       , _hasher(hashBook) {
+    initializeAs<State>(this);
     _board.fill(UNKNOWN);
     _boardSample.fill(UNKNOWN);
     _minesSample.fill(-1);

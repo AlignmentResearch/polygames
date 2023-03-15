@@ -696,6 +696,7 @@ def run_training(
         model=ddpmodel if ddpmodel is not None else model,
         optim_params=optim_params,
         optim_state_dict=checkpoint.get("optim_state_dict", None),
+
     )
 
     print("creating training environment...")

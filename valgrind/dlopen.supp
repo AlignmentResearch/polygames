@@ -1,0 +1,9 @@
+# Ignore errors in _dlopen
+# Following https://stackoverflow.com/questions/1542457/memory-leak-reported-by-valgrind-in-dlopen
+{
+   Ignore dlopen bug.
+   Memcheck:Addr8
+   ...
+   fun:_dl_open
+   ...
+}

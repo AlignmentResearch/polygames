@@ -5,6 +5,7 @@
 #include <memory>
 #include <optional>
 #include <stdexcept>
+#include <array>
 
 namespace rdma {
 

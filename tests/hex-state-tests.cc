@@ -20,8 +20,8 @@ namespace Hex {
  template <int SIZE, bool PIE> class StateTest : public Hex::State<SIZE, PIE> {
   public:
    StateTest<SIZE, PIE>(int seed, int history, bool turnFeatures) : 
-    Hex::State<SIZE, PIE>(seed, history, turnFeatures) {}
-   GameStatus GetStatus() { return ::State::_status; };
+   Hex::State<SIZE, PIE>(seed) {}
+   GameStatus GetStatus() { return Hex::State<SIZE, PIE>::_status; };
  };
 
 };
@@ -49,7 +49,7 @@ TEST(HexStateGroup, init_1) {
  for (int k=0; k<state.GetLegalActions().size(); ++k) {
   int i = k / 7;
   int j = k % 7;
-  auto a = state.GetLegalActions()[k];
+  auto a = &state.GetLegalActions()[k];
   ASSERT_EQ(0, a->GetX());
   ASSERT_EQ(i, a->GetY());
   ASSERT_EQ(j, a->GetZ());
@@ -63,7 +63,7 @@ TEST(HexStateGroup, play_1) {
 
  Hex::StateTest<7,true> state(0, 0, false);
 
- Hex::Action<7> a(2, 3, 2*7+3);
+ _Action a(0, 2, 3, 2*7+3);
  state.ApplyAction(a);
 
  ASSERT_EQ(GameStatus::player1Turn, state.GetStatus());
@@ -90,7 +90,7 @@ TEST(HexStateGroup, play_1) {
   for (int j=0; j<2; ++j) {
    int k = i*7+j;
    if (k<2*7+3) {
-   auto a = state.GetLegalActions()[k];
+   auto a = &state.GetLegalActions()[k];
     ASSERT_EQ(0, a->GetX());
     ASSERT_EQ(i, a->GetY());
     ASSERT_EQ(j, a->GetZ());
@@ -99,7 +99,7 @@ TEST(HexStateGroup, play_1) {
    }
    else if (k>2*7+3) {
     int k2 = k-1;
-    auto a = state.GetLegalActions()[k2];
+    auto a = &state.GetLegalActions()[k2];
     ASSERT_EQ(0, a->GetX());
     ASSERT_EQ(i, a->GetY());
     ASSERT_EQ(j, a->GetZ());
@@ -123,7 +123,7 @@ TEST(HexStateGroup, clone_1) {
   ASSERT_EQ(49, state.GetLegalActions().size());
   ASSERT_EQ(49, ptrClone->GetLegalActions().size());
 
-  Hex::Action<7> a(2, 3, -1);
+  _Action a(0, 2, 3, -1);
   state.ApplyAction(a);
 
   ASSERT_EQ(49, state.GetLegalActions().size());
@@ -144,9 +144,9 @@ TEST(HexStateGroup, features_1) {
 
  ASSERT_EQ((std::vector<int64_t>{1, 3, 3}), state.GetActionSize());
 
- std::vector<Hex::Action<3>> actions {{
-     {1,0,-1},
-     {0,0,-1}
+ std::vector<_Action> actions {{
+     {0, 1,0,-1},
+     {0, 0,0,-1}
  }};
 
  auto currentPlayer = GameStatus::player0Turn;
@@ -218,10 +218,10 @@ TEST(HexStateGroup, features_2) {
 
  ASSERT_EQ((std::vector<int64_t>{1, 3, 3}), state.GetActionSize());
 
- std::vector<Hex::Action<3>> actions {{
-     {1,1,-1}, {0,0,-1},
-     {2,2,-1}, {2,0,-1},
-     {1,0,-1}
+ std::vector<_Action> actions {{
+     {0, 1,1,-1}, {0, 0,0,-1},
+     {0, 2,2,-1}, {0, 2,0,-1},
+     {0, 1,0,-1}
  }};
 
  auto currentPlayer = GameStatus::player0Turn;
@@ -303,18 +303,18 @@ TEST(HexStateGroup, features_3) {
 
  ASSERT_EQ((std::vector<int64_t>{1, size, size}), state.GetActionSize());
 
- std::vector<Hex::Action<size>> actions {{
-   {0,0,-1}, {4,1,-1},
-   {2,3,-1}, {5,2,-1},
-   {2,5,-1}, {4,4,-1},
-   {2,6,-1}, {5,5,-1},
-   {7,4,-1}, {4,7,-1},
-   {7,6,-1}, {3,8,-1},
-   {5,6,-1}, {4,6,-1},
-   {4,5,-1}, {5,4,-1},
-   {5,3,-1}, {4,3,-1},
-   {4,2,-1}, {5,1,-1},
-   {5,0,-1}, {4,0,-1}
+ std::vector<_Action> actions {{
+   {0, 0,0,-1}, {0, 4,1,-1},
+   {0, 2,3,-1}, {0, 5,2,-1},
+   {0, 2,5,-1}, {0, 4,4,-1},
+   {0, 2,6,-1}, {0, 5,5,-1},
+   {0, 7,4,-1}, {0, 4,7,-1},
+   {0, 7,6,-1}, {0, 3,8,-1},
+   {0, 5,6,-1}, {0, 4,6,-1},
+   {0, 4,5,-1}, {0, 5,4,-1},
+   {0, 5,3,-1}, {0, 4,3,-1},
+   {0, 4,2,-1}, {0, 5,1,-1},
+   {0, 5,0,-1}, {0, 4,0,-1}
  }};
 
  auto currentPlayer = GameStatus::player0Turn;

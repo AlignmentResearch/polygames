@@ -3,8 +3,8 @@
 
 namespace mcts {
 
-std::mutex freeStoragesMutex;
-std::list<Storage*> freeStorages;
+static std::mutex freeStoragesMutex;
+static std::list<Storage*> freeStorages;
 
 Node* Storage::newNode() {
   if (chunkIndex >= chunks.size()) {
@@ -27,6 +27,7 @@ Node* Storage::newNode() {
 
 void Storage::freeNode(Node* node) {
   --allocated;
+  assert(allocated >= 0);
   if (allocated == 0) {
     chunkIndex = 0;
     subIndex = 0;

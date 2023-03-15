@@ -77,13 +77,16 @@ class StateForNogo : public State {
   virtual void ApplyAction(const _Action& action) override {
     assert(_status != GameStatus::player0Win);
     assert(_status != GameStatus::player1Win);
-    NoGoAction nogoAction(_nogoGame.GetTurnPlayer(), action.GetHash());
+    // NOTE: nhowe changed three occurrences of "GetHash" to "GetIndex",
+    //       which seems more correct. This was the only place that
+    //       "GetHash" was used.
+    NoGoAction nogoAction(_nogoGame.GetTurnPlayer(), action.GetIndex());
     if (_nogoGame.GetTurnPlayer() == PLAYER_0) {
-      _features[action.GetHash()] = 1.;
+      _features[action.GetIndex()] = 1.;
       for (int i = 0; i < 81; i++)
         _features[81 * 2 + i] = 1.;
     } else {
-      _features[9 * 9 + action.GetHash()] = 1.;
+      _features[9 * 9 + action.GetIndex()] = 1.;
       for (int i = 0; i < 81; i++)
         _features[81 * 2 + i] = 0.;
     }

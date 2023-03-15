@@ -128,6 +128,7 @@ void LudiiStateWrapper::DoGoodAction() {
 LudiiStateWrapper::LudiiStateWrapper(int seed,
                                      LudiiGameWrapper&& inLudiiGameWrapper)
     : core::State(seed) {
+  initializeAs<LudiiStateWrapper>(this);
 
   JNIEnv* jenv = JNIUtils::GetEnv();
   ludiiGameWrapper =

@@ -13,11 +13,13 @@
 // - Email:  yumjelly@gmail.com
 
 #include "amazons.h"
+#include <unordered_map>
 
 namespace Amazons {
 
 State::State(int seed)
     : core::State(seed) {
+  initializeAs<Amazons::State>(this);
   std::call_once(setupCalled, [&] { setupBoard(_rng); });
 }
 
