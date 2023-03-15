@@ -33,7 +33,7 @@ def test_models(model_name) -> None:
     assert list(outputs["pi"].shape) == [1] + action_size
     # loss
     multi_counter = utils.MultiCounter(root=None)
-    pi_mask = torch.ones(outputs["pi"].shape)
+    pi_mask = torch.ones(outputs["pi_logit"].shape)
     model.loss(
         model, input_data, outputs["v"], outputs["pi"], pi_mask, multi_counter
     )  # make sure it computes something
