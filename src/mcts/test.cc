@@ -261,6 +261,7 @@ int main(int argc, char* argv[]) {
   while (!state.terminated()) {
     int playerIdx = state.getCurrentPlayer() == 1 ? 0 : 1;
     assert(!state.GetLegalActions().empty());
+    std::cout << "the legal actions are " << state.getLegalActions() << std::endl;
     MctsResult result = players.at(playerIdx)->actMcts(state);
     std::cout << "best action is " << result.bestAction << std::endl;
     state.forward(result.bestAction);

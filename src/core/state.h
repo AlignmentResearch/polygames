@@ -182,7 +182,7 @@ class State {
     auto moves = _moves;
     auto rngs = _moveRngs;
     s->reset();
-    for (size_t i = 0; i != moves.size(); ++i) {
+    for (size_t i = 0; i < moves.size(); ++i) {
       if (i == moves.size() - 1) {
         str = s->actionDescription(s->GetLegalActions().at(moves.at(i)));
       }
@@ -199,7 +199,7 @@ class State {
     auto moves = _moves;
     auto rngs = _moveRngs;
     s->reset();
-    for (size_t i = 0; i != moves.size(); ++i) {
+    for (size_t i = 0; i < moves.size(); ++i) {
       if (!str.empty()) {
         str += " ";
       }
