@@ -36,6 +36,9 @@ RUN wget https://github.com/bcpierce00/unison/releases/download/v2.52.1/unison-v
     && mv unison-work/bin/unison* /usr/local/bin \
     && rm -rf unison*
 
+# Following https://stackoverflow.com/questions/35134713/disable-cache-for-specific-run-commands, build with
+# docker build --build-arg CACHEBUST=`git rev-parse ${GITHUB_REF}`
+ARG CACHEBUST=0
 # Copy code
 RUN git clone --recursive --branch dockerfile https://github.com/AlignmentResearch/polygames /polygames
 WORKDIR /polygames
@@ -48,8 +51,7 @@ RUN mkdir /polygames/build
 WORKDIR /polygames/build
 
 # TODO(nhowe): add support for Ludii
-RUN cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON -DWITH_LUDII=OFF
-RUN make -j
+RUN cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON -DWITH_LUDII=OFF && make -j
 
 WORKDIR /polygames
 ENV PYTHONPATH=/polygames
