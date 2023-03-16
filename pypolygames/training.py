@@ -485,7 +485,7 @@ def train_model(
       "s":  [c, h, w],
       "v": [3 if getattr(model, "logit_value", False) else 1],
       "pred_v": [1],
-      "pi": [c_prime, h_prime, w_prime],
+      "pi_logit": [c_prime, h_prime, w_prime],
       "pi_mask": [c_prime, h_prime, w_prime]
     }
 

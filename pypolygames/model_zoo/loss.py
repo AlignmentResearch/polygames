@@ -14,7 +14,7 @@ def mcts_loss(
 
     x = batch["s"]
     v = batch["v"]
-    pi = batch["pi"]
+    pi = batch["pi_logit"]
     pi_mask = batch["pi_mask"]
     predict_pi = batch["predict_pi"] if predicts > 0 else None
     predict_pi_mask = batch["predict_pi_mask"] if predicts > 0 else None
