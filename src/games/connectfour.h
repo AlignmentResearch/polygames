@@ -83,7 +83,6 @@ class StateForConnectFour : public core::State {
     for (int i = 0; i < boardWidth; ++i) {
       if (height[i] < boardHeight) {
         addAction(i, 0, 0);
-        std::cout << 1 + getCurrentPlayer() << "adding action (" << i << height[i] << ")" << std::endl << std::flush;
       }
     }
   }

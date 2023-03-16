@@ -13,6 +13,48 @@
 #include "utils.h"
 #include <connectfour.h>
 
+void printAllowedActions(StateForConnectFour state) {
+    std::cout << "now the allowed actions are " << std::endl;
+    std::vector<core::_Action> theActions = state.GetLegalActions();
+    for (auto action : theActions) {
+        int x = action.GetX();
+        int y = state.height.at(x);
+        std::cout << "(" << x << ", " << y << ") " << std::endl;
+    }
+}
+
+TEST(Connectfour, fill_column_legal_moves) {
+    StateForConnectFour state(0);
+    state.Initialize();
+
+    // Print the starting state
+    // std::cout << "starting with " << std::endl;
+    state.printCurrentBoard();
+    printAllowedActions(state);
+
+    // Fill the first column with alternating pieces
+    for (int i = 0; i < 6; ++i) {
+        _Action action(0, 0, 0, 0);  // play in column 0
+        state.ApplyAction(action);
+        // std::cout << "played action 0, now board is" << std::endl;
+        state.printCurrentBoard();
+        // printAllowedActions(state);
+    }
+
+    // At this point, the board should look as follows
+    /*|O| | | | | | |
+      |X| | | | | | |
+      |O| | | | | | |
+      |X| | | | | | |
+      |O| | | | | | |
+      |X| | | | | | |*/
+
+    // Now, let's see what the available moves are: is it possible to play
+    // in the first column still?
+    ASSERT_EQ(state.height.at(0), 6);
+    ASSERT_EQ(state.GetLegalActions().size(), 6);
+}
+
 TEST(Connectfour, init_1) {
 
  StateForConnectFour state(0);
