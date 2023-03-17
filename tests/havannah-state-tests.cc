@@ -249,7 +249,7 @@ TEST(HavannahStateGroup, clone_1) {
 
   ASSERT_EQ(37, ptrClone->GetLegalActions().size());
  }
- catch (std::bad_cast) {
+ catch (std::bad_cast &) {
   FAIL() << "not a Havannah::State<4, true, false>"; 
  }
 
@@ -273,7 +273,7 @@ TEST(HavannahStateGroup, clone_2) {
   ASSERT_EQ(36, state.GetLegalActions().size());
   ASSERT_EQ(37, ptrClone->GetLegalActions().size());
  }
- catch (std::bad_cast) {
+ catch (std::bad_cast &) {
   FAIL() << "not a Havannah::State<4, true, false>"; 
  }
 

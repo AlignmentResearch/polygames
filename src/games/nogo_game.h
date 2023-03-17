@@ -16,7 +16,6 @@
 class NoGoGame : public GameBase<NoGoState, NoGoAction> {
  public:
   NoGoGame();
-  ~NoGoGame();
 
   NoGoGame& operator=(const NoGoGame& rhs);
   bool IsTerminalState() override;
@@ -27,7 +26,6 @@ class NoGoGame : public GameBase<NoGoState, NoGoAction> {
   bool PlayAction(Action action) override;
 
   NoGoBitBoard GetIllegalBitBoard();
-  NoGoState GetNoGoState();
   PLAYER GetPositionPlayer(Position position);
   bool IsLegalAction(PLAYER player, Position position);
   bool IsLegalAction(Position position);

@@ -9,6 +9,8 @@
 #define CZF_NOGO_NOGO_BITBOARD_H_
 
 #include "nogo_position.h"
+#include <array>
+
 class NoGoBitBoard {
   static const long long kMASK_55 = 0x5555555555555555ULL;
   static const long long kMASK_33 = 0x3333333333333333ULL;
@@ -18,21 +20,14 @@ class NoGoBitBoard {
   static const long long kMASK_0000FFFF = 0x0000ffff0000ffffULL;
   static const long long kMASK_00000000FFFFFFFF = 0x00000000ffffffffULL;
   static const long long kMASK_FFFFFFFFFFFFFFFF = 0xffffffffffffffffULL;
-  long long bitboard_[(kNOGO_GRIDS_NUM / 64) + 1];
+  std::array<long long, (kNOGO_GRIDS_NUM / 64) + 1> bitboard_;
 
  public:
   NoGoBitBoard() {
     Reset();
   }
   void Reset() {
-    bitboard_[0] = 0;
-    bitboard_[1] = 0;
-  }
-
-  NoGoBitBoard& operator=(const NoGoBitBoard& rhs) {
-    bitboard_[0] = rhs.bitboard_[0];
-    bitboard_[1] = rhs.bitboard_[1];
-    return *this;
+    std::fill(bitboard_.begin(), bitboard_.end(), 0);
   }
 
   int Count() const {
@@ -60,9 +55,10 @@ class NoGoBitBoard {
     bitboard_[i >> 6] |= (1LL << (i & 63));
   }
 
-  void operator|=(NoGoBitBoard rhs) {
-    bitboard_[0] |= rhs.bitboard_[0];
-    bitboard_[1] |= rhs.bitboard_[1];
+  void operator|=(const NoGoBitBoard &rhs) {
+    for(size_t i=0; i < bitboard_.size(); i++) {
+      bitboard_[i] |= rhs.bitboard_[i];
+    }
     return;
   }
 

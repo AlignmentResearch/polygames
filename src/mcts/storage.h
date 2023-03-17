@@ -18,7 +18,7 @@ class Storage {
   std::vector<Node*> chunks;
   size_t chunkIndex = 0;
   size_t subIndex = 0;
-  size_t allocated = 0;
+  int64_t allocated = 0;
   const size_t chunkSize = 16;
 
  public:

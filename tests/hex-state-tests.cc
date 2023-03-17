@@ -129,7 +129,7 @@ TEST(HexStateGroup, clone_1) {
   ASSERT_EQ(49, state.GetLegalActions().size());
   ASSERT_EQ(49, ptrClone->GetLegalActions().size());
  }
- catch (std::bad_cast) {
+ catch (std::bad_cast &) {
   FAIL() << "not a Hex::State<7,true>"; 
  }
 

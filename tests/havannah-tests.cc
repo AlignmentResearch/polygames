@@ -15,14 +15,6 @@
 // helpers
 ///////////////////////////////////////////////////////////////////////////////
 
-static void CheckHavannahPathInfo(const Havannah::PathInfo & path, Havannah::Color color,
-  unsigned borders, unsigned corners, int m) {
- ASSERT_EQ(path._color, color);
- ASSERT_EQ(path._borders, borders);
- ASSERT_EQ(path._corners, corners);
- ASSERT_EQ(path._mainPathIndex, m);
-}
-
 namespace Havannah {
 
  template<int SIZE, bool PIE>
