@@ -72,7 +72,7 @@ add_subdirectory(tests)
 
 # tests
 add_executable(test_state src/core/test_state.cc src/core/state.cc)
-target_link_libraries(test_state PUBLIC _tube _mcts _games ${JNI_LIBRARIES} python3.10)
+target_link_libraries(test_state PUBLIC _tube _mcts _games ${JNI_LIBRARIES} ${PYTHON_LIBRARIES})
 
 enable_testing()
 
