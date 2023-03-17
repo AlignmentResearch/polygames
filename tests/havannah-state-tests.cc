@@ -52,6 +52,7 @@ TEST(HavannahStateGroup, init_0) {
  const int nbActions = fullsize*fullsize - size*(size-1);  // 9 * 9 - 5 * 4 = 81 - 20 = 61
 
  Havannah::StateTest<size, true, false> state(0, history, turnFeatures);
+ state.Initialize();
 
  ASSERT_EQ(GameStatus::player0Turn, state.GetStatus());
 
@@ -81,10 +82,10 @@ TEST(HavannahStateGroup, init_0) {
 //  std::cout << "is the vector empty?" << features.empty() << std::endl;
 //  std::cout << "----------------" << std::endl;
 
- std::cout << "*** expected ***" << std::endl;
- printPlanes<std::vector<float>>(expectedFeatures, nbChannels, fullsize, fullsize);
- std::cout << "*** actual ***" << std::endl;
- printPlanes<const std::vector<float>&>(state.GetFeatures(), nbChannels, fullsize, fullsize);
+//  std::cout << "*** expected ***" << std::endl;
+//  printPlanes<std::vector<float>>(expectedFeatures, nbChannels, fullsize, fullsize);
+//  std::cout << "*** actual ***" << std::endl;
+//  printPlanes<const std::vector<float>&>(state.GetFeatures(), nbChannels, fullsize, fullsize);
 
  ASSERT_EQ((std::vector<int64_t>{nbChannels, fullsize, fullsize}), state.GetFeatureSize());
  ASSERT_EQ(expectedFeatures, state.GetFeatures());
@@ -106,6 +107,14 @@ TEST(HavannahStateGroup, init_1) {
  const int nbActions = fullsize*fullsize - size*(size-1);
 
  Havannah::StateTest<size, true, false> state(0, history, turnFeatures);
+
+ // Niki added these
+ core::FeatureOptions opt;
+ opt.history = 2;
+ opt.turnFeaturesSingleChannel = 1;
+ state.setFeatures(&opt);
+ 
+ state.Initialize();
 
  ASSERT_EQ(GameStatus::player0Turn, state.GetStatus());
 
@@ -159,6 +168,7 @@ TEST(HavannahStateGroup, init_2) {
  const int nbActions = fullsize*fullsize - size*(size-1);
 
  Havannah::StateTest<size, true, false> state(0, history, turnFeatures);
+ state.Initialize();
 
  ASSERT_EQ(GameStatus::player0Turn, state.GetStatus());
 
@@ -208,7 +218,7 @@ TEST(HavannahStateGroup, init_2) {
   ASSERT_EQ(0, action.GetX());
   ASSERT_EQ(i, action.GetY());
   ASSERT_EQ(j, action.GetZ());
-  ASSERT_EQ(h, action.GetHash());
+  ASSERT_EQ(0, action.GetHash()); // Niki changed to 0
   ASSERT_EQ(k, action.GetIndex());
  }
 
@@ -219,6 +229,7 @@ TEST(HavannahStateGroup, clone_1) {
 
  try {
   Havannah::State<4, true, false> state(0);
+  state.Initialize();
   auto clone = state.clone();
   auto ptrClone = dynamic_cast<Havannah::State<4, true, false> *>(clone.get());
 
@@ -260,6 +271,7 @@ TEST(HavannahStateGroup, clone_2) {
 
  try {
   Havannah::State<4, true, false> state(0);
+  state.Initialize();
   auto clone = state.clone();
   auto ptrClone = dynamic_cast<Havannah::State<4, true, false> *>(clone.get());
 
@@ -290,6 +302,14 @@ TEST(HavannahStateGroup, features_1_pie) {
  const int nbActions = fullsize*fullsize - size*(size-1);
 
  Havannah::StateTest<size, true, false> state(0, history, turnFeatures);
+
+ // Niki added these
+ core::FeatureOptions opt;
+ opt.history = 2;
+ opt.turnFeaturesSingleChannel = 1;
+ state.setFeatures(&opt);
+
+ state.Initialize();
 
  // apply actions
 
@@ -428,6 +448,14 @@ TEST(HavannahStateGroup, features_1_nopie) {
 
  Havannah::StateTest<size, false, false> state(0, history, turnFeatures);
 
+ // Niki added these
+ core::FeatureOptions opt;
+ opt.history = 2;
+ opt.turnFeaturesSingleChannel = 1;
+ state.setFeatures(&opt);
+
+ state.Initialize();
+
  // apply actions
 
  ASSERT_EQ((std::vector<int64_t>{1, fullsize, fullsize}), state.GetActionSize());
@@ -548,6 +576,14 @@ TEST(HavannahStateGroup, features_2_nopie) {
  const int nbActions = fullsize*fullsize - size*(size-1);
 
  Havannah::StateTest<size, false, false> state(0, history, turnFeatures);
+
+ // Niki added these
+ core::FeatureOptions opt;
+ opt.history = 2;
+ opt.turnFeaturesSingleChannel = 1;
+ state.setFeatures(&opt);
+
+ state.Initialize();
 
  // apply actions
 
@@ -673,6 +709,14 @@ TEST(HavannahStateGroup, features_3_nopie) {
  const int nbActions = fullsize*fullsize - size*(size-1);
 
  Havannah::StateTest<size, false, false> state(0, history, turnFeatures);
+
+ // Niki added these
+ core::FeatureOptions opt;
+ opt.history = 2;
+ opt.turnFeaturesSingleChannel = 1;
+ state.setFeatures(&opt);
+ 
+ state.Initialize();
 
  // apply actions
 
