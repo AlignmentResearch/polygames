@@ -80,6 +80,8 @@ void Hex::State<SIZE, PIE>::ApplyAction(const _Action& action) {
   // find board move from action
   int i = action.GetY();
   int j = action.GetZ();
+  assert(i >= 0 && i < SIZE);  // N added
+  assert(j >= 0 && j < SIZE);
   int index = _board.convertCellToIndex(Cell(i, j));
   std::optional<int> lastIndex = _board.getLastIndex();
 
@@ -87,7 +89,7 @@ void Hex::State<SIZE, PIE>::ApplyAction(const _Action& action) {
   // TODO assert action is in legal actions ?
   if (not lastIndex or *lastIndex != index) {
     Color currentColor = _board.getCurrentColor();
-    _features.at(((currentColor * SIZE) + i) * SIZE + j) = 1.f;
+    _features.at(((((int) currentColor) * SIZE) + i) * SIZE + j) = 1.f;  // cast to int to avoid unsigned badness when j = -1
   }
 
   // play move
