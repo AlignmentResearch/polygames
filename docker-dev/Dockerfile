@@ -40,7 +40,7 @@ RUN wget https://github.com/bcpierce00/unison/releases/download/v2.52.1/unison-v
 # docker build --build-arg CACHEBUST="$(git ls-remote origin refs/heads/dockerfile)"
 ARG CACHEBUST=0
 # Copy code
-RUN git clone --recursive --branch dockerfile https://github.com/AlignmentResearch/polygames /polygames
+RUN git clone --recursive https://github.com/AlignmentResearch/polygames /polygames
 WORKDIR /polygames
 RUN pip install -r docker-dev/requirements.txt
 
