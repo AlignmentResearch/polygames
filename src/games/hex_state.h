@@ -89,7 +89,7 @@ void Hex::State<SIZE, PIE>::ApplyAction(const _Action& action) {
   // TODO assert action is in legal actions ?
   if (not lastIndex or *lastIndex != index) {
     Color currentColor = _board.getCurrentColor();
-    _features.at(((((int) currentColor) * SIZE) + i) * SIZE + j) = 1.f;  // cast to int to avoid unsigned badness when j = -1
+    _features.at((((currentColor) * SIZE) + i) * SIZE + j) = 1.f;
   }
 
   // play move
