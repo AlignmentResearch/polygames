@@ -8,26 +8,24 @@ OPTION(USE_MOLD "Use mold linker if available" ON)
 if(USE_MOLD)
   find_program(MOLD_FOUND mold)
   if(MOLD_FOUND)
-    message(STATUS "Using mold linker: ${MOLD_FOUND}")
-    set(FLAGS_LINKER "-fuse-ld=mold")
+    message(STATUS "Using mold linker: mold")
+    set(LINK_FLAGS "-fuse-ld=mold")
   else()
     message(STATUS "mold linker not found, using default linker `ld`")
-    set(FLAGS_LINKER "-fuse-ld=lld")
+    set(LINK_FLAGS "-fuse-ld=lld")
   endif()
 endif()
 
 
-set(FLAGS_WARNINGS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-variable")
+set(FLAGS_WARNINGS "-Wall -Wextra -Werror -Wno-unused-variable -Wno-unused-parameter")
 
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 ${FLAGS_WARNINGS} ${FLAGS_LINKER}")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O3 -ffast-math ${FLAGS_WARNINGS} ${FLAGS_LINKER}")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math ${FLAGS_WARNINGS} ${FLAGS_LINKER}")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 ${FLAGS_WARNINGS}")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O3 -ffast-math ${FLAGS_WARNINGS}")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math ${FLAGS_WARNINGS}")
 
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
-
-set(CMAKE_CXX_LINKER_PREFERENCE)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 

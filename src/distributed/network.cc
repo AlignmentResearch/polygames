@@ -756,7 +756,7 @@ class NetworkImpl {
   static std::unique_ptr<T, std::function<void(T*)>> wrap(Handle<T> h) {
     auto* ptr = &*h;
     return std::unique_ptr<T, std::function<void(T*)>>(
-        ptr, [h = std::move(h)](T* ptr) mutable { h = nullptr; });
+        ptr, [h = std::move(h)](T*) mutable { h = nullptr; });
   }
 
   bool run_one() {

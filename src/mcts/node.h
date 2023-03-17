@@ -21,17 +21,12 @@ class Storage;
 
 class Node {
  public:
-  Node()
-      : storage_(nullptr)
-      , id_(0) {
-  }
-
-  void setStorageAndId(Storage* storage, NodeId id) {
-    storage_ = storage;
-    id_ = id;
-  }
+  Node(Storage *storage) : storage_(storage) {}
 
   Node(const Node&) = delete;
+  Node(Node&& n) : storage_(n.storage_) {
+    throw std::runtime_error("should not be called");
+  }
   Node& operator=(const Node&) = delete;
 
   void init(Node* parent);
@@ -67,10 +62,6 @@ class Node {
 
   std::unique_ptr<core::State>& localState() {
     return localState_;
-  }
-
-  NodeId getId() const {
-    return id_;
   }
 
   const auto& getChildren() const {
@@ -114,8 +105,7 @@ class Node {
   // std::pair<Node*, Node*> link;
 
   // set in constructor, should never be changed
-  Storage* storage_;
-  NodeId id_;
+  Storage * const storage_;
 
   // sync tools
   // std::mutex mSelf_;

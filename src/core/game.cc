@@ -156,7 +156,6 @@ struct BatchExecutor {
     }
     gst.state = cloneState(basestate);
     unsigned long seed = rng();
-    gst.state->newGame(seed);
     gst.playerState.resize(players_.size());
     for (size_t i = 0; i != players_.size(); ++i) {
       std::unique_ptr<State> s = nullptr;
