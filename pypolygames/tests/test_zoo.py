@@ -64,7 +64,21 @@ def test_models(model_name) -> None:
     assert list(outputs["pi_logit"].shape) == [1] + action_size
     # loss
     multi_counter = utils.MultiCounter(root=None)
-    pi_mask = torch.ones(outputs["pi_logit"].shape)
-    loss(
-        model, input_data, outputs["v"], outputs["pi_logit"], pi_mask, multi_counter
-    )  # make sure it computes something
+    # pi_mask = torch.ones(outputs["pi"].shape)
+    # loss(
+    #     model, input_data, outputs["v"], outputs["pi"], pi_mask, multi_counter
+    # )  # make sure it computes something
+
+    multi_counter = utils.MultiCounter(root=None)
+    if "pi_logit" in outputs:
+        pi_mask = torch.ones(outputs["pi_logit"].shape)
+        loss(
+            model, input_data, outputs["v"], outputs["pi_logit"], pi_mask, multi_counter
+        )  # make sure it computes something
+    elif "pi" in outputs:
+        pi_mask = torch.ones(outputs["pi"].shape)
+        loss(
+            model, input_data, outputs["v"], outputs["pi"], pi_mask, multi_counter
+        )  # make sure it computes something
+    else:
+        raise ValueError("Model must have pi or pi_logit")

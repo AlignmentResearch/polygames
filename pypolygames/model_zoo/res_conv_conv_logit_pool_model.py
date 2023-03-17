@@ -187,5 +187,5 @@ class ResConvConvLogitPoolModel(torch.jit.ScriptModule):
     def forward(self, x: torch.Tensor):
         v, pi = self._forward(x, True)
         pi = pi.view(-1, self.c_prime, x.size(2), x.size(3))
-        reply = {"v": v, "pi_logit": pi}
+        reply = {"v": v, "pi": pi}
         return reply
