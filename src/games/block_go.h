@@ -637,7 +637,7 @@ class StateForBlockGo : public core::State {
     return ss.str();
   }
 
-  virtual std::string actionDescription(const _Action& action) const {
+  virtual std::string actionDescription(const _Action& action) const override {
     std::stringstream ss;
     int z = action.GetX();
     int x = action.GetY();

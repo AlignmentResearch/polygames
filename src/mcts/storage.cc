@@ -44,9 +44,8 @@ void Storage::freeNode(Node* node) {
 }
 
 Storage* Storage::getStorage() {
-  std::unique_lock l(storagesMutex);
+  std::lock_guard l(storagesMutex);
   if (freeStorages.empty()) {
-    l.unlock();
     const std::unique_ptr<Storage> &p = allStorages.emplace_back();
     return p.get();
   }

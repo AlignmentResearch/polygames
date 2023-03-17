@@ -120,7 +120,7 @@ class StateForKyotoshogi : public core::State {
     return ss.str();
   }
 
-  virtual std::string actionDescription(const _Action& action) const {
+  virtual std::string actionDescription(const _Action& action) const override {
     std::stringstream ss;
     char x1, y1;
     int color = (turn + 1) % 2;

@@ -22,7 +22,7 @@
 // draw ka rule is different- no of rings pe aa jaati hai baat
 // namespace Yinsh{
 
-uint64_t StateForYinsh::hash_table[5][BOARD_X][BOARD_Y] = {0};
+uint64_t StateForYinsh::hash_table[5][BOARD_X][BOARD_Y] = {{{0}}};
 std::once_flag StateForYinsh::table_flag = once_flag();
 
 string StateForYinsh::stateDescription(void) const {

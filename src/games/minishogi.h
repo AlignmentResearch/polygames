@@ -442,7 +442,7 @@ class StateForMinishogi : public core::State, public Shogi {
     return str;
   }
 
-  virtual std::string actionDescription(const _Action& action) const {
+  virtual std::string actionDescription(const _Action& action) const override {
     const Move& move = moves.at(action.GetIndex());
 
     const Piece& p = move.piece;
