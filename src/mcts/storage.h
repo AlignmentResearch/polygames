@@ -17,11 +17,11 @@ static constexpr size_t CHUNK_SIZE = 128;
 class Storage {
   std::vector<std::vector<Node> > chunks;
   int allocated = 0;
-  std::vector<std::vector<Node> >::iterator chunks_it = chunks.begin();
+  std::vector<std::vector<Node> >::iterator chunks_it;
   size_t subIndex = 0;
 
  public:
-  Storage() = default;
+  Storage() { chunks_it = chunks.begin(); }
   Storage(const Storage&) = delete;
   Storage& operator=(const Storage&) = delete;
 

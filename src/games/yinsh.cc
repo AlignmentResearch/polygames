@@ -199,7 +199,7 @@ tuple<int, int> StateForYinsh::find_first_invalid(int x,
   // printf("enter:    find_first_invalid\n");
 
   /// PENDING, shayad zaroorat nhi
-  int ex_x, ex_y;
+  int ex_x = -1, ex_y = -1;
   int i = d0;
   int j = d1;
   // PE- assumes that x and y are non extremes
@@ -213,6 +213,7 @@ tuple<int, int> StateForYinsh::find_first_invalid(int x,
       cout << "Debug here" << endl;
     }
   }
+  assert(ex_x != -1 && ex_y != -1);
   // printf("leave:    find_first_invalid\n");
   return make_tuple(ex_x, ex_y);
 }
@@ -233,10 +234,9 @@ vector<int> StateForYinsh::find_first_5_for_specific_pt(int x, int y) {
         start_x = get<0>(temp);
         start_y = get<1>(temp);
 
-        // PE kis extreme se start kar raha hai
+        // From which extreme is the algorithm starting
         for (int k = 1; k < 13; k++) {
-          start_x =
-              start_x + i;  // one step in the direction with each iteration
+          start_x = start_x + i;  // one step in the direction with each iteration
           start_y = start_y + j;
           type = board[start_x][start_y];
           if (type == (int)(piece::invalid)) {

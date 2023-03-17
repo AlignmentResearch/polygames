@@ -66,8 +66,9 @@ extern bool useCode;
 
 class NogoMove {
  public:
-  int inter, color;
-  int code;
+  int inter = 0;
+  int color = 0;
+  int code = 0;
 
   int number() {
     int c = 0;
