@@ -182,7 +182,7 @@ class ResConvConvLogitModel(torch.jit.ScriptModule):
 
     @torch.jit.script_method
     def forward(self, x: torch.Tensor):
-        v, pi = self._forward(x, True)
-        pi = pi.view(-1, self.c_prime, self.h_prime, self.w_prime)
-        reply = {"v": v, "pi_logit": pi}
+        v, pi_logit = self._forward(x, True)
+        pi_logit = pi_logit.view(-1, self.c_prime, self.h_prime, self.w_prime)
+        reply = {"v": v, "pi_logit": pi_logit}
         return reply

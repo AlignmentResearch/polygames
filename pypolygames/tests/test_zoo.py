@@ -61,25 +61,11 @@ def test_models(model_name) -> None:
     input_data = torch.zeros([1] + feature_size, device=torch.device("cpu"))
     outputs = model.forward(input_data)
     assert list(outputs["v"].shape) == [1, 1]
-    # assert list(outputs["pi_logit"].shape) == [1] + action_size
+    assert list(outputs["pi_logit"].shape) == [1] + action_size
     # loss
     multi_counter = utils.MultiCounter(root=None)
-    # pi_mask = torch.ones(outputs["pi"].shape)
-    # loss(
-    #     model, input_data, outputs["v"], outputs["pi"], pi_mask, multi_counter
-    # )  # make sure it computes something
-
-    if "pi_logit" in outputs:
-        assert list(outputs["pi_logit"].shape) == [1] + action_size
-        pi_mask = torch.ones(outputs["pi_logit"].shape)
-        loss(
-            model, input_data, outputs["v"], outputs["pi_logit"], pi_mask, multi_counter
-        )  # make sure it computes something
-    elif "pi" in outputs:
-        assert list(outputs["pi"].shape) == [1] + action_size
-        pi_mask = torch.ones(outputs["pi"].shape)
-        loss(
-            model, input_data, outputs["v"], outputs["pi"], pi_mask, multi_counter
-        )  # make sure it computes something
-    else:
-        raise ValueError("Model must have pi or pi_logit")
+    pi_mask = torch.ones(outputs["pi_logit"].shape)
+    
+    loss(
+        model, input_data, outputs["v"], outputs["pi_logit"], pi_mask, multi_counter
+    )  # make sure it computes something
