@@ -14,7 +14,7 @@
 #include <connectfour.h>
 
 void printAllowedActions(StateForConnectFour state) {
-    std::cout << "now the allowed actions are " << std::endl;
+    // std::cout << "now the allowed actions are " << std::endl;
     std::vector<core::_Action> theActions = state.GetLegalActions();
     for (auto action : theActions) {
         int x = action.GetX();
@@ -29,15 +29,15 @@ TEST(Connectfour, fill_column_legal_moves) {
 
     // Print the starting state
     // std::cout << "starting with " << std::endl;
-    state.printCurrentBoard();
-    printAllowedActions(state);
+    // state.printCurrentBoard();
+    // printAllowedActions(state);
 
     // Fill the first column with alternating pieces
     for (int i = 0; i < 6; ++i) {
         _Action action(0, 0, 0, 0);  // play in column 0
         state.ApplyAction(action);
         // std::cout << "played action 0, now board is" << std::endl;
-        state.printCurrentBoard();
+        // state.printCurrentBoard();
         // printAllowedActions(state);
     }
 

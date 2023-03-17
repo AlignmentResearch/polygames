@@ -129,7 +129,7 @@ class AmazonsModel(torch.jit.ScriptModule):
     def forward(self, x: torch.Tensor):
         v, pi = self._forward(x, True)
         pi = pi.view(-1, self.c_prime, self.h_prime, self.w_prime)
-        reply = {"v": v, "pi": pi}
+        reply = {"v": v, "pi_logit": pi}
         return reply
 
     def loss(
