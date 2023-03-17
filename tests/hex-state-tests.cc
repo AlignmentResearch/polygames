@@ -46,7 +46,7 @@ TEST(HexStateGroup, init_1) {
  // actions
  ASSERT_EQ((std::vector<int64_t>{1, 7, 7}), state.GetActionSize());
  ASSERT_EQ(7*7, state.GetLegalActions().size());
- for (int k=0; k<state.GetLegalActions().size(); ++k) {
+ for (size_t k=0; k<state.GetLegalActions().size(); ++k) {
   int i = k / 7;
   int j = k % 7;
   auto a = &state.GetLegalActions()[k];

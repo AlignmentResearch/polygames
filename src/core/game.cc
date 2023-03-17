@@ -857,7 +857,7 @@ struct BatchExecutor {
 
         bool isForward = dynamic_cast<ForwardPlayer*>(devPlayer) != nullptr;
 
-        int seqlen = devPlayer->rnnSeqlen();
+        uint64_t seqlen = devPlayer->rnnSeqlen();
 
         if ((isForward && seqlen > 0) || completed) {
           for (size_t slot = 0; slot != players_.size(); ++slot) {
@@ -869,7 +869,7 @@ struct BatchExecutor {
                           result_[dstp]);
 #endif
             } else {
-              if ((int)i->pi[slot].size() < seqlen * 16 + 1 ||
+              if (i->pi[slot].size() < seqlen * 16 + 1 ||
                   i->history.empty() || i->history.back().turn != (int)slot) {
                 continue;
               }
@@ -889,10 +889,10 @@ struct BatchExecutor {
                               tube::EpisodicTrajectory& traj) {
               for (auto& x : src) {
                 dst.push_back(x);
-                if ((int)dst.size() > seqlen) {
+                if (dst.size() > seqlen) {
                   throw std::runtime_error("addseq bad seqlen");
                 }
-                if ((int)dst.size() == seqlen) {
+                if (dst.size() == seqlen) {
                   traj.pushBack(torch::stack(dst));
                   dst.clear();
                 }

@@ -154,7 +154,7 @@ class Actor {
     dispatcher_.terminate();
   }
 
-  void batchResize(size_t n) {
+  void batchResize(int64_t n) {
     if (!modelManager_) {
       return;
     }
@@ -350,7 +350,7 @@ class Actor {
       modelTrackers_;
 
   const std::vector<int64_t> rnnStateSize_;
-  int rnnSeqlen_ = 0;
+  uint64_t rnnSeqlen_ = 0;
   bool logitValue_ = false;
   std::shared_ptr<ModelManager> modelManager_;
 };
