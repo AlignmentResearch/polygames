@@ -30,7 +30,7 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Set compiler for NVCC
-OPTION(NVCC_EXTRA_FLAGS "Extra flags to prepend to nvcc" "")
+SET(NVCC_EXTRA_FLAGS "Extra flags to prepend to nvcc" "")
 set(ENV{NVCC_PREPEND_FLAGS} "-ccbin ${CMAKE_CXX_COMPILER} ${NVCC_EXTRA_FLAGS}")
 
 OPTION(PYTORCH12 "Is PyTorch >= 1.2" OFF)
