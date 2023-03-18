@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.1.0-devel-ubuntu22.04
+FROM nvidia/cuda:11.7.1-cudnn8-devel-ubuntu22.04
 ENV DEBIAN_FRONTEND noninteractive
 ENV LANG=C.UTF-8
 
@@ -10,7 +10,6 @@ RUN apt-get update -q \
     python3 python3-dev python3-pip python3-setuptools python-is-python3 \
     cmake pkg-config \
     libmkl-core libmkl-intel-thread libmkl-intel-ilp64 \
-    llvm clang mold \
     vim \
     tmux \
     less \
@@ -41,7 +40,7 @@ RUN wget https://github.com/bcpierce00/unison/releases/download/v2.52.1/unison-v
 # docker build --build-arg CACHEBUST="$(git ls-remote origin refs/heads/dockerfile)"
 ARG CACHEBUST=0
 # Copy code
-RUN git clone --recursive https://github.com/AlignmentResearch/polygames /polygames && cd /polygames && git checkout eliminate_warnings
+RUN git clone --recursive https://github.com/AlignmentResearch/polygames /polygames
 WORKDIR /polygames
 RUN pip install -r docker-dev/requirements.txt
 
@@ -52,7 +51,7 @@ RUN mkdir /polygames/build
 WORKDIR /polygames/build
 
 # TODO(nhowe): add support for Ludii
-RUN CC=clang CXX=clang++ cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON -DWITH_LUDII=OFF && make -j
+RUN cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON -DWITH_LUDII=OFF && make -j
 
 WORKDIR /polygames
 ENV PYTHONPATH=/polygames

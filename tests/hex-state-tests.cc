@@ -26,7 +26,6 @@ template <int SIZE, bool PIE> class StateTest : public Hex::State<SIZE, PIE> {
 
     _testFeatureOptions->history = history;
     _testFeatureOptions->turnFeaturesSingleChannel = turnFeatures;
-    _testFeatureOptions->turnFeaturesMultiChannel = turnFeatures;
     this->setFeatures(_testFeatureOptions.get());
     this->Initialize();
   }

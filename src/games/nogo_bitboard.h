@@ -10,6 +10,8 @@
 
 #include "nogo_position.h"
 #include <array>
+#include <vector>
+
 
 class NoGoBitBoard {
   static const long long kMASK_55 = 0x5555555555555555ULL;
@@ -20,10 +22,13 @@ class NoGoBitBoard {
   static const long long kMASK_0000FFFF = 0x0000ffff0000ffffULL;
   static const long long kMASK_00000000FFFFFFFF = 0x00000000ffffffffULL;
   static const long long kMASK_FFFFFFFFFFFFFFFF = 0xffffffffffffffffULL;
-  std::array<long long, (kNOGO_GRIDS_NUM / 64) + 1> bitboard_;
+
+  static constexpr int BITBOARD_SIZE = (kNOGO_GRIDS_NUM / 64) + 1;
+  std::array<long long, BITBOARD_SIZE> bitboard_;
 
  public:
   NoGoBitBoard() {
+    static_assert(BITBOARD_SIZE == 2); // code below assumes this
     Reset();
   }
   void Reset() {
@@ -56,10 +61,8 @@ class NoGoBitBoard {
   }
 
   void operator|=(const NoGoBitBoard &rhs) {
-    for(size_t i=0; i < bitboard_.size(); i++) {
-      bitboard_[i] |= rhs.bitboard_[i];
-    }
-    return;
+    bitboard_[0] |= rhs.bitboard_[0];
+    bitboard_[1] |= rhs.bitboard_[1];
   }
 
   bool Isempty() const {

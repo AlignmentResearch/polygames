@@ -28,7 +28,6 @@ namespace Havannah {
 
     _testFeatureOptions->history = history;
     _testFeatureOptions->turnFeaturesSingleChannel = turnFeatures;
-    _testFeatureOptions->turnFeaturesMultiChannel = turnFeatures;
     this->setFeatures(_testFeatureOptions.get());
     this->Initialize();
    }
