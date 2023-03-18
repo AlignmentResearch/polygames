@@ -21,11 +21,20 @@ namespace Hex {
 template <int SIZE, bool PIE> class StateTest : public Hex::State<SIZE, PIE> {
  public:
   StateTest<SIZE, PIE>(int seed, int history, bool turnFeatures)
-      : Hex::State<SIZE, PIE>(seed) {
+      : Hex::State<SIZE, PIE>(seed)
+      , _testFeatureOptions(std::make_shared<core::FeatureOptions>()) {
+
+    _testFeatureOptions->history = history;
+    _testFeatureOptions->turnFeaturesSingleChannel = turnFeatures;
+    _testFeatureOptions->turnFeaturesMultiChannel = turnFeatures;
+    this->setFeatures(_testFeatureOptions.get());
+    this->Initialize();
   }
   GameStatus GetStatus() {
     return Hex::State<SIZE, PIE>::_status;
-  };
+  }
+
+  std::shared_ptr<core::FeatureOptions> _testFeatureOptions;
 };
 
 };  // namespace Hex
@@ -37,7 +46,6 @@ template <int SIZE, bool PIE> class StateTest : public Hex::State<SIZE, PIE> {
 TEST(HexStateGroup, init_1) {
 
   Hex::StateTest<7, true> state(0, 0, false);
-  state.Initialize();  // Niki added
 
   ASSERT_EQ(GameStatus::player0Turn, state.GetStatus());
 
@@ -65,7 +73,6 @@ TEST(HexStateGroup, init_1) {
 TEST(HexStateGroup, play_1) {
 
   Hex::StateTest<7, true> state(0, 0, false);
-  state.Initialize();  // Niki added
 
   _Action a(0, 2 * 7 + 3, 2, 3);  // used to be 2, 3, 2*7+3
   state.ApplyAction(a);
@@ -139,12 +146,6 @@ TEST(HexStateGroup, features_1) {
 
   Hex::StateTest<3, true> state(0, 2, true);
 
-  // Niki added below
-  core::FeatureOptions opt;
-  opt.history = 2;
-  opt.turnFeaturesSingleChannel = 1;
-  state.setFeatures(&opt);
-  state.Initialize();
 
   // apply actions
   ASSERT_EQ((std::vector<int64_t>{1, 3, 3}), state.GetActionSize());
@@ -207,11 +208,6 @@ TEST(HexStateGroup, features_1) {
 TEST(HexStateGroup, features_2) {
 
   Hex::StateTest<3, false> state(0, 2, true);
-  core::FeatureOptions opt;
-  opt.history = 2;
-  opt.turnFeaturesSingleChannel = 1;
-  state.setFeatures(&opt);
-  state.Initialize();  // Niki added
 
   // apply actions
 
@@ -287,12 +283,6 @@ TEST(HexStateGroup, features_3) {
   const int nbChannels = 2 * (1 + history) + (turnFeatures ? 1 : 0);
 
   Hex::StateTest<size, false> state(0, history, turnFeatures);
-
-  core::FeatureOptions opt;
-  opt.history = 2;
-  opt.turnFeaturesSingleChannel = 1;
-  state.setFeatures(&opt);
-  state.Initialize();  // Niki added
 
   // apply actions
 

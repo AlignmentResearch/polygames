@@ -4,7 +4,6 @@ project(polygames)
 set(CMAKE_CXX_STANDARD 17)
 
 OPTION(USE_MOLD "Use mold linker if available" ON)
-
 if(USE_MOLD)
   find_program(MOLD_FOUND mold)
   if(MOLD_FOUND)
@@ -17,7 +16,8 @@ if(USE_MOLD)
 endif()
 
 
-set(FLAGS_WARNINGS "-Wall -Wextra -Werror -Wno-unused-variable -Wno-unused-parameter -Wno-unused-value -Wno-deprecated-declarations")
+# Compilation flags
+set(FLAGS_WARNINGS "-Wall -Wextra -Werror -Wno-unused-variable -Wno-unused-value -Wno-deprecated-declarations")
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 ${FLAGS_WARNINGS}")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O3 -ffast-math ${FLAGS_WARNINGS}")
@@ -28,6 +28,9 @@ set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+# Set compiler for NVCC
+set(ENV{NVCC_PREPEND_FLAGS} "-ccbin ${CMAKE_CXX_COMPILER}")
 
 OPTION(PYTORCH12 "Is PyTorch >= 1.2" OFF)
 OPTION(PYTORCH15 "Is PyTorch >= 1.5" OFF)

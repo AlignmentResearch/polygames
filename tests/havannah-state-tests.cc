@@ -21,19 +21,21 @@ namespace Havannah {
  template <int SIZE, bool PIE, bool EXTENDED> class StateTest :
    public Havannah::State<SIZE, PIE, EXTENDED> {
   public:
-   StateTest<SIZE, PIE, EXTENDED>(int seed, int history, bool turnFeatures) :
-   Havannah::State<SIZE, PIE, EXTENDED>(seed) {
-      // nhowe added
-      // currently, actively, trying to get the turnFeatures to work properly given it's deprecated
-      // std::list<core::FeatureOptions> featopts;
-      // featopts.emplace_back();
-      // core::FeatureOptions& opt = featopts.back();
-      // opt.turnFeaturesMultiChannel = turnFeatures;
-      // state_->setFeatures(&opt);
-   }
-   GameStatus GetStatus() { return Havannah::State<SIZE, PIE, EXTENDED>::_status; };
- };
+   StateTest<SIZE, PIE, EXTENDED>(int seed, int history, bool turnFeatures)
+       : Havannah::State<SIZE, PIE, EXTENDED>(seed)
+      , _testFeatureOptions(std::make_shared<core::FeatureOptions>()) {
+    assert(_testFeatureOptions.get() != nullptr);
 
+    _testFeatureOptions->history = history;
+    _testFeatureOptions->turnFeaturesSingleChannel = turnFeatures;
+    _testFeatureOptions->turnFeaturesMultiChannel = turnFeatures;
+    this->setFeatures(_testFeatureOptions.get());
+    this->Initialize();
+   }
+   GameStatus GetStatus() { return Havannah::State<SIZE, PIE, EXTENDED>::_status; }
+
+  std::shared_ptr<core::FeatureOptions> _testFeatureOptions;
+ };
 };
 
 
@@ -107,14 +109,6 @@ TEST(HavannahStateGroup, init_1) {
  const int nbActions = fullsize*fullsize - size*(size-1);
 
  Havannah::StateTest<size, true, false> state(0, history, turnFeatures);
-
- // Niki added these
- core::FeatureOptions opt;
- opt.history = 2;
- opt.turnFeaturesSingleChannel = 1;
- state.setFeatures(&opt);
- 
- state.Initialize();
 
  ASSERT_EQ(GameStatus::player0Turn, state.GetStatus());
 
@@ -303,14 +297,6 @@ TEST(HavannahStateGroup, features_1_pie) {
 
  Havannah::StateTest<size, true, false> state(0, history, turnFeatures);
 
- // Niki added these
- core::FeatureOptions opt;
- opt.history = 2;
- opt.turnFeaturesSingleChannel = 1;
- state.setFeatures(&opt);
-
- state.Initialize();
-
  // apply actions
 
  ASSERT_EQ((std::vector<int64_t>{1, fullsize, fullsize}), state.GetActionSize());
@@ -448,14 +434,6 @@ TEST(HavannahStateGroup, features_1_nopie) {
 
  Havannah::StateTest<size, false, false> state(0, history, turnFeatures);
 
- // Niki added these
- core::FeatureOptions opt;
- opt.history = 2;
- opt.turnFeaturesSingleChannel = 1;
- state.setFeatures(&opt);
-
- state.Initialize();
-
  // apply actions
 
  ASSERT_EQ((std::vector<int64_t>{1, fullsize, fullsize}), state.GetActionSize());
@@ -576,14 +554,6 @@ TEST(HavannahStateGroup, features_2_nopie) {
  const int nbActions = fullsize*fullsize - size*(size-1);
 
  Havannah::StateTest<size, false, false> state(0, history, turnFeatures);
-
- // Niki added these
- core::FeatureOptions opt;
- opt.history = 2;
- opt.turnFeaturesSingleChannel = 1;
- state.setFeatures(&opt);
-
- state.Initialize();
 
  // apply actions
 
@@ -709,14 +679,6 @@ TEST(HavannahStateGroup, features_3_nopie) {
  const int nbActions = fullsize*fullsize - size*(size-1);
 
  Havannah::StateTest<size, false, false> state(0, history, turnFeatures);
-
- // Niki added these
- core::FeatureOptions opt;
- opt.history = 2;
- opt.turnFeaturesSingleChannel = 1;
- state.setFeatures(&opt);
- 
- state.Initialize();
 
  // apply actions
 
