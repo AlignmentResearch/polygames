@@ -67,6 +67,9 @@ class MctsPlayer : public core::ActorPlayer {
     remaining_time = option_.totalTime;
   }
 
+ // see https://stackoverflow.com/a/10024812. Virtual class must have a virtual or protected destructor. else UB
+ virtual ~MctsPlayer() = default;
+
  private:
   MctsOption option_;
   double remaining_time;

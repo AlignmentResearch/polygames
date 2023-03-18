@@ -7,9 +7,8 @@ namespace core {
 
 class ActorPlayer : public Player {
  public:
-  ActorPlayer()
-      : Player(false) {
-  }
+  ActorPlayer() : Player(false) {}
+  virtual ~ActorPlayer() = default;
 
   void setActor(std::shared_ptr<Actor> actor) {
     actor_ = std::move(actor);
