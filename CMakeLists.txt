@@ -3,7 +3,7 @@ project(polygames)
 
 set(CMAKE_CXX_STANDARD 17)
 
-OPTION(USE_MOLD "Use mold linker if available" ON)
+OPTION(USE_MOLD "Use mold linker if available" OFF)
 if(USE_MOLD)
   find_program(MOLD_FOUND mold)
   if(MOLD_FOUND)
@@ -30,7 +30,8 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Set compiler for NVCC
-set(ENV{NVCC_PREPEND_FLAGS} "-ccbin ${CMAKE_CXX_COMPILER}")
+OPTION(NVCC_EXTRA_FLAGS "Extra flags to prepend to nvcc" "")
+set(ENV{NVCC_PREPEND_FLAGS} "-ccbin ${CMAKE_CXX_COMPILER} ${NVCC_EXTRA_FLAGS}")
 
 OPTION(PYTORCH12 "Is PyTorch >= 1.2" OFF)
 OPTION(PYTORCH15 "Is PyTorch >= 1.5" OFF)

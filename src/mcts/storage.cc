@@ -1,5 +1,6 @@
 
 #include "storage.h"
+#include <stdexcept>
 
 namespace mcts {
 
@@ -31,7 +32,9 @@ Node* Storage::newNode() {
 }
 
 void Storage::freeNode(Node* node) {
-  assert(node->storage_ == this);
+  if(node->storage_ != this) {
+    throw std::invalid_argument("Cannot free node from a different storage");
+  }
 
   --allocated;
   assert(allocated >= 0);

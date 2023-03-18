@@ -11,6 +11,7 @@
 #include "nogo_bitboard.h"
 #include <vector>
 
+// Perhaps should inherit from State, but it's not used so no idea how to fix.
 class NoGoState {
  private:
   NoGoBitBoard bm_board_[2];
