@@ -12,7 +12,8 @@ from ..model_zoo.utils import get_game_info
 from .. import params
 from .. import utils
 
-# NOTE: Copied this loss from a model in the first commit
+# NOTE: this loss function is taken from polygames/pypolygames/model_zoo/nano_fc_logit_model.py
+#       in commit 86465b47a6eb24c60fa8857cc0946fff010ada9d
 def loss(
     model,
     x: torch.Tensor,
