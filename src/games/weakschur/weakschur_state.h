@@ -124,7 +124,7 @@ void weakschur::State<NBSUBSETS, MAXNUMBER>::ApplyAction(
 
   const int channelSize = NBSUBSETS * MAXNUMBER;
 
-  auto feature = [channelSize, this](int c, int subset, int number) -> float& {
+  auto feature = [this](int c, int subset, int number) -> float& {
     return this
         ->_features[channelSize * c + (subset - 1) * MAXNUMBER + number - 1];
   };

@@ -18,8 +18,8 @@ namespace chess {
 
 struct ChessBoard {
 
-  static const size_t boardSize = 8;
-  static const size_t boardDim = boardSize + 4;
+  static const int boardSize = 8;
+  static const int boardDim = boardSize + 4;
 
   std::array<uint8_t, boardDim * boardDim> board;
 
@@ -69,7 +69,7 @@ class State : public core::State {
 
   std::vector<size_t> moves;
 
-  static const int boardSize = 8;
+  static constexpr int boardSize = 8;
 
   virtual void Initialize() override {
     _moves.clear();

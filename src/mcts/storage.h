@@ -8,21 +8,20 @@
 #pragma once
 
 #include "mcts/node.h"
-
-#include <deque>
 #include <list>
 
 namespace mcts {
 
+static constexpr size_t CHUNK_SIZE = 128;
+
 class Storage {
-  std::vector<Node*> chunks;
-  size_t chunkIndex = 0;
+  std::vector<std::vector<Node> > chunks;
+  int allocated = 0;
+  std::vector<std::vector<Node> >::iterator chunks_it;
   size_t subIndex = 0;
-  size_t allocated = 0;
-  const size_t chunkSize = 16;
 
  public:
-  Storage() = default;
+  Storage() { chunks_it = chunks.begin(); }
   Storage(const Storage&) = delete;
   Storage& operator=(const Storage&) = delete;
 

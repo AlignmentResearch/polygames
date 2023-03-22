@@ -254,7 +254,7 @@ class StateForConnect6 : public core::State, C6Board {
   }
 
   int humanInputAction(
-      std::function<std::optional<int>(std::string)> specialAction) {
+      std::function<std::optional<int>(std::string)> specialAction) override {
     std::cout << "Current board:" << std::endl
               << stateDescription() << std::endl;
     std::string str;

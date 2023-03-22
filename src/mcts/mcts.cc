@@ -6,6 +6,7 @@
  */
 
 #include "mcts/mcts.h"
+#include "mcts/storage.h"
 #include "common/async.h"
 #include "common/thread_id.h"
 #include "common/threads.h"

@@ -146,8 +146,7 @@ class State {
     };
   }
 
-  virtual void newGame(unsigned long seed) {
-  }
+  virtual void newGame(unsigned long seed) { setSeed(seed); }
 
   // -----overriding core::State's virtual functions-----
 

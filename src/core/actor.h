@@ -27,9 +27,9 @@ class PiVal {
   // NOTE: we added this in
   PiVal(int player, float value, std::vector<float> pi) {
     reset();
-    playerId = player;
-    value = value;
-    logitPolicy = torch::tensor(pi);
+    this->playerId = player;
+    this->value = value;
+    this->logitPolicy = torch::tensor(pi);
   }
 
   void reset() {
@@ -154,7 +154,9 @@ class Actor {
     dispatcher_.terminate();
   }
 
-  void batchResize(size_t n) {
+  void batchResize(size_t batch_size) {
+    // Use int64_t because Torch shapes use int64_t.
+    int64_t n = static_cast<int64_t>(batch_size);
     if (!modelManager_) {
       return;
     }
@@ -350,7 +352,7 @@ class Actor {
       modelTrackers_;
 
   const std::vector<int64_t> rnnStateSize_;
-  int rnnSeqlen_ = 0;
+  uint64_t rnnSeqlen_ = 0;
   bool logitValue_ = false;
   std::shared_ptr<ModelManager> modelManager_;
 };

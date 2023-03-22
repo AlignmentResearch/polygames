@@ -18,6 +18,7 @@ class ForwardPlayer : public ActorPlayer {
   void batchResult(size_t index, const State& s, PiVal& pival) {
     actor_->batchResult(index, s, pival);
   }
+  virtual ~ForwardPlayer() = default;
 };
 
 }  // namespace core

@@ -99,7 +99,7 @@ class StateForSurakarta : public core::State, public SKBoard {
     return ss.str();
   }
 
-  virtual std::string actionDescription(const _Action& action) const {
+  virtual std::string actionDescription(const _Action& action) const override {
     std::stringstream ss;
     char x, y, x1, y1;
     x = static_cast<char>(action.GetY() + 'A');

@@ -23,7 +23,7 @@ inline void getFeatureInTensor(const State& state, torch::Tensor dest) {
   auto& feat = state.GetFeatures();
   torch::Tensor temp = torch::from_blob(
       (void*)feat.data(), state.GetFeatureSize(), dest.dtype());
-  if (feat.size() != temp.numel()) {
+  if (static_cast<int64_t>(feat.size()) != temp.numel()) {
     throw std::runtime_error("getFeatureInTensor size mismatch");
   }
   dest.copy_(temp);
@@ -40,7 +40,7 @@ inline void getRawFeatureInTensor(const State& state, torch::Tensor dest) {
   auto& feat = state.GetRawFeatures();
   torch::Tensor temp = torch::from_blob(
       (void*)feat.data(), state.GetRawFeatureSize(), dest.dtype());
-  if (feat.size() != temp.numel()) {
+  if (static_cast<int64_t>(feat.size()) != temp.numel()) {
     throw std::runtime_error("getRawFeatureInTensor size mismatch");
   }
   dest.copy_(temp);
@@ -81,7 +81,7 @@ inline void getPolicyInTensor(const State& state,
   auto maskaccessor = mask.accessor<float, 3>();
 
   const auto& legalAction = state.GetLegalActions();
-  for (mcts::Action actionIdx = 0; actionIdx != pi.size(); ++actionIdx) {
+  for (mcts::Action actionIdx = 0; actionIdx != static_cast<mcts::Action>(pi.size()); ++actionIdx) {
     if (actionIdx >= (int)legalAction.size() || actionIdx < 0) {
       std::cout << "Wrong action in getPolicyTargetInTensor, "
                 << "action idx: " << actionIdx

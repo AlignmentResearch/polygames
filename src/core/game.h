@@ -239,6 +239,7 @@ to look into this) if the strategy is identical to knuth’s.
       state_ = newState<StateForBreakthrough<true>>(seed);
     } else if (gameName.rfind("Ludii", 0) == 0) {
 #ifdef NO_JAVA
+      (void) gameOptions;  // gameOptions is otherwise unused
       throw std::runtime_error(
           "Java/JNI support has not been built in, but is required for Ludii");
 #else

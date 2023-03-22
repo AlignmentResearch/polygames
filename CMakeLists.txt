@@ -3,11 +3,35 @@ project(polygames)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -Wall -Wextra")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O3 -ffast-math")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math")
+OPTION(USE_MOLD "Use mold linker if available" OFF)
+if(USE_MOLD)
+  find_program(MOLD_FOUND mold)
+  if(MOLD_FOUND)
+    message(STATUS "Using mold linker: mold")
+    set(LINK_FLAGS "-fuse-ld=mold")
+  else()
+    message(STATUS "mold linker not found, using default linker `ld`")
+    set(LINK_FLAGS "-fuse-ld=lld")
+  endif()
+endif()
+
+
+# Compilation flags
+set(FLAGS_WARNINGS "-Wall -Wextra -Werror -Wno-unused-variable -Wno-unused-value -Wno-deprecated-declarations")
+
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 ${FLAGS_WARNINGS}")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O3 -ffast-math ${FLAGS_WARNINGS}")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math ${FLAGS_WARNINGS}")
+
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+# Set compiler for NVCC
+SET(NVCC_EXTRA_FLAGS "")  # Extra flags to prepend to NVCC
+set(ENV{NVCC_PREPEND_FLAGS} "-ccbin ${CMAKE_CXX_COMPILER} ${NVCC_EXTRA_FLAGS}")
 
 OPTION(PYTORCH12 "Is PyTorch >= 1.2" OFF)
 OPTION(PYTORCH15 "Is PyTorch >= 1.5" OFF)
@@ -52,7 +76,7 @@ add_subdirectory(tests)
 
 # tests
 add_executable(test_state src/core/test_state.cc src/core/state.cc)
-target_link_libraries(test_state PUBLIC _tube _mcts _games ${JNI_LIBRARIES} python3.10)
+target_link_libraries(test_state PUBLIC _tube _mcts _games ${JNI_LIBRARIES} ${PYTHON_LIBRARIES})
 
 enable_testing()
 

@@ -5,14 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#pragma once
 #include "nogo_game.h"
 
 NoGoGame::NoGoGame() {
   Reset();
-}
-NoGoGame::~NoGoGame() {
-  ;
 }
 
 bool NoGoGame::PlayAction(Action action) {
@@ -36,10 +32,6 @@ NoGoGame& NoGoGame::operator=(const NoGoGame& rhs) {
   is_terminal_ = rhs.is_terminal_;
   win_player_ = rhs.win_player_;
   return *this;
-}
-
-NoGoState NoGoGame::GetNoGoState() {
-  return state_;
 }
 
 std::vector<NoGoGame::Action> NoGoGame::GetLegalActions() {

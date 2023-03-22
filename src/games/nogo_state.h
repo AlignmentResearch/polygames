@@ -7,12 +7,12 @@
 
 #pragma once
 
-#include "game_state.h"
 #include "nogo_action.h"
 #include "nogo_bitboard.h"
 #include <vector>
 
-class NoGoState : public GameState {
+// Perhaps should inherit from State, but it's not used so no idea how to fix.
+class NoGoState {
  private:
   NoGoBitBoard bm_board_[2];
   std::vector<Position> neighbor_list_[kNOGO_GRIDS_NUM];

@@ -12,14 +12,18 @@ execute_process(
 find_package(PythonInterp 3.7 REQUIRED)
 find_package(PythonLibs 3.7 REQUIRED)
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(ZeroMQ REQUIRED libzmq>=4.3)
+
+
 # lib for other c++ programs
 add_library(_tube
   src_cpp/data_channel.cc
 )
 target_include_directories(_tube PUBLIC ${TORCH_INCLUDE_DIRS})
-target_include_directories(_tube PUBLIC ${PYTHON_INCLUDE_DIRS})
+target_include_directories(_tube PUBLIC ${PYTHON_INCLUDE_DIRS} ${ZEROMQ_INCLUDE_DIRS})
 target_link_directories(_tube PUBLIC ${TORCH_INSTALL_PREFIX}/lib)
-target_link_libraries(_tube PUBLIC ${TORCH_LIBRARIES} fmt zmq torch_python)
+target_link_libraries(_tube PUBLIC ${TORCH_LIBRARIES} fmt ${ZEROMQ_LIBRARIES} torch_python)
 
 #target_include_directories(_tube PUBLIC ../third_party ../third_party/zstd/lib ../third_party/zstd/lib/common)
 

@@ -20,7 +20,6 @@
 #include "core/actor_player.h"
 #include "core/state.h"
 #include "mcts/node.h"
-#include "mcts/storage.h"
 #include "mcts/utils.h"
 
 namespace mcts {
@@ -68,11 +67,13 @@ class MctsPlayer : public core::ActorPlayer {
     remaining_time = option_.totalTime;
   }
 
+ // see https://stackoverflow.com/a/10024812. Virtual class must have a virtual or protected destructor. else UB
+ virtual ~MctsPlayer() = default;
+
  private:
   MctsOption option_;
   double remaining_time;
   std::minstd_rand rng_;
-  // Storage storage_;
   double rolloutsPerSecond_ = 0.0;
 };
 }  // namespace mcts

@@ -238,8 +238,6 @@ class State : public core::State, public Game {
   void findActions();
   void findFeatures();
 
-  int seed;
-
   static constexpr size_t featuresSizeX = chesses;
   static constexpr size_t featuresSizeY = boardWH;
   static constexpr size_t featuresSizeZ = boardWH;

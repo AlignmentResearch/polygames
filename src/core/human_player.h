@@ -13,10 +13,9 @@ namespace core {
 
 class HumanPlayer : public Player {
  public:
-  HumanPlayer()
-      : Player(true){
+  HumanPlayer() : Player(true){};
+  virtual ~HumanPlayer(){};
 
-        };
 
   _Action act(State& state) {
     int index = state.humanInputAction();
@@ -31,10 +30,8 @@ class HumanPlayer : public Player {
 
 class TPPlayer : public Player {
  public:
-  TPPlayer()
-      : Player(true) {
-    isTP_ = true;
-  };
+  TPPlayer() : Player(true) {isTP_ = true;};
+  virtual ~TPPlayer(){};
 
   _Action act(State& state) {
     assert(!state.isStochastic());  // TPPlayer is not implemented for
