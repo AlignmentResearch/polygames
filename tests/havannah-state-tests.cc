@@ -218,7 +218,6 @@ TEST(HavannahStateGroup, init_2) {
   ASSERT_EQ(0, action.GetX());
   ASSERT_EQ(i, action.GetY());
   ASSERT_EQ(j, action.GetZ());
-  ASSERT_EQ(0, action.GetHash()); // Niki changed to 0
   ASSERT_EQ(k, action.GetIndex());
  }
 

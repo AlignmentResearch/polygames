@@ -57,7 +57,6 @@ TEST(HexStateGroup, init_1) {
     ASSERT_EQ(0, a->GetX());
     ASSERT_EQ(i, a->GetY());
     ASSERT_EQ(j, a->GetZ());
-    ASSERT_EQ(0, a->GetHash());  // Niki changed to 0
     ASSERT_EQ(k, a->GetIndex());
   }
 }
@@ -98,7 +97,6 @@ TEST(HexStateGroup, play_1) {
         ASSERT_EQ(0, a->GetX());
         ASSERT_EQ(i, a->GetY());
         ASSERT_EQ(j, a->GetZ());
-        ASSERT_EQ(0, a->GetHash());  // Niki changed to 0
         ASSERT_EQ(k, a->GetIndex());
       } else if (k > 2 * 7 + 3) {
         int k2 = k - 1;
@@ -106,7 +104,6 @@ TEST(HexStateGroup, play_1) {
         ASSERT_EQ(0, a->GetX());
         ASSERT_EQ(i, a->GetY());
         ASSERT_EQ(j, a->GetZ());
-        ASSERT_EQ(0, a->GetHash());  // Niki changed to 0
         ASSERT_EQ(k2, a->GetIndex());
       }
     }

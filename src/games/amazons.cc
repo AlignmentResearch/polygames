@@ -315,8 +315,6 @@ Action::Action(int i, int fromXY, int toXY, int arrowXY)
     : ::_Action() {
   _i = i;
   _loc = {fromXY, toXY, arrowXY};
-  _hash = State::Board::squares * State::Board::squares * fromXY +
-          State::Board::squares * toXY + arrowXY;
 }
 
 }  // namespace Amazons

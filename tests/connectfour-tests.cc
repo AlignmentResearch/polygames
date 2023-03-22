@@ -72,8 +72,6 @@ TEST(Connectfour, init_1) {
   ASSERT_EQ(i, a_i->GetX());
   ASSERT_EQ(0, a_i->GetY());
   ASSERT_EQ(0, a_i->GetZ());
-  // NOTE: nhowe changed the below to be 0, from i, since it seems hash is never changed.
-  ASSERT_EQ(0, a_i->GetHash());
   ASSERT_EQ(i, a_i->GetIndex());
  }
 
@@ -136,8 +134,6 @@ TEST(Connectfour, play_1) {
   ASSERT_EQ(i, a_i->GetX());
   ASSERT_EQ(0, a_i->GetY());
   ASSERT_EQ(0, a_i->GetZ());
-  // NOTE: nhowe changed the below from i to 0 (see same change above)
-  ASSERT_EQ(0, a_i->GetHash());
   ASSERT_EQ(i, a_i->GetIndex());
  }
 
