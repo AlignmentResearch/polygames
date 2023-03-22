@@ -49,7 +49,6 @@ Havannah::Action<SIZE>::Action(int i, int j, int indexInActions) {
   _loc[0] = 0;
   _loc[1] = i;
   _loc[2] = j;
-  _hash = uint32_t(i * fullsize(SIZE) + j);
   _i = indexInActions;  // (position in _legalActions)
 }
 

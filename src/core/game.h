@@ -401,7 +401,7 @@ to look into this) if the strategy is identical to knuth’s.
     auto rnnStateMask = tube::EpisodicTrajectory(
         "rnn_state_mask", addseq({1}), torch::kFloat32);
     auto pi = tube::EpisodicTrajectory(
-        "pi_logit", addseq(state_->GetActionSize()), torch::kFloat32);
+        "pi", addseq(state_->GetActionSize()), torch::kFloat32);
     auto piMask = tube::EpisodicTrajectory(
         "pi_mask", addseq(state_->GetActionSize()), torch::kFloat32);
     auto actionPi = tube::EpisodicTrajectory(

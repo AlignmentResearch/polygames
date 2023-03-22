@@ -68,6 +68,28 @@ class StateForConnectFour : public core::State {
     }
   }
 
+  virtual std::string stateDescription() const override {
+    std::string theBoard;
+    for (int r = boardHeight - 1; r >= 0; --r) {
+      theBoard += "|";
+      for (int c = 0; c < boardWidth; ++c) {
+        auto val = board[r * boardWidth + c];
+        if (val == 0) {
+          theBoard += " ";
+        } else if (val == 1) {
+          theBoard += "X";
+        } else if (val == 2) {
+          theBoard += "O";
+        } else {
+          assert(false);
+        }
+        theBoard += "|";
+      }
+      theBoard += "\n";
+    }
+    return theBoard;
+  }
+
   void featurize() {
     int player = 1 + getCurrentPlayer();
     int otherPlayer = player == 1 ? 2 : 1;

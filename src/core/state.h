@@ -69,10 +69,6 @@ class _Action {
     return _loc[2];
   }
 
-  uint64_t GetHash() const {
-    return _hash;
-  }
-
   void SetIndex(int i) {
     _i = i;
   }
@@ -82,8 +78,6 @@ class _Action {
   }
 
  protected:
-  uint64_t _hash = 0;
-
   // Warning! Two actions might have the same position _loc.  position
   // of the action in {0,...,GetXActionSize()-1} *
   // {0,...,GetYActionSize()-1} * {0,...,GetZActionSize()-1}

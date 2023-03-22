@@ -12,6 +12,7 @@
 #include <gtest/gtest.h>
 #include "utils.h"
 #include <connectfour.h>
+#include <string>
 
 void printAllowedActions(StateForConnectFour state) {
     // std::cout << "now the allowed actions are " << std::endl;
@@ -42,12 +43,14 @@ TEST(Connectfour, fill_column_legal_moves) {
     }
 
     // At this point, the board should look as follows
-    /*|O| | | | | | |
-      |X| | | | | | |
-      |O| | | | | | |
-      |X| | | | | | |
-      |O| | | | | | |
-      |X| | | | | | |*/
+    std::string theBoard =
+        "|O| | | | | | |\n"
+        "|X| | | | | | |\n"
+        "|O| | | | | | |\n"
+        "|X| | | | | | |\n"
+        "|O| | | | | | |\n"
+        "|X| | | | | | |\n";
+    ASSERT_EQ(theBoard, state.stateDescription());
 
     // Now, let's see what the available moves are: is it possible to play
     // in the first column still?
@@ -69,8 +72,6 @@ TEST(Connectfour, init_1) {
   ASSERT_EQ(i, a_i->GetX());
   ASSERT_EQ(0, a_i->GetY());
   ASSERT_EQ(0, a_i->GetZ());
-  // NOTE: nhowe changed the below to be 0, from i, since it seems hash is never changed.
-  ASSERT_EQ(0, a_i->GetHash());
   ASSERT_EQ(i, a_i->GetIndex());
  }
 
@@ -133,8 +134,6 @@ TEST(Connectfour, play_1) {
   ASSERT_EQ(i, a_i->GetX());
   ASSERT_EQ(0, a_i->GetY());
   ASSERT_EQ(0, a_i->GetZ());
-  // NOTE: nhowe changed the below from i to 0 (see same change above)
-  ASSERT_EQ(0, a_i->GetHash());
   ASSERT_EQ(i, a_i->GetIndex());
  }
 
