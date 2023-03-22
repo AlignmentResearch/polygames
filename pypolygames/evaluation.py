@@ -232,7 +232,7 @@ def _play_game_neural_mcts_against_pure_mcts_opponent(
             batch[actor_channel_eval.name]["s"], nb_devices_eval, dim=0
         )
         futures = []
-        reply_eval = {"v": None, "pi_logit": None}
+        reply_eval = {"v": None, "pi": None}
         # multithread
         with ThreadPoolExecutor(max_workers=nb_devices_eval) as executor:
             for device, model, batch_s in zip(
@@ -243,7 +243,7 @@ def _play_game_neural_mcts_against_pure_mcts_opponent(
                 )
             results = [future.result() for future in futures]
             reply_eval["v"] = torch.cat([result["v"] for result in results], dim=0)
-            reply_eval["pi_logit"] = torch.cat([result["pi_logit"] for result in results], dim=0)
+            reply_eval["pi"] = torch.cat([result["pi"] for result in results], dim=0)
         dcm.set_reply(actor_channel_eval.name, reply_eval)
     dcm.terminate()
 
@@ -274,7 +274,7 @@ def _play_game_neural_mcts_against_neural_mcts_opponent(
                 batch[actor_channel_eval.name]["s"], nb_devices_eval, dim=0
             )
             futures = []
-            reply_eval = {"v": None, "pi_logit": None}
+            reply_eval = {"v": None, "pi": None}
             # multithread
             with ThreadPoolExecutor(max_workers=nb_devices_eval) as executor:
                 for device, model, batch_s in zip(
@@ -285,8 +285,8 @@ def _play_game_neural_mcts_against_neural_mcts_opponent(
                     )
                 results = [future.result() for future in futures]
                 reply_eval["v"] = torch.cat([result["v"] for result in results], dim=0)
-                reply_eval["pi_logit"] = torch.cat(
-                    [result["pi_logit"] for result in results], dim=0
+                reply_eval["pi"] = torch.cat(
+                    [result["pi"] for result in results], dim=0
                 )
             dcm.set_reply(actor_channel_eval.name, reply_eval)
 
@@ -296,7 +296,7 @@ def _play_game_neural_mcts_against_neural_mcts_opponent(
                 batch[actor_channel_opponent.name]["s"], nb_devices_opponent, dim=0
             )
             futures = []
-            reply_opponent = {"v": None, "pi_logit": None}
+            reply_opponent = {"v": None, "pi": None}
             # multithread
             with ThreadPoolExecutor(max_workers=nb_devices_opponent) as executor:
                 for device, model, batch_s in zip(
@@ -309,8 +309,8 @@ def _play_game_neural_mcts_against_neural_mcts_opponent(
                 reply_opponent["v"] = torch.cat(
                     [result["v"] for result in results], dim=0
                 )
-                reply_opponent["pi_logit"] = torch.cat(
-                    [result["pi_logit"] for result in results], dim=0
+                reply_opponent["pi"] = torch.cat(
+                    [result["pi"] for result in results], dim=0
                 )
             dcm.set_reply(actor_channel_opponent.name, reply_opponent)
     dcm.terminate()

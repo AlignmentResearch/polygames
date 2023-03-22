@@ -172,7 +172,7 @@ to look into this) if the strategy is identical to knuth’s.
       state_ = newState<MNKGame::State<15, 15, 5>>(seed);
     } else if (isGameNameMatched(
                    {"Othello4", "Reversi4", "Othello04", "Reversi04"})) {
-      state_ = newState<Othello::State<6>>(seed);
+      state_ = newState<Othello::State<4>>(seed);
     } else if (isGameNameMatched(
                    {"Othello6", "Reversi6", "Othello06", "Reversi06"})) {
       state_ = newState<Othello::State<6>>(seed);

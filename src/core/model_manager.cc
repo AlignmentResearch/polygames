@@ -572,7 +572,7 @@ class ModelManagerImpl {
     lk.unlock();
     auto reply = convertIValueToMap(output);
     v.copy_(reply["v"], true);
-    pi.copy_(reply["pi_logit"], true);
+    pi.copy_(reply["pi"], true);
     if (rnnStateOut) {
       *rnnStateOut = reply["rnn_state"];
     }
