@@ -71,7 +71,7 @@ class Actor {
 
     feat_ = std::make_shared<tube::DataBlock>("s", featSize, torch::kFloat32);
     pi_ = std::make_shared<tube::DataBlock>(
-        "pi_logit", actionSize, torch::kFloat32);
+        "pi", actionSize, torch::kFloat32);
     value_ = std::make_shared<tube::DataBlock>(
         "v", std::initializer_list<int64_t>{logitValue ? 3 : 1},
         torch::kFloat32);

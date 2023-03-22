@@ -33,6 +33,6 @@ def draw_model(
     action_size = info["action_size"][:3]
     input_data = torch.zeros([1] + feature_size, device=torch.device("cpu"))
     model_out = m(input_data)
-    dot = torchviz.make_dot((model_out["v"], model_out["pi_logit"]), params=dict(list(m.named_parameters())))
+    dot = torchviz.make_dot((model_out["v"], model_out["pi"]), params=dict(list(m.named_parameters())))
     dot.format = 'png'
     dot.render(out)

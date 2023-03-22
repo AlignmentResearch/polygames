@@ -205,7 +205,7 @@ def _play_game_against_neural_mcts(
                     batch[actor_channel.name]["rnn_state"], nb_devices, dim=0
                 )
             futures = []
-            reply_eval = {"v": None, "pi_logit": None}
+            reply_eval = {"v": None, "pi": None}
             if has_rnn:
                 for device, model, batch_s, batch_rnn_state in zip(
                     devices, models, batches_s, batches_rnn_state
@@ -215,7 +215,7 @@ def _play_game_against_neural_mcts(
                     )
                 results = [future.result() for future in futures]
                 reply_eval["v"] = torch.cat([result["v"] for result in results], dim=0)
-                reply_eval["pi_logit"] = torch.cat([result["pi_logit"] for result in results], dim=0)
+                reply_eval["pi"] = torch.cat([result["pi"] for result in results], dim=0)
                 reply_eval["rnn_state_out"] = torch.cat([result["rnn_state"] for result in results], dim=0)
             else:
                 for device, model, batch_s in zip(
@@ -226,7 +226,7 @@ def _play_game_against_neural_mcts(
                     )
                 results = [future.result() for future in futures]
                 reply_eval["v"] = torch.cat([result["v"] for result in results], dim=0)
-                reply_eval["pi_logit"] = torch.cat([result["pi_logit"] for result in results], dim=0)
+                reply_eval["pi"] = torch.cat([result["pi"] for result in results], dim=0)
             dcm.set_reply(actor_channel.name, reply_eval)
     dcm.terminate()
 

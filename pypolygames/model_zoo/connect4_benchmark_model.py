@@ -38,8 +38,8 @@ class Connect4BenchModel(torch.jit.ScriptModule):
 
     @torch.jit.script_method
     def forward(self, x: torch.Tensor):
-        v, pi_logit = self._forward(x, True)
-        pi_logit = pi_logit.view(-1, 7, 1, 1)
-        reply = {"v": v, "pi_logit": pi_logit}
+        v, pi = self._forward(x, True)
+        pi = pi.view(-1, 7, 1, 1)
+        reply = {"v": v, "pi": pi}
         return reply
 
