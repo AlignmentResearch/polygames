@@ -156,7 +156,7 @@ class Actor {
 
   void batchResize(size_t batch_size) {
     // Use int64_t because Torch shapes use int64_t.
-    int64_t n = std::static_cast<int64_t>(batch_size);
+    int64_t n = static_cast<int64_t>(batch_size);
     if (!modelManager_) {
       return;
     }
