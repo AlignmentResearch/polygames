@@ -17,7 +17,8 @@
 
 namespace Hex {
 
-enum Color { COLOR_BLACK, COLOR_WHITE, COLOR_NONE };
+// Niki added the explicit 0
+enum Color { COLOR_BLACK = 0, COLOR_WHITE, COLOR_NONE };
 
 using Cell = std::pair<int, int>;  // (i, j) in [0, SIZE) x [0, SIZE)
 

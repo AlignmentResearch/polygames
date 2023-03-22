@@ -80,6 +80,8 @@ void Hex::State<SIZE, PIE>::ApplyAction(const _Action& action) {
   // find board move from action
   int i = action.GetY();
   int j = action.GetZ();
+  assert(i >= 0 && i < SIZE);  // N added
+  assert(j >= 0 && j < SIZE);
   int index = _board.convertCellToIndex(Cell(i, j));
   std::optional<int> lastIndex = _board.getLastIndex();
 

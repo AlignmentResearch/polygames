@@ -120,16 +120,16 @@ class AmazonsModel(torch.jit.ScriptModule):
             pi_logit[:, c_prime + h_prime :].reshape(-1, 1, 1, w_prime), 3
         )
         pi = v1 * v2 * v3
-        # pi = nn.functional.softmax(pi.view(pi.shape[0], -1), 1).reshape(pi.shape)
+        pi = nn.functional.softmax(pi.view(pi.shape[0], -1), 1).reshape(pi.shape)
         # This representation is not sparse, that's a temporary hack
         # for testing the idea of a cartesian product.
         return v, pi
 
     @torch.jit.script_method
     def forward(self, x: torch.Tensor):
-        v, pi_logit = self._forward(x, True)
-        pi_logit = pi_logit.view(-1, self.c_prime, self.h_prime, self.w_prime)
-        reply = {"v": v, "pi_logit": pi_logit}
+        v, pi = self._forward(x, True)
+        pi = pi.view(-1, self.c_prime, self.h_prime, self.w_prime)
+        reply = {"v": v, "pi_logit": pi}
         return reply
 
     def loss(

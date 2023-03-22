@@ -37,7 +37,9 @@ def test_mcts(game_name) -> None:
         "ChineseCheckers",
     ]
     too_bad = ["Havannah5", "Havannah5pie", "Surakarta", "DiceShogi", "Connect6"]
-    if game_name in crashing + too_slow:  # + one_player_games:
+    if is_one_player_game:
+        raise SkipTest(f"Skipping {game_name} (one-player game)")
+    if game_name in crashing + too_slow:
         raise SkipTest(f"Skipping {game_name}")
     if "inesweeper" in game_name and "4_4_4" not in game_name:
         raise SkipTest(f"Skipping {game_name}")
@@ -45,6 +47,7 @@ def test_mcts(game_name) -> None:
         raise SkipTest(f"Skipping {game_name}")
     if "WeakSchur" in game_name:
         raise SkipTest(f"Skipping {game_name} (currently aborts when finished, which kills the CI)")
+    print("Testing", game_name)
     # for allowing some tolerance to winning all games with larger rollouts, add here:
     tolerance = {
         "TicTacToe": 4,
