@@ -12,7 +12,7 @@ jobs:
       - image : nvidia/cuda:12.0.1-cudnn8-devel-ubuntu22.04
 
     # machine: true
-    working_directory: /polygames
+    working_directory: /
     # resource_class: xlarge  # not activated for the project
 
     steps:
@@ -77,18 +77,18 @@ jobs:
       - run:
           name: Test games
           command: |
-              ./build/test_state
+              ./polygames/build/test_state
 
       - run:
           name: Test polygames-tests (unit tests)
           command: |
-              ./tests/build/polygames-tests
+              ./polygames/tests/build/polygames-tests
 
       - run:
           name: Test Mcts
           command: |
-              ./build/src/mcts/test_mcts 1 100
-              ./build/src/mcts/test_mcts 4 50
+              ./polygames/build/src/mcts/test_mcts 1 100
+              ./polygames/build/src/mcts/test_mcts 4 50
 
       - run:
           name: Test python
