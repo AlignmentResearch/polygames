@@ -389,6 +389,10 @@ def run_evaluation(eval_params: EvalParams, execution_params: ExecutionParams, o
     print("#" + "EVALUATION".center(68) + "#")
     print("#" * 70)
 
+    # Print out the eval parameters for future reference
+    print("the eval parameters are")
+    print(eval_params)
+
     # evaluation is done on a NN-powered MCTS
     pure_mcts_eval = False
 
