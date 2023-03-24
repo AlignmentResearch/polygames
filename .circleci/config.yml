@@ -77,21 +77,21 @@ jobs:
       - run:
           name: Test games
           command: |
-              pwd
-              ls /polygames
-              ls /polygames/build
-              ./polygames/build/test_state
+              cd /polygames
+              ./build/test_state
 
       - run:
           name: Test polygames-tests (unit tests)
           command: |
-              ./polygames/tests/build/polygames-tests
+              cd /polygames
+              ./tests/build/polygames-tests
 
       - run:
           name: Test Mcts
           command: |
-              ./polygames/build/src/mcts/test_mcts 1 100
-              ./polygames/build/src/mcts/test_mcts 4 50
+              cd /polygames
+              ./build/src/mcts/test_mcts 1 100
+              ./build/src/mcts/test_mcts 4 50
 
       - run:
           name: Test python
