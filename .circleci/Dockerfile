@@ -2,10 +2,10 @@ FROM cimg/python:3.10.6
 
 # Install binary dependencies
 RUN sudo apt-get update -q \
-    && apt-get install -y --no-install-recommends \
+    && sudo apt-get install -y --no-install-recommends \
         wget cmake pkg-config clang lldb lcov \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && sudo apt-get clean \
+    && sudo rm -rf /var/lib/apt/lists/*
 
 WORKDIR "/home/circleci/project"
 # Copy whole repo
