@@ -84,7 +84,7 @@ jobs:
           name: Test polygames-tests (unit tests)
           command: |
               cd /polygames
-              ./tests/build/polygames-tests
+              ./build/tests/polygames-tests
 
       - run:
           name: Test Mcts
