@@ -54,9 +54,6 @@ jobs:
               mkdir build
               cd build
               CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON -DWITH_LUDII=OFF && make -j
-              echo "export PYTHONPATH=/polygames" >> /root/.bashrc
-              export PYHTONPATH=/polygames
-              cd /polygames
       # TODO: make sure the below is not necessary anymore?
       # TODO: also, get Ludii working at some point
       # - run:
@@ -70,6 +67,13 @@ jobs:
       #         cd tests/build
       #         cmake ..
       #         make -j 2
+
+      - run:
+          name: Export pythonpath and navigate to polygames
+          command: |
+              echo "export PYTHONPATH=/polygames" >> /root/.bashrc
+              export PYHTONPATH=/polygames
+              cd /polygames
 
       - run:
           name: Test games
