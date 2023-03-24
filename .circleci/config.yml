@@ -12,7 +12,7 @@ jobs:
       - image : nvidia/cuda:12.0.1-cudnn8-devel-ubuntu22.04
 
     # machine: true
-    working_directory: ~/repo
+    working_directory: /polygames
     # resource_class: xlarge  # not activated for the project
 
     steps:
@@ -69,11 +69,10 @@ jobs:
       #         make -j 2
 
       - run:
-          name: Export pythonpath and navigate to polygames
+          name: Export pythonpath
           command: |
               echo "export PYTHONPATH=/polygames" >> /root/.bashrc
               export PYHTONPATH=/polygames
-              cd /polygames
 
       - run:
           name: Test games
