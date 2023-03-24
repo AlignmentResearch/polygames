@@ -11,12 +11,16 @@ jobs:
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
       - image : nvidia/cuda:12.0.1-cudnn8-devel-ubuntu22.04
 
+    resource_class: gpu.nvidia.small
+
     # machine: true
     working_directory: /repo
     # resource_class: xlarge  # not activated for the project
 
     steps:
       - checkout
+
+      - run: nvidia-smi
         
       - run:
           name: Install bash tools
