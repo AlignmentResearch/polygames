@@ -11,7 +11,7 @@ WORKDIR "/home/circleci/project"
 # Copy whole repo
 COPY --chown=circleci:circleci . .
 # Abort if repo is dirty
-RUN if [ -z "$(git status --porcelain)" ] ; then exit 1; fi
+RUN if [ ! -z "$(git status --porcelain)" ] ; then exit 1; fi
 
 # Install Python dependencies
 RUN pip install --upgrade pip -r .circleci/requirements.txt
