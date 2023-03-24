@@ -77,6 +77,9 @@ jobs:
       - run:
           name: Test games
           command: |
+              pwd
+              ls /polygames
+              ls /polygames/build
               ./polygames/build/test_state
 
       - run:
