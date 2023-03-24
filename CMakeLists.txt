@@ -41,6 +41,11 @@ ELSEIF(PYTORCH12)
     ADD_DEFINITIONS(-DPYTORCH12)
 ENDIF()
 
+OPTION(POLYGAMES_WITH_CUDA "Compile with CUDA support?" ON)
+if(NOT POLYGAMES_WITH_CUDA)
+  ADD_DEFINITIONS(-DPOLYGAMES_WITHOUT_CUDA)
+endif()
+
 execute_process(
     COMMAND python -c "import torch; import os; print(os.path.dirname(torch.__file__), end='')"
     OUTPUT_VARIABLE TorchPath
