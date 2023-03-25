@@ -3,15 +3,15 @@ FROM cimg/python:3.11.2
 # Install binary dependencies
 RUN sudo apt-get update -q \
     && sudo apt-get install -y --no-install-recommends \
-        wget cmake pkg-config llvm-14 clang lldb lcov libzmq3-dev \
+        wget cmake pkg-config clang lldb lcov libzmq3-dev mold \
     && sudo apt-get clean \
     && sudo rm -rf /var/lib/apt/lists/*
 
-ENV MOLD_VERSION="mold-1.11.0-x86_64-linux"
-RUN wget "https://github.com/rui314/mold/releases/download/v1.11.0/${MOLD_VERSION}.tar.gz" \
-    && tar xf "${MOLD_VERSION}.tar.gz" \
-    && sudo mv "${MOLD_VERSION}/bin/mold" /usr/local/bin \
-    && rm -rf "${MOLD_VERSION}" "${MOLD_VERSION}.tar.gz"
+# ENV MOLD_VERSION="mold-1.11.0-x86_64-linux"
+# RUN wget "https://github.com/rui314/mold/releases/download/v1.11.0/${MOLD_VERSION}.tar.gz" \
+#     && tar xf "${MOLD_VERSION}.tar.gz" \
+#     && sudo mv "${MOLD_VERSION}/bin/mold" /usr/local/bin \
+#     && rm -rf "${MOLD_VERSION}" "${MOLD_VERSION}.tar.gz"
 
 WORKDIR "/home/circleci/project"
 # Copy whole repo
