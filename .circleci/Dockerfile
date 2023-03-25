@@ -1,4 +1,4 @@
-FROM cimg/python:3.10.6
+FROM cimg/python:3.11.2
 
 # Install binary dependencies
 RUN sudo apt-get update -q \
