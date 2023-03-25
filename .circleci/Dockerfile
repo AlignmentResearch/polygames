@@ -3,7 +3,7 @@ FROM cimg/python:3.11.2
 # Install binary dependencies
 RUN sudo apt-get update -q \
     && sudo apt-get install -y --no-install-recommends \
-        wget cmake pkg-config clang lldb lcov libzmq3-dev \
+        wget cmake pkg-config llvm-14 clang lldb lcov libzmq3-dev \
     && sudo apt-get clean \
     && sudo rm -rf /var/lib/apt/lists/*
 
