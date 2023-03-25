@@ -19,7 +19,7 @@ RUN pip install --upgrade pip -r .circleci/requirements.txt && rm -rf /home/circ
 # TODO(nhowe): add support for Ludii
 RUN mkdir "/home/circleci/project/build"
 WORKDIR "/home/circleci/project/build"
-RUN CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=debug -DPYTORCH15=ON -DWITH_LUDII=OFF -DCAFFE2_USE_CUDA=0 && make -j
+RUN CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=debug -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF && make -j
 
 # Back to project workdir
 ENV PYTHONPATH="/home/circleci/project"
