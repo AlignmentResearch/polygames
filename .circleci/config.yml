@@ -1,110 +1,68 @@
-# Python CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
-version: 2
+version: 2.1
+
+parameters:
+  action:
+    type: enum
+    enum: [oncommit, docker]
+    default: oncommit
+
+  docker_img_version:
+    type: string
+    default: "0.1"
+
+workflows:
+  test-jobs:
+    when:
+      equal: [oncommit, << pipeline.parameters.action >>]
+    jobs:
+      - all-tests:
+          context:
+            - ghcr-auth
+
+  docker-publish-jobs:
+    when:
+      equal: [docker, << pipeline.parameters.action >>]
+    jobs:
+      - docker-publish:
+          context:
+            - ghcr-auth
+            # TODO: this won't work because the current token, connected to the `rhaps0dy` account, only has read permissions.
+
+commands:
+  - build-polygames:
+      command: |
+              CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON -DWITH_LUDII=OFF && make -j
+
 jobs:
-  build:
-    branches: {}
+  all-tests:
     docker:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image : nvidia/cuda:12.0.1-cudnn8-devel-ubuntu22.04
-
-    # machine: true
-    working_directory: /repo
-    # resource_class: xlarge  # not activated for the project
-
+      - image: ghcr.io/ghcr.io/alignmentresearch/polygames-circleci:<< pipeline.parameters.docker_img_version >>
+        auth:
+          username: "$GHCR_DOCKER_USER"
+          password: "$GHCR_DOCKER_TOKEN"
+    resource_class: small
     steps:
       - checkout
-        
-      - run:
-          name: Install bash tools
-          command: |
-              apt-get update -q \
-              && apt-get install -y --no-install-recommends \
-              wget \
-              git \
-              python3 python3-dev python3-pip python3-setuptools python-is-python3 \
-              cmake pkg-config clang lldb \
-              libmkl-core libmkl-intel-thread libmkl-intel-ilp64 \
-              ssh \
-              openssh-server \
-              sudo \
-              curl \
-              jq \
-              libzmq3-dev \
-              && apt-get clean \
-              && rm -rf /var/lib/apt/lists/*
-
-    # TODO: do we want to save anything from the above?
-    #   - save_cache:
-    #       paths:
-    #         - /opt/conda
-    #         - ~/pytorch
-    #       key: tag3-conda-{{ checksum "singularity/environment.yml" }}-pytorch
-
-      - run:
-          name: Build polygames
-          command: |
-              git clone --recursive https://github.com/AlignmentResearch/polygames /polygames
-              cd /polygames
-              pip install -r docker-dev/requirements.txt
-              mv docker-dev/authorized_keys /root/.ssh/authorized_keys
-              mkdir build
-              cd build
-              CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON -DWITH_LUDII=OFF && make -j
-      # TODO: make sure the below is not necessary anymore?
-      # TODO: also, get Ludii working at some point
-      # - run:
-      #     name: Build polygames-tests
-      #     command: |
-      #         # . /opt/conda/etc/profile.d/conda.sh
-      #         # conda activate pypg
-      #         mkdir ludii
-      #         wget -P ludii https://ludii.games/downloads/Ludii.jar
-      #         mkdir tests/build
-      #         cd tests/build
-      #         cmake ..
-      #         make -j 2
-
-      - run:
-          name: Export pythonpath
-          command: |
-              echo "export PYTHONPATH=/polygames" >> /root/.bashrc
-              export PYHTONPATH=/polygames
-
+      - build-polygames
       - run:
           name: Test games
-          command: |
-              cd /polygames
-              ./build/test_state
-
+          command: ./build/test_state
       - run:
           name: Test polygames-tests (unit tests)
-          command: |
-              cd /polygames
-              ./tests/build/polygames-tests
+          command: ./build/polygames-tests
 
       - run:
-          name: Test Mcts
+          name: Test MCTS
           command: |
-              cd /polygames
               ./build/src/mcts/test_mcts 1 100
               ./build/src/mcts/test_mcts 4 50
-
       - run:
           name: Test python
           command: |
-              # . /opt/conda/etc/profile.d/conda.sh
-              # conda activate pypg
               pytest pypolygames --durations=10 --verbose
-
       - run:
           name: Run training
           command: |
-              # . /opt/conda/etc/profile.d/conda.sh
-              # conda activate pypg
               python -m pypolygames traineval --act_batchsize=2 \
                   --batchsize=2 --replay_capacity=16  --replay_warmup=2 \
                   --num_epoch=1 --num_game=12 --model_name=NanoFCLogitModel \
