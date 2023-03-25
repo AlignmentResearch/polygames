@@ -376,7 +376,6 @@ class StateForMinishogi : public core::State, public Shogi {
       legalMoves(p, moves);
     }
 
-    int i = 0;
     clearActions();
     for (auto m : moves) {
       m.piece.promoted = m.promote;
@@ -392,7 +391,6 @@ class StateForMinishogi : public core::State, public Shogi {
 
         addAction(z, x, y);
       }
-      i++;
     }
   }
 
