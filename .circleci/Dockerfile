@@ -3,7 +3,7 @@ FROM cimg/python:3.10.6
 # Install binary dependencies
 RUN sudo apt-get update -q \
     && sudo apt-get install -y --no-install-recommends \
-        wget cmake pkg-config clang lldb lcov libzmq3-dev \
+        wget cmake pkg-config clang lldb lcov mold libzmq3-dev \
     && sudo apt-get clean \
     && sudo rm -rf /var/lib/apt/lists/*
 
@@ -19,7 +19,7 @@ RUN pip install --upgrade pip -r .circleci/requirements.txt && rm -rf /home/circ
 # TODO(nhowe): add support for Ludii
 RUN mkdir "/home/circleci/project/build"
 WORKDIR "/home/circleci/project/build"
-RUN CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=debug -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF && make -j
+RUN CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=debug -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF -DUSE_MOLD=ON && make -j
 
 # Back to project workdir
 ENV PYTHONPATH="/home/circleci/project"
