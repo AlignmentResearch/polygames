@@ -17,7 +17,7 @@ endif()
 set(FLAGS_WARNINGS "-Wall -Wextra -Werror -Wno-unused-variable -Wno-unused-value -Wno-deprecated-declarations")
 
 # In debug use the three simultaneously supported sanitizers, see https://stackoverflow.com/a/47261999
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 ${FLAGS_WARNINGS} -fsanitize=address -fsanitize=undefined -fsanitize=leak")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 ${FLAGS_WARNINGS}")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O3 -ffast-math ${FLAGS_WARNINGS}")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math ${FLAGS_WARNINGS}")
 

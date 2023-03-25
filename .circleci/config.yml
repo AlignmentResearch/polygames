@@ -45,7 +45,7 @@ jobs:
         auth:
           username: "$GHCR_DOCKER_USER"
           password: "$GHCR_DOCKER_TOKEN"
-    resource_class: 2xlarge  # Needs to be large to have enough RAM
+    resource_class: large  # Needs to be large to have enough RAM
     steps:
       - checkout
       - build-polygames
