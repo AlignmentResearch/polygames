@@ -45,16 +45,18 @@ jobs:
         auth:
           username: "$GHCR_DOCKER_USER"
           password: "$GHCR_DOCKER_TOKEN"
-    resource_class: large  # Needs to be large to have enough RAM
+    resource_class: 2xlarge  # Needs to be large to have enough RAM
     steps:
       - checkout
       - build-polygames
       - run:
           name: Test games
-          command: ./build/test_state
+          command: |
+            ./build/test_state
       - run:
           name: Test polygames-tests (unit tests)
-          command: ./build/polygames-tests
+          command: |
+            ./build/tests/polygames-tests
 
       - run:
           name: Test MCTS
