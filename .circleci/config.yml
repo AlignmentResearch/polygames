@@ -40,7 +40,7 @@ commands:
 jobs:
   all-tests:
     docker:
-      - image: ghcr.io/ghcr.io/alignmentresearch/polygames-circleci:<< pipeline.parameters.docker_img_version >>
+      - image: ghcr.io/alignmentresearch/polygames-circleci:<< pipeline.parameters.docker_img_version >>
         auth:
           username: "$GHCR_DOCKER_USER"
           password: "$GHCR_DOCKER_TOKEN"
@@ -72,3 +72,18 @@ jobs:
                   --num_epoch=1 --num_game=12 --model_name=NanoFCLogitModel \
                   --epoch_len=1 --device=cpu --game_name=TicTacToe --sync_period=1  --device_eval=cpu \
                   --num_actor_eval=2 --num_rollouts_opponent=50 --num_game_eval=4
+
+  docker-publish:
+    docker:
+      - image: cimg/python:3.10.6
+    resource_class: small
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
+      - run: |
+          TAG="ghcr.io/alignmentresearch/polygames-circleci:<< pipeline.parameters.docker_img_version >>"
+          docker build -f .circleci/Dockerfile -t "$TAG" .
+          echo "$GHCR_DOCKER_TOKEN" | docker login -u "$GHCR_DOCKER_USER" --password-stdin
+          docker push "$TAG"
