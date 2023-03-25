@@ -14,7 +14,7 @@ COPY --chown=circleci:circleci . .
 RUN if [ ! -z "$(git status --porcelain)" ] ; then exit 1; fi
 
 # Install Python dependencies
-RUN pip install --upgrade pip -r .circleci/requirements.txt
+RUN pip install --upgrade pip -r .circleci/requirements.txt && rm -rf /home/circleci/.cache
 
 # TODO(nhowe): add support for Ludii
 RUN mkdir "/home/circleci/project/build"
