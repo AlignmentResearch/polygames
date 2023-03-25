@@ -29,9 +29,13 @@ workflows:
             # TODO: this won't work because the current token, connected to the `rhaps0dy` account, only has read permissions.
 
 commands:
-  - build-polygames:
-      command: |
-              CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON -DWITH_LUDII=OFF && make -j
+  build-polygames:
+    steps:
+      - run:
+          name: Build Polygames in debug
+          command: |
+            CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=debug -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF
+            make -j
 
 jobs:
   all-tests:
