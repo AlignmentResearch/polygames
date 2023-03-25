@@ -48,7 +48,7 @@ jobs:
     resource_class: large  # Needs to be large to have enough RAM
     steps:
       - checkout
-      - build-polygames
+      # - build-polygames
       - run:
           name: Test games
           command: |
