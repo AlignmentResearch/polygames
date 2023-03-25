@@ -45,7 +45,7 @@ jobs:
         auth:
           username: "$GHCR_DOCKER_USER"
           password: "$GHCR_DOCKER_TOKEN"
-    resource_class: small
+    resource_class: medium
     steps:
       - checkout
       - build-polygames
