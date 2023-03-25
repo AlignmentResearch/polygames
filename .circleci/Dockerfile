@@ -9,7 +9,7 @@ RUN sudo apt-get update -q \
 
 ENV MOLD_VERSION="mold-1.11.0-x86_64-linux"
 RUN wget "https://github.com/rui314/mold/releases/download/v1.11.0/${MOLD_VERSION}.tar.gz" \
-    && tar xf "${MOLD_VERSION}.tar.gz"
+    && tar xf "${MOLD_VERSION}.tar.gz" \
     && sudo mv "${MOLD_VERSION}/bin/mold" /usr/local/bin \
     && rm -rf "${MOLD_VERSION}" "${MOLD_VERSION}.tar.gz"
 
