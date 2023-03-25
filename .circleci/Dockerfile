@@ -1,4 +1,6 @@
 FROM cimg/python:3.10.10
+LABEL org.opencontainers.image.source=https://github.com/AlignmentResearch/polygames
+
 
 # Install binary dependencies
 RUN sudo apt-get update -q \
