@@ -35,6 +35,7 @@ commands:
           name: Build Polygames in debug
           command: |
             cd build
+            CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=debug -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF
             make -j
 
 jobs:
@@ -44,7 +45,7 @@ jobs:
         auth:
           username: "$GHCR_DOCKER_USER"
           password: "$GHCR_DOCKER_TOKEN"
-    resource_class: medium
+    resource_class: large  # Needs to be large to have enough RAM
     steps:
       - checkout
       - build-polygames
