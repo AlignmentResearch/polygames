@@ -21,8 +21,6 @@ jobs:
 
     steps:
       - checkout
-
-      - run: nvidia-smi
         
       - run:
           name: Install bash tools
