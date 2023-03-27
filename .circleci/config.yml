@@ -36,7 +36,7 @@ commands:
           command: |
             cd build
             CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=debug -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF -DUSE_MOLD=ON
-            make -j
+            make -j2  # Limit concurrent jobs to limit memory use
 
 jobs:
   all-tests:
