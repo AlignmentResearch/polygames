@@ -55,6 +55,7 @@ jobs:
             md5sum build/src/tube/CMakeFiles/_tube.dir/src_cpp/data_channel.cc.o
             ls -lh build/src/tube/CMakeFiles/_tube.dir/src_cpp/data_channel.cc.o
 
+            export SSH_CONFIG_DIR=/home/circleci/.ssh
             echo "Using SSH Config Dir '$SSH_CONFIG_DIR'"
             git --version
 
