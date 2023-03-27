@@ -124,7 +124,10 @@ class ResConvConvLogitPoolModel(torch.jit.ScriptModule):
                     nets[j] = nn.Sequential(
                         nets[j],
                         nn.BatchNorm2d(
-                            int(nnsize * c), track_running_stats=True, affine=bn_affine, momentum=batchnorm_momentum
+                            int(nnsize * c),
+                            track_running_stats=True,
+                            affine=bn_affine,
+                            momentum=batchnorm_momentum,
                         ),
                     )
             if pooling:
@@ -141,7 +144,12 @@ class ResConvConvLogitPoolModel(torch.jit.ScriptModule):
             resnet_list.append(nets)
         if bn or bn_affine:
             mono.append(
-                nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine, momentum=batchnorm_momentum),
+                nn.BatchNorm2d(
+                    int(nnsize * c),
+                    track_running_stats=True,
+                    affine=bn_affine,
+                    momentum=batchnorm_momentum,
+                ),
             )
             for i in range(nb_nets):
                 for j in range(nb_layers_per_net):
@@ -157,7 +165,12 @@ class ResConvConvLogitPoolModel(torch.jit.ScriptModule):
         self.resnets = nn.ModuleList(resnet_list)
         self.v = nn.Linear(2 * int(nnsize * c), 1)
         self.pi_logit = nn.Conv2d(
-            int(nnsize * c), c_prime, nnks, stride=stride, padding=padding, dilation=dilation
+            int(nnsize * c),
+            c_prime,
+            nnks,
+            stride=stride,
+            padding=padding,
+            dilation=dilation,
         )
 
     @torch.jit.script_method

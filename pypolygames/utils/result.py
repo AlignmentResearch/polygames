@@ -7,7 +7,7 @@
 
 
 def parse_reward(reward):
-    result = {"win": 0, "loss": 0, "tie": 0, "avg": 0.}
+    result = {"win": 0, "loss": 0, "tie": 0, "avg": 0.0}
     for r in reward:
         if r == -1:
             result["loss"] += 1
@@ -16,7 +16,7 @@ def parse_reward(reward):
         else:
             result["tie"] += 1
     result["total"] = len(reward)
-    result["avg"] = (sum(reward) / max(len(reward), 1) + 1.) / 2.
+    result["avg"] = (sum(reward) / max(len(reward), 1) + 1.0) / 2.0
     return result
 
 

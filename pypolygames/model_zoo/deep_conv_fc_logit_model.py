@@ -108,7 +108,9 @@ class DeepConvFCLogitModel(torch.jit.ScriptModule):
                 )
         if bn or bn_affine:
             mono.append(
-                nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine)
+                nn.BatchNorm2d(
+                    int(nnsize * c), track_running_stats=True, affine=bn_affine
+                )
             )
             for i in range(nb_nets):
                 conv_nets[i] = nn.Sequential(

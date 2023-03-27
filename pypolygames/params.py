@@ -11,12 +11,14 @@ from typing import Iterator, Tuple, Union, List, Optional, Dict, Any
 
 from .weight_init import WEIGHT_INIT
 
+
 def boolarg(x):
-  if str(x).lower() in ["true", "yes", "on", "1", "y"]:
-    return True
-  if str(x).lower() in ["false", "no", "off", "0", "n"]:
-    return False
-  raise RuntimeError("Unknown bool value " + str(x))
+    if str(x).lower() in ["true", "yes", "on", "1", "y"]:
+        return True
+    if str(x).lower() in ["false", "no", "off", "0", "n"]:
+        return False
+    raise RuntimeError("Unknown bool value " + str(x))
+
 
 @dataclass
 class ArgFields:
@@ -143,7 +145,7 @@ class GameParams:
                     type=str,
                     help="Type of player to use. One of: mcts, forward",
                 )
-            )
+            ),
         )
         for param, arg_field in params.items():
             if arg_field.name is None:
@@ -289,7 +291,7 @@ class ModelParams:
                     help="Global pooling - this will, for the models that support it, "
                     "add global pooling over some channels after convolutional layers. "
                     "The parameter is the proportion of the channels that should be pooled. "
-                    "Eg. 0.1 will specify that we should pool 10%% of the channels"
+                    "Eg. 0.1 will specify that we should pool 10%% of the channels",
                 )
             ),
             batchnorm_momentum=ArgFields(
@@ -359,7 +361,7 @@ class OptimParams:
             reset_optimizer_state=ArgFields(
                 opts=dict(
                     action="store_false" if cls.reset_optimizer_state else "store_true",
-                    help="If set, any internal state of optimizer from checkpoint will be reset"
+                    help="If set, any internal state of optimizer from checkpoint will be reset",
                 )
             ),
         )
@@ -409,9 +411,7 @@ class SimulationParams:
             num_game=ArgFields(
                 opts=dict(type=int, help=f"Number of game-running threads")
             ),
-            num_threads=ArgFields(
-                opts=dict(type=int, help=f"Number of async threads")
-            ),
+            num_threads=ArgFields(opts=dict(type=int, help=f"Number of async threads")),
             num_actor=ArgFields(
                 opts=dict(
                     type=int,
@@ -553,9 +553,11 @@ class ExecutionParams:
         if self.checkpoint_dir is not None:
             self.checkpoint_dir = self.checkpoint_dir.resolve().absolute()
         if self.save_dir is not None:
-            raise RuntimeError("""--save_dir is deprecated, use --checkpoint_dir instead, with slightly different behavior:
+            raise RuntimeError(
+                """--save_dir is deprecated, use --checkpoint_dir instead, with slightly different behavior:
     - no subfolder creation.
-    - resumes from latest checkpoint if available in the directory.""")
+    - resumes from latest checkpoint if available in the directory."""
+            )
 
     @classmethod
     def arg_fields(cls) -> Iterator[Tuple[str, ArgFields]]:
@@ -564,13 +566,13 @@ class ExecutionParams:
                 opts=dict(
                     type=Path,
                     help="Directory for saving checkpoints. "
-                         "If the directory is not empty, the latest checkpoint will be resumed",
+                    "If the directory is not empty, the latest checkpoint will be resumed",
                 )
             ),
             save_dir=ArgFields(
                 opts=dict(
                     type=Path,
-                    help="Deprecated, use checkpoint_dir with slightly different behavior instead"
+                    help="Deprecated, use checkpoint_dir with slightly different behavior instead",
                 )
             ),
             save_uncompressed=ArgFields(
@@ -770,8 +772,9 @@ class EvalParams:
             ),
             num_parallel_games_eval=ArgFields(
                 opts=dict(
-                    type=int, help="Number of evaluation games to be played in parallel. "
-                                   "If set to None, all games are played in parallel"
+                    type=int,
+                    help="Number of evaluation games to be played in parallel. "
+                    "If set to None, all games are played in parallel",
                 )
             ),
             num_actor_eval=ArgFields(
@@ -830,9 +833,13 @@ class EvalParams:
             ),
             plot_server=ArgFields(opts=dict(type=str, help="Visdom server url")),
             plot_port=ArgFields(opts=dict(type=int, help="Visdom server port")),
-            eval_verbosity=ArgFields(opts=dict(type=int, help="Verbosity during the evaluation")),
+            eval_verbosity=ArgFields(
+                opts=dict(type=int, help="Verbosity during the evaluation")
+            ),
         )
-        defaults = cls(checkpoint_dir=Path("blublu"))  # cannot create with both None for checkpoint_dir and checkpoint
+        defaults = cls(
+            checkpoint_dir=Path("blublu")
+        )  # cannot create with both None for checkpoint_dir and checkpoint
         defaults.checkpoint_dir = None  # revert
         for param, arg_field in params.items():
             if arg_field.name is None:
@@ -841,9 +848,7 @@ class EvalParams:
                 arg_field.opts = {}
             if "help" not in arg_field.opts:
                 arg_field.opts["help"] = ""
-            arg_field.opts[
-                "help"
-            ] += f" (DEFAULT: {getattr(defaults, param)})"
+            arg_field.opts["help"] += f" (DEFAULT: {getattr(defaults, param)})"
             yield param, arg_field
 
 

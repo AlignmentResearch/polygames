@@ -17,7 +17,13 @@ def games(olympiads: bool = False) -> tp.List[str]:
         only list olympiad games
     """
     if olympiads:
-        pies = {"Hex11pie", "Hex13pie", "Hex19pie", "Havannah5pie", "Havannah8pie"} & set(
+        pies = {
+            "Hex11pie",
+            "Hex13pie",
+            "Hex19pie",
+            "Havannah5pie",
+            "Havannah8pie",
+        } & set(
             games()
         )  # to ready yet
         return [

@@ -11,6 +11,7 @@ import pypolygames as ppg
 import polygames
 import tube
 
+
 class TrainingEnvironment(object):
     model_fpath = None
     assembler = None
@@ -18,19 +19,30 @@ class TrainingEnvironment(object):
     optim = None
     game = None
 
+
 DEFAULT_CAPACITY = 1000
 
+
 @contextmanager
-def create_training_env(game_name, act_batchsize=50,
-    n_act_channels=1, n_games=100, n_actors=1,
-    model_device="cuda:0", act_devices=["cuda:0"],
-    lr=6.25e-5, eps=1.5e-4,
-    replay_capacity=DEFAULT_CAPACITY, seed=1):
+def create_training_env(
+    game_name,
+    act_batchsize=50,
+    n_act_channels=1,
+    n_games=100,
+    n_actors=1,
+    model_device="cuda:0",
+    act_devices=["cuda:0"],
+    lr=6.25e-5,
+    eps=1.5e-4,
+    replay_capacity=DEFAULT_CAPACITY,
+    seed=1,
+):
     model_fname = game_name + "_model_latest.pt"
     training_env = TrainingEnvironment()
     with tempfile.TemporaryDirectory() as save_dir:
         train_option, eval_option = ppg.workflow.set_up_options(
-            seed=seed, save_dir=save_dir, game_name=game_name)
+            seed=seed, save_dir=save_dir, game_name=game_name
+        )
 
         model_fpath = os.path.join(save_dir, model_fname)
         model = ppg.workflow.create_model(game_name).to(model_device)
@@ -60,17 +72,17 @@ def create_training_env(game_name, act_batchsize=50,
         finally:
             pass
 
-class TestReplayBuffer(unittest.TestCase):
 
+class TestReplayBuffer(unittest.TestCase):
     def test_init(self):
         game_name = "Connect4"
         with create_training_env(game_name) as training_env:
             replay_buffer = training_env.assembler.buffer
-            self.assertTrue(hasattr(replay_buffer, 'size'))
+            self.assertTrue(hasattr(replay_buffer, "size"))
             self.assertEqual(replay_buffer.size, 0)
-            self.assertTrue(hasattr(replay_buffer, 'capacity'))
+            self.assertTrue(hasattr(replay_buffer, "capacity"))
             self.assertEqual(replay_buffer.capacity, DEFAULT_CAPACITY)
-            self.assertTrue(hasattr(replay_buffer, 'is_full'))
+            self.assertTrue(hasattr(replay_buffer, "is_full"))
             self.assertFalse(replay_buffer.is_full)
 
     def test_init_one_game(self):
@@ -94,5 +106,6 @@ class TestReplayBuffer(unittest.TestCase):
             time.sleep(2)
             print("replay buffer size: ", assembler.buffer_size())
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

@@ -80,7 +80,10 @@ def _check_arg_consistency(args: argparse.Namespace) -> None:
             "When '--per_thread_batchsize' is set, '--act_batchsize' is not used"
         )
 
-    if getattr(args, "total_time", 0) is not None and getattr(args, "total_time", 0) > 0:
+    if (
+        getattr(args, "total_time", 0) is not None
+        and getattr(args, "total_time", 0) > 0
+    ):
         if args.command_history.last_command_contains("num_rollouts"):
             raise ValueError(
                 "When a '--total_time' is set, "
@@ -90,7 +93,9 @@ def _check_arg_consistency(args: argparse.Namespace) -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description=DOC, formatter_class=argparse.RawDescriptionHelpFormatter, allow_abbrev=False,
+        description=DOC,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        allow_abbrev=False,
     )
     parser.set_defaults(func=run_training_and_evaluation_from_args_warning)
 
@@ -122,31 +127,57 @@ def parse_args() -> argparse.Namespace:
     parser_convert = subparsers.add_parser("convert")
     parser_convert.set_defaults(func=convert_checkpoint_from_args)
 
-    parser_convert.add_argument('--out', type=str, required=True, help='File name to save the converted checkpoint to')
-    parser_convert.add_argument('--skip', type=str, nargs="*", help='List of attributes to not copy, leaving them initialized')
     parser_convert.add_argument(
-        '--auto_tune_nnsize', action="store_true",
-        help='Tune nnsize automatically such that number of filters in hidden layers remains unchanged.'
+        "--out",
+        type=str,
+        required=True,
+        help="File name to save the converted checkpoint to",
     )
     parser_convert.add_argument(
-        '--zero_shot', type=bool, default=False, 
-        help='Convert for zero-shot evaluation without training; this will initialise any skipped or new params to 0.'
+        "--skip",
+        type=str,
+        nargs="*",
+        help="List of attributes to not copy, leaving them initialized",
     )
     parser_convert.add_argument(
-        '--move_source_channels', type=int, nargs="*", 
-        help=('For fully convolutional architectures, for every channel in the destination game\'s move tensors, '
-              'specify the channel from the original tensor that we should transfer weights from.')
+        "--auto_tune_nnsize",
+        action="store_true",
+        help="Tune nnsize automatically such that number of filters in hidden layers remains unchanged.",
     )
     parser_convert.add_argument(
-        '--state_source_channels', type=int, nargs="*", 
-        help=('For fully convolutional architectures, for every channel in the destination game\'s state tensors, '
-              'specify the channel from the original tensor that we should transfer weights from.')
+        "--zero_shot",
+        type=bool,
+        default=False,
+        help="Convert for zero-shot evaluation without training; this will initialise any skipped or new params to 0.",
     )
-    
+    parser_convert.add_argument(
+        "--move_source_channels",
+        type=int,
+        nargs="*",
+        help=(
+            "For fully convolutional architectures, for every channel in the destination game's move tensors, "
+            "specify the channel from the original tensor that we should transfer weights from."
+        ),
+    )
+    parser_convert.add_argument(
+        "--state_source_channels",
+        type=int,
+        nargs="*",
+        help=(
+            "For fully convolutional architectures, for every channel in the destination game's state tensors, "
+            "specify the channel from the original tensor that we should transfer weights from."
+        ),
+    )
+
     # DRAW MODEL COMMAND
     parser_draw_model = subparsers.add_parser("draw_model")
     parser_draw_model.set_defaults(func=draw_model_from_args)
-    parser_draw_model.add_argument('--out', type=str, required=True, help='File name (without extension) to save figure to.')
+    parser_draw_model.add_argument(
+        "--out",
+        type=str,
+        required=True,
+        help="File name (without extension) to save figure to.",
+    )
 
     # Game params
     train_game_params_group = parser_train.add_argument_group(
@@ -241,7 +272,7 @@ def parse_args() -> argparse.Namespace:
             simulation_params_group.add_argument(
                 arg_field.name, **{**arg_field.opts, **dict(help=argparse.SUPPRESS)}
             )
-        #if arg_name in {"num_actor", "num_rollouts"}:
+        # if arg_name in {"num_actor", "num_rollouts"}:
         if True:
             human_simulation_params_group.add_argument(arg_field.name, **arg_field.opts)
 
@@ -309,7 +340,9 @@ def update_and_create_checkpoint_dir(
         model_name = model_params.model_name
         game_features = _get_game_features(game_params)
         timestamp = _get_timestamp()
-        subfolder = f"game_{game_name}_model_{model_name}_feat_{game_features}_GMT_{timestamp}"
+        subfolder = (
+            f"game_{game_name}_model_{model_name}_feat_{game_features}_GMT_{timestamp}"
+        )
         execution_params.checkpoint_dir = Path("exps").absolute() / "dev" / subfolder
     execution_params.checkpoint_dir.mkdir(exist_ok=True, parents=True)
 
@@ -419,6 +452,7 @@ def run_tp_played_game_from_args(args: argparse.Namespace):
         execution_params=execution_params,
     )
 
+
 def convert_checkpoint_from_args(args: argparse.Namespace):
     command_history = args.command_history
     game_params = instanciate_params_from_args(GameParams, args)
@@ -434,7 +468,8 @@ def convert_checkpoint_from_args(args: argparse.Namespace):
         move_source_channels=args.move_source_channels,
         state_source_channels=args.state_source_channels,
     )
-    
+
+
 def draw_model_from_args(args: argparse.Namespace):
     game_params = instanciate_params_from_args(GameParams, args)
     model_params = instanciate_params_from_args(ModelParams, args)

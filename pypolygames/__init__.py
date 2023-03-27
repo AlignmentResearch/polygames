@@ -8,7 +8,7 @@ import sys
 
 # disable CUDA cache as it can throw errors when doing distributed
 # training and the cache folder is on NFS
-os.environ['CUDA_CACHE_DISABLE'] = '1'
+os.environ["CUDA_CACHE_DISABLE"] = "1"
 
 root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 game = os.path.join(root, "build/src")

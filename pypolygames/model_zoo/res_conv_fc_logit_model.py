@@ -133,7 +133,9 @@ class ResConvFCLogitModel(torch.jit.ScriptModule):
             resnet_list.append(nets)
         if bn or bn_affine:
             mono.append(
-                nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine),
+                nn.BatchNorm2d(
+                    int(nnsize * c), track_running_stats=True, affine=bn_affine
+                ),
             )
             for i in range(nb_nets):
                 for j in range(nb_layers_per_net):

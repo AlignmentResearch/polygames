@@ -75,7 +75,9 @@ class NanoFCLogitModel(torch.jit.ScriptModule):
         ]
         if bn or bn_affine:
             net.append(
-                nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine)
+                nn.BatchNorm2d(
+                    int(nnsize * c), track_running_stats=True, affine=bn_affine
+                )
             )
         self.net = nn.Sequential(*net)
         self.v = nn.Linear(int(nnsize * c) * h * w, 1)
@@ -98,4 +100,3 @@ class NanoFCLogitModel(torch.jit.ScriptModule):
         pi = pi.view(-1, self.c_prime, self.h_prime, self.w_prime)
         reply = {"v": v, "pi": pi}
         return reply
-

@@ -10,10 +10,11 @@ from ..params import GameParams, ModelParams
 
 # import utils
 
+
 @zutils.register_model
 class Connect4BenchModel(torch.jit.ScriptModule):
     def __init__(self, game_params: GameParams, model_params: ModelParams):
-    # def __init__(self):
+        # def __init__(self):
         super().__init__()
         self.fc1 = nn.Linear(6 * 7 * 2, 200)
         self.fc2 = nn.Linear(200, 200)
@@ -42,4 +43,3 @@ class Connect4BenchModel(torch.jit.ScriptModule):
         pi = pi.view(-1, 7, 1, 1)
         reply = {"v": v, "pi": pi}
         return reply
-

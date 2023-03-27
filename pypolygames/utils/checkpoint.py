@@ -32,6 +32,7 @@ class BufferType(TypedDict):
     first: str
     second: torch.Tensor
 
+
 @dataclasses.dataclass
 class DummyReplayBuffer:
     capacity: int
@@ -49,6 +50,7 @@ class DummyReplayBuffer:
         self.nextIdx = x[2]
         self.rngState = x[3]
         self.buffer = x[4]
+
 
 # This is added to allow for loading of old checkpoints
 tube.ReplayBuffer = DummyReplayBuffer
@@ -87,8 +89,14 @@ def save_checkpoint(
     checkpoint = {
         "command_history": command_history,
         "epoch": epoch,
-        "model_state_dict": {k : v.cpu().clone() if isinstance(v, torch.Tensor) else copy.deepcopy(v) for k, v in model.state_dict().items()},
-        "optim_state_dict": {k : v.cpu().clone() if isinstance(v, torch.Tensor) else copy.deepcopy(v) for k, v in optim.state_dict().items()},
+        "model_state_dict": {
+            k: v.cpu().clone() if isinstance(v, torch.Tensor) else copy.deepcopy(v)
+            for k, v in model.state_dict().items()
+        },
+        "optim_state_dict": {
+            k: v.cpu().clone() if isinstance(v, torch.Tensor) else copy.deepcopy(v)
+            for k, v in optim.state_dict().items()
+        },
         "game_params": game_params,
         "model_params": model_params,
         "optim_params": optim_params,
@@ -108,6 +116,7 @@ def save_checkpoint(
             #        torch.save(checkpoint, f)
             with gzip.open(checkpoint_dir / f"{checkpoint_name}.pt.gz", "wb") as f:
                 torch.save(checkpoint, f)
+
     if executor is not None:
         return executor.submit(saveit)
     else:
@@ -117,10 +126,10 @@ def save_checkpoint(
 def load_checkpoint(checkpoint_path: Path) -> Checkpoint:
     ext = checkpoint_path.suffix
     if ext == ".pt":
-        checkpoint = torch.load(str(checkpoint_path), map_location=torch.device('cpu'))
+        checkpoint = torch.load(str(checkpoint_path), map_location=torch.device("cpu"))
     elif ext == ".gz":
         with gzip.open(checkpoint_path, "rb") as f:
-            checkpoint = torch.load(f, map_location=torch.device('cpu'))
+            checkpoint = torch.load(f, map_location=torch.device("cpu"))
     elif ext == ".zip":
         with zipfile.ZipFile(checkpoint_path, "r", allowZip64=True) as z:
             checkpoint_unzipped_name = z.namelist()[0]
@@ -133,13 +142,15 @@ def load_checkpoint(checkpoint_path: Path) -> Checkpoint:
         )
 
     # If the ExecutionParams contains device instead of devices, update it to fit the new naming
-    if hasattr(checkpoint['execution_params'], 'device'):
-        checkpoint['execution_params'].devices = checkpoint['execution_params'].device  # it's a list of strings so this is a full copy
-        del checkpoint['execution_params'].device
+    if hasattr(checkpoint["execution_params"], "device"):
+        checkpoint["execution_params"].devices = checkpoint[
+            "execution_params"
+        ].device  # it's a list of strings so this is a full copy
+        del checkpoint["execution_params"].device
 
     # If the checkpoint contained a replay buffer, ignore it
-    if 'replay_buffer' in checkpoint:
-        del checkpoint['replay_buffer']
+    if "replay_buffer" in checkpoint:
+        del checkpoint["replay_buffer"]
 
     return checkpoint
 
@@ -164,7 +175,7 @@ def gen_checkpoints(
             for checkpoint_path in glob.glob(f"{checkpoint_basepath}*")
         ]
         new_epoch_list = {
-            int(checkpoint_path_no_ext[len(checkpoint_basepath):])
+            int(checkpoint_path_no_ext[len(checkpoint_basepath) :])
             for checkpoint_path_no_ext in checkpoint_path_list_no_ext
         }
         if not checkpoint_ext_detected and new_epoch_list:

@@ -139,7 +139,7 @@ class AmazonsModel(torch.jit.ScriptModule):
         v: torch.Tensor,
         pi: torch.Tensor,
         pi_mask: torch.Tensor,
-        stat: utils.MultiCounter
+        stat: utils.MultiCounter,
     ) -> float:
         # print(x.size())
         # print(x[0])

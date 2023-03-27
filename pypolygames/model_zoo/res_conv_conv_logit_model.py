@@ -139,7 +139,9 @@ class ResConvConvLogitModel(torch.jit.ScriptModule):
             resnet_list.append(nets)
         if bn or bn_affine:
             mono.append(
-                nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine),
+                nn.BatchNorm2d(
+                    int(nnsize * c), track_running_stats=True, affine=bn_affine
+                ),
             )
             for i in range(nb_nets):
                 for j in range(nb_layers_per_net):
@@ -155,7 +157,12 @@ class ResConvConvLogitModel(torch.jit.ScriptModule):
         self.resnets = nn.ModuleList(resnet_list)
         self.v = nn.Linear(int(nnsize * c) * h * w, 1)
         self.pi_logit = nn.Conv2d(
-            int(nnsize * c), c_prime, nnks, stride=stride, padding=padding, dilation=dilation
+            int(nnsize * c),
+            c_prime,
+            nnks,
+            stride=stride,
+            padding=padding,
+            dilation=dilation,
         )
 
     @torch.jit.script_method

@@ -95,16 +95,15 @@ class ResConvConvLogitPoolModelV2(torch.jit.ScriptModule):
         bn_affine = bn
         self.model_params = model_params
 
-
         self.global_pooling = model_params.global_pooling
         if model_params.activation_function == "relu":
-          self.af = F.relu
+            self.af = F.relu
         elif model_params.activation_function == "gelu":
-          self.af = F.gelu
+            self.af = F.gelu
         elif model_params.activation_function == "celu":
-          self.af = F.celu
+            self.af = F.celu
         else:
-          raise RuntimeError("Unknown activation function")
+            raise RuntimeError("Unknown activation function")
         batchnorm_momentum = model_params.batchnorm_momentum
 
         self.predict_end_state = game_params.predict_end_state
@@ -131,7 +130,8 @@ class ResConvConvLogitPoolModelV2(torch.jit.ScriptModule):
         for i in range(nb_nets):
             nets = [
                 nn.Conv2d(
-                    int(nnsize * c) + int(nnsize * c * (self.global_pooling if _ == 0 else 0)) * 2,
+                    int(nnsize * c)
+                    + int(nnsize * c * (self.global_pooling if _ == 0 else 0)) * 2,
                     int(nnsize * c),
                     nnks,
                     stride=stride,
@@ -146,7 +146,10 @@ class ResConvConvLogitPoolModelV2(torch.jit.ScriptModule):
                     nets[j] = nn.Sequential(
                         nets[j],
                         nn.BatchNorm2d(
-                            int(nnsize * c), track_running_stats=True, affine=bn_affine, momentum=batchnorm_momentum
+                            int(nnsize * c),
+                            track_running_stats=True,
+                            affine=bn_affine,
+                            momentum=batchnorm_momentum,
                         ),
                     )
             if pooling:
@@ -163,7 +166,12 @@ class ResConvConvLogitPoolModelV2(torch.jit.ScriptModule):
             resnet_list.append(nets)
         if bn or bn_affine:
             mono.append(
-                nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine, momentum=batchnorm_momentum),
+                nn.BatchNorm2d(
+                    int(nnsize * c),
+                    track_running_stats=True,
+                    affine=bn_affine,
+                    momentum=batchnorm_momentum,
+                ),
             )
         for i in range(nb_nets):
             resnet_list[i] = nn.ModuleList(resnet_list[i])
@@ -172,14 +180,24 @@ class ResConvConvLogitPoolModelV2(torch.jit.ScriptModule):
         self.v = nn.Linear(2 * int(nnsize * c), 2 * int(nnsize * c))
         self.v2 = nn.Linear(2 * int(nnsize * c), 1)
         self.pi_logit = nn.Conv2d(
-            int(nnsize * c), c_prime, nnks, stride=stride, padding=padding, dilation=dilation
+            int(nnsize * c),
+            c_prime,
+            nnks,
+            stride=stride,
+            padding=padding,
+            dilation=dilation,
         )
         if self.predicts > 0:
-          self.predict_pi_logit = nn.Conv2d(
-              int(nnsize * c), r_c * self.predicts, nnks, stride=stride, padding=padding, dilation=dilation
-          )
+            self.predict_pi_logit = nn.Conv2d(
+                int(nnsize * c),
+                r_c * self.predicts,
+                nnks,
+                stride=stride,
+                padding=padding,
+                dilation=dilation,
+            )
         else:
-          self.predict_pi_logit = None
+            self.predict_pi_logit = None
 
     @torch.jit.script_method
     def _forward(self, x: torch.Tensor, return_logit: bool):
@@ -191,7 +209,14 @@ class ResConvConvLogitPoolModelV2(torch.jit.ScriptModule):
             h = previous_block
             if global_pooling > 0:
                 hpart = h.narrow(1, 0, int(h.size(1) * global_pooling))
-                h = torch.cat((h, F.adaptive_max_pool2d(hpart, 1).expand_as(hpart), F.adaptive_avg_pool2d(hpart, 1).expand_as(hpart)), 1)
+                h = torch.cat(
+                    (
+                        h,
+                        F.adaptive_max_pool2d(hpart, 1).expand_as(hpart),
+                        F.adaptive_avg_pool2d(hpart, 1).expand_as(hpart),
+                    ),
+                    1,
+                )
             h = af(h)  # initial activation
             for net in resnet:
                 if sublayer_no < self.nb_layers_per_net - 1:

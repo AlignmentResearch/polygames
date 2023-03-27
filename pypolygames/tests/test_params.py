@@ -34,7 +34,9 @@ def test_dataclass(cls):
             ), f"Field default do not match class one for {key}"
     field_keys = set(argfields)
     cls_attrs = set(
-        asdict(cls() if cls != params.EvalParams else cls(checkpoint_dir=Path("blublu")))
+        asdict(
+            cls() if cls != params.EvalParams else cls(checkpoint_dir=Path("blublu"))
+        )
     )
     additional = field_keys - cls_attrs
     missing = cls_attrs - field_keys

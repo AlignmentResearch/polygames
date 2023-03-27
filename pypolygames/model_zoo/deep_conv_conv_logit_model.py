@@ -77,7 +77,7 @@ class DeepConvConvLogitModel(torch.jit.ScriptModule):
         # bn_affine = model_params.bn_affine
         bn_affine = bn
         self.model_params = model_params
-        
+
         mono = [
             nn.Conv2d(
                 c,
@@ -114,7 +114,9 @@ class DeepConvConvLogitModel(torch.jit.ScriptModule):
                 )
         if bn or bn_affine:
             mono.append(
-                nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine)
+                nn.BatchNorm2d(
+                    int(nnsize * c), track_running_stats=True, affine=bn_affine
+                )
             )
             for i in range(nb_nets):
                 conv_nets[i] = nn.Sequential(
@@ -127,7 +129,12 @@ class DeepConvConvLogitModel(torch.jit.ScriptModule):
         self.conv_nets = nn.ModuleList(conv_nets)
         self.v = nn.Linear(int(nnsize * c) * h * w, 1)
         self.pi_logit = nn.Conv2d(
-            int(nnsize * c), c_prime, nnks, stride=stride, padding=padding, dilation=dilation
+            int(nnsize * c),
+            c_prime,
+            nnks,
+            stride=stride,
+            padding=padding,
+            dilation=dilation,
         )
 
     @torch.jit.script_method
@@ -151,4 +158,3 @@ class DeepConvConvLogitModel(torch.jit.ScriptModule):
         pi = pi.view(-1, self.c_prime, self.h_prime, self.w_prime)
         reply = {"v": v, "pi": pi}
         return reply
-

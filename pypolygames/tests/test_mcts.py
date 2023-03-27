@@ -46,7 +46,9 @@ def test_mcts(game_name) -> None:
     if "astermind" in game_name and "4_4_6" not in game_name:
         raise SkipTest(f"Skipping {game_name}")
     if "WeakSchur" in game_name:
-        raise SkipTest(f"Skipping {game_name} (currently aborts when finished, which kills the CI)")
+        raise SkipTest(
+            f"Skipping {game_name} (currently aborts when finished, which kills the CI)"
+        )
     print("Testing", game_name)
     # for allowing some tolerance to winning all games with larger rollouts, add here:
     tolerance = {
@@ -77,7 +79,9 @@ def test_mcts(game_name) -> None:
     eval_params = params.EvalParams(
         num_game_eval=10,
         device_eval="cpu",
-        checkpoint_dir=Path("mock/path"),  # this should not be *required* here! no network
+        checkpoint_dir=Path(
+            "mock/path"
+        ),  # this should not be *required* here! no network
         num_rollouts_eval=rollouts[0],
         num_rollouts_opponent=rollouts[1],
     )  # device eval is actually not used
@@ -103,5 +107,7 @@ def test_mcts(game_name) -> None:
     expected = 0 if case else eval_params.num_game_eval
     msg = f"Wrong score for random case {case}, expected {expected} with tol {tolerance} but got {score}."
     if is_one_player_game or game_name in too_bad:
-        raise SkipTest(f"Skipping evaluation of {game_name} (not very good, or one player)")
+        raise SkipTest(
+            f"Skipping evaluation of {game_name} (not very good, or one player)"
+        )
     assert abs(score - expected) <= tolerance, msg

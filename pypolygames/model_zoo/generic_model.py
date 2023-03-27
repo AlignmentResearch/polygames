@@ -129,16 +129,24 @@ class GenericModel(torch.jit.ScriptModule):
         pi2 = [nn.Linear(fcsize, fcsize)]
         if bn or bn_affine:
             net1.append(
-                nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine)
+                nn.BatchNorm2d(
+                    int(nnsize * c), track_running_stats=True, affine=bn_affine
+                )
             )
             net2.append(
-                nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine)
+                nn.BatchNorm2d(
+                    int(nnsize * c), track_running_stats=True, affine=bn_affine
+                )
             )
             net3.append(
-                nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine)
+                nn.BatchNorm2d(
+                    int(nnsize * c), track_running_stats=True, affine=bn_affine
+                )
             )
             net4.append(
-                nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine)
+                nn.BatchNorm2d(
+                    int(nnsize * c), track_running_stats=True, affine=bn_affine
+                )
             )
             v1.append(
                 nn.BatchNorm1d(fcsize, track_running_stats=True, affine=bn_affine)

@@ -65,7 +65,7 @@ def create_checkpoint_iter(eval_params: EvalParams, only_last: bool = False):
 
 
 def create_models_and_devices_opponent(
-    eval_params: EvalParams
+    eval_params: EvalParams,
 ) -> Tuple[List[torch.jit.ScriptModule], List[torch.device], GameParams]:
     devices_opponent = [
         torch.device(device_opponent) for device_opponent in eval_params.device_opponent
@@ -84,10 +84,10 @@ def create_models_and_devices_opponent(
         ).to(device_opponent)
         remove = []
         for k, v in model_state_dict_opponent.items():
-          if "training" in k:
-            remove.append(k)
+            if "training" in k:
+                remove.append(k)
         for k in remove:
-          model_state_dict_opponent.pop(k)
+            model_state_dict_opponent.pop(k)
         model_opponent.load_state_dict(model_state_dict_opponent)
         model_opponent.eval()
         models_opponent.append(model_opponent)
@@ -106,7 +106,7 @@ def create_evaluation_environment(
     current_batch_size: int = None,
     pure_mcts_eval: bool = False,
     pure_mcts_opponent: bool = True,
-    num_evaluated_games: int = 0
+    num_evaluated_games: int = 0,
 ) -> Tuple[
     tube.Context,
     Optional[tube.DataChannel],
@@ -196,6 +196,7 @@ def create_evaluation_environment(
 
 def player_moves_first(game_id, num_games_eval):
     return game_id < num_games_eval // 2
+
 
 #######################################################################################
 # EVALUATION
@@ -377,7 +378,9 @@ def evaluate_on_checkpoint(
 #######################################################################################
 
 
-def run_evaluation(eval_params: EvalParams, execution_params: ExecutionParams, only_last: bool = False) -> None:
+def run_evaluation(
+    eval_params: EvalParams, execution_params: ExecutionParams, only_last: bool = False
+) -> None:
     start_time = time.time()
     logger_dir = eval_params.checkpoint_dir
     if eval_params.checkpoint_dir is None:
@@ -464,12 +467,22 @@ def run_evaluation(eval_params: EvalParams, execution_params: ExecutionParams, o
         num_evaluated_games = 0
         rewards = []
 
-        eval_batch_size = eval_params.num_parallel_games_eval if eval_params.num_parallel_games_eval else eval_params.num_game_eval
-        print("evaluating {} games with batches of size {}".format(eval_params.num_game_eval, eval_batch_size))
+        eval_batch_size = (
+            eval_params.num_parallel_games_eval
+            if eval_params.num_parallel_games_eval
+            else eval_params.num_game_eval
+        )
+        print(
+            "evaluating {} games with batches of size {}".format(
+                eval_params.num_game_eval, eval_batch_size
+            )
+        )
         while num_evaluated_games < eval_params.num_game_eval:
             if eval_params.eval_verbosity:
                 print("creating evaluation environment...")
-            current_batch_size = min(eval_batch_size, eval_params.num_game_eval - num_evaluated_games)
+            current_batch_size = min(
+                eval_batch_size, eval_params.num_game_eval - num_evaluated_games
+            )
             (
                 context,
                 actor_channel_eval,
