@@ -143,13 +143,18 @@ jobs:
 
       #- checkout
       - run:
-          name: Ls files
+          name: MD5 files
           command: |
-            md5sum src/tube/src_cpp/data_channel.cc
-            ls -lh src/tube/src_cpp/data_channel.cc
-            md5sum build/src/tube/CMakeFiles/_tube.dir/src_cpp/data_channel.cc.o
-            ls -lh build/src/tube/CMakeFiles/_tube.dir/src_cpp/data_channel.cc.o
+            md5sum build/src/third_party/fmt/CMakeFiles/fmt.dir/flags.make
+            md5sum build/src/CMakeFiles/_games.dir/flags.make
+            md5sum build/src/CMakeFiles/_zstd.dir/flags.make
       - build-polygames
+      - run:
+          name: MD5 files
+          command: |
+            md5sum build/src/third_party/fmt/CMakeFiles/fmt.dir/flags.make
+            md5sum build/src/CMakeFiles/_games.dir/flags.make
+            md5sum build/src/CMakeFiles/_zstd.dir/flags.make
       - run:
           name: Test games
           command: |
