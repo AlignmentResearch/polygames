@@ -47,7 +47,7 @@ jobs:
           password: "$GHCR_DOCKER_TOKEN"
     resource_class: large  # Needs to be large to have enough RAM
     steps:
-      - run: .circleci/checkout-without-force.sh
+      - run: "${HOME}/project/.circleci/checkout-without-force.sh"
       - run: git submodule sync
       - run: git submodule update --init
 
