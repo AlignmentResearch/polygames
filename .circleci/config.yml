@@ -47,7 +47,17 @@ jobs:
           password: "$GHCR_DOCKER_TOKEN"
     resource_class: large  # Needs to be large to have enough RAM
     steps:
+      - run:
+          name: Ls files
+          command: |
+            ls -lh src/tube/src_cpp/data_channel.cc
+            ls -lh build/src/tube/CMakeFiles/_tube.dir/src_cpp/data_channel.cc.o
       - checkout
+      - run:
+          name: Ls files
+          command: |
+            ls -lh src/tube/src_cpp/data_channel.cc
+            ls -lh build/src/tube/CMakeFiles/_tube.dir/src_cpp/data_channel.cc.o
       - build-polygames
       - run:
           name: Test games
