@@ -50,13 +50,17 @@ jobs:
       - run:
           name: Ls files
           command: |
+            md5sum src/tube/src_cpp/data_channel.cc
             ls -lh src/tube/src_cpp/data_channel.cc
+            md5sum build/src/tube/CMakeFiles/_tube.dir/src_cpp/data_channel.cc.o
             ls -lh build/src/tube/CMakeFiles/_tube.dir/src_cpp/data_channel.cc.o
       - checkout
       - run:
           name: Ls files
           command: |
+            md5sum src/tube/src_cpp/data_channel.cc
             ls -lh src/tube/src_cpp/data_channel.cc
+            md5sum build/src/tube/CMakeFiles/_tube.dir/src_cpp/data_channel.cc.o
             ls -lh build/src/tube/CMakeFiles/_tube.dir/src_cpp/data_channel.cc.o
       - build-polygames
       - run:
