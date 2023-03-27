@@ -1,3 +1,3 @@
 [tool.black]
 line-length = 120
-exclude = "src/third_party"
+exclude = "src/third_party|_deps|build"
