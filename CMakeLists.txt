@@ -74,6 +74,15 @@ endif()
 message(STATUS "Adding PyTorch compilation flags: ${TORCH_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
+# Add targets for checking the format of files
+include(FetchContent)
+FetchContent_Declare(
+  Format.cmake
+  GIT_REPOSITORY https://github.com/TheLartians/Format.cmake.git
+  GIT_TAG        d87964c97ca3d1584cf2716619d8aaf159d8e4ff
+)
+FetchContent_MakeAvailable(Format.cmake)
+
 include_directories(src/third_party/pybind11/include/)
 add_subdirectory(src)
 add_subdirectory(tests)
