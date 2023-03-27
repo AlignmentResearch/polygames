@@ -128,7 +128,7 @@ jobs:
               git reset --hard "$CIRCLE_SHA1"
             else
               echo 'Checking out branch'
-              git checkout --force -B "$CIRCLE_BRANCH" "$CIRCLE_SHA1"
+              git checkout -B "$CIRCLE_BRANCH" "$CIRCLE_SHA1"
               md5sum src/tube/src_cpp/data_channel.cc
               ls -lh src/tube/src_cpp/data_channel.cc
               md5sum build/src/tube/CMakeFiles/_tube.dir/src_cpp/data_channel.cc.o
