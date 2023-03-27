@@ -9,6 +9,17 @@ namespace threads {
 std::unique_ptr<Threads> Threads::instance = nullptr;
 
 void Threads::init(size_t nThreads) {
+    if (nThreads <= 0) {
+      nThreads = std::thread::hardware_concurrency();
+      if (nThreads <= 0) {
+        throw std::runtime_error("Could not automatically determine the "
+                                  "number of hardware threads :(");
+      }
+      std::cout << "Starting " << nThreads << "threads (automatically configured)" << std::endl;
+    } else {
+      std::cout << "Starting " << nThreads << "threads" << std::endl;
+    }
+
     if (!instance) {
         // using new is a bit bad, but unique_ptr cannot call the private constructor.
         instance = std::unique_ptr<Threads>(new Threads(nThreads));
@@ -29,22 +40,9 @@ Threads& Threads::inst() {
 }
 
 
-Threads::Threads(size_t nThreads) : numThreads(0), threads(0), functionQueue(0) {
-    if (nThreads <= 0) {
-      nThreads = std::thread::hardware_concurrency();
-      if (nThreads <= 0) {
-        throw std::runtime_error("Could not automatically determine the "
-                                  "number of hardware threads :(");
-      }
-      std::cout << "Starting " << nThreads << "threads (automatically configured)" << std::endl;
-    } else {
-      std::cout << "Starting " << nThreads << "threads" << std::endl;
-    }
-
-    numThreads = nThreads;
+Threads::Threads(size_t nThreads) : numThreads(nThreads), threads(nThreads), functionQueue(nThreads) {
     for (size_t i = 0; i < numThreads; i++) {
-        threads.push_back(std::thread(&Threads::threadLoop, this, i));
-        functionQueue.emplace_back();
+        threads.at(i) = std::thread(&Threads::threadLoop, this, i);
     }
 }
 
