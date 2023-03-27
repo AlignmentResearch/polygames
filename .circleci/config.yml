@@ -8,7 +8,7 @@ parameters:
 
   docker_img_version:
     type: string
-    default: "0.3"
+    default: "0.4"
 
 workflows:
   test-jobs:
@@ -35,7 +35,7 @@ commands:
           name: Build Polygames in debug
           command: |
             cd build
-            CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=debug -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF
+            CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=debug -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF -DUSE_MOLD=ON
             make -j
 
 jobs:
@@ -66,7 +66,6 @@ jobs:
       - run:
           name: Test python
           command: |
-              pip install -r .circleci/requirements.txt
               pytest pypolygames --durations=10 --verbose
       - run:
           name: Run training
