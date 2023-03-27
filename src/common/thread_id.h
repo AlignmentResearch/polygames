@@ -1,5 +1,3 @@
-
 namespace common {
-
 int getThreadId();
 }

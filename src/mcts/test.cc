@@ -10,6 +10,7 @@
 #include "mcts.h"
 #include "types.h"
 #include "utils.h"
+#include "common/threads.h"
 
 #include <algorithm>
 #include <atomic>
@@ -57,12 +58,14 @@ int main(int argc, char* argv[]) {
   option.virtualLoss = 1.0;
   std::vector<std::unique_ptr<MctsPlayer>> players;
 
-  for (int i = 0; i < 2; ++i) {
+  size_t n_threads = std::stoi(std::string(argv[1]));
+  for (size_t i = 0; i < 2; ++i) {
     players.push_back(std::make_unique<MctsPlayer>(option));
-    for (int j = 0; j < std::stoi(std::string(argv[1])); ++j) {
+    for (size_t j = 0; j < n_threads; ++j) {
       players.at(i)->setActor(std::make_shared<TestActor>());
     }
   }
+  threads::Threads::init(n_threads);
 
   int i = 0;
   while (!state.terminated()) {

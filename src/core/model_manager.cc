@@ -1,7 +1,6 @@
 
 #include "model_manager.h"
 
-#include "common/async.h"
 #include "common/thread_id.h"
 #include "distributed/distributed.h"
 #include "distributed/rpc.h"
