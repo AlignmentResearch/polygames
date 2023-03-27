@@ -50,9 +50,7 @@ def test_models(model_name) -> None:
     if model_name in ["Connect4BenchModel", "ResConvConvLogitPoolModelV2"]:
         raise SkipTest(f"Skipping {model_name}")
     game_params = params.GameParams(
-        game_name="Tristannogo"
-        if "GameOfTheAmazons" not in model_name
-        else "GameOfTheAmazons"
+        game_name="Tristannogo" if "GameOfTheAmazons" not in model_name else "GameOfTheAmazons"
     )
     model_params = params.ModelParams(model_name=model_name)
     info = get_game_info(game_params)
@@ -68,6 +66,4 @@ def test_models(model_name) -> None:
     multi_counter = utils.MultiCounter(root=None)
     pi_mask = torch.ones(outputs["pi"].shape)
 
-    loss(
-        model, input_data, outputs["v"], outputs["pi"], pi_mask, multi_counter
-    )  # make sure it computes something
+    loss(model, input_data, outputs["v"], outputs["pi"], pi_mask, multi_counter)  # make sure it computes something

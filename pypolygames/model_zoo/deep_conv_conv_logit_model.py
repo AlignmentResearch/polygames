@@ -35,9 +35,7 @@ class DeepConvConvLogitModel(torch.jit.ScriptModule):
         self.game_params = game_params
         info = zutils.get_game_info(game_params)
         c, h, w = self.c, self.h, self.w = info["feature_size"][:3]
-        c_prime, h_prime, w_prime = self.c_prime, self.h_prime, self.w_prime = info[
-            "action_size"
-        ][:3]
+        c_prime, h_prime, w_prime = self.c_prime, self.h_prime, self.w_prime = info["action_size"][:3]
         if h_prime != h or w_prime != w:
             raise RuntimeError(
                 f'The game "{self.game_name}" is not eligible to a conv-computed logit '
@@ -113,17 +111,11 @@ class DeepConvConvLogitModel(torch.jit.ScriptModule):
                     ),
                 )
         if bn or bn_affine:
-            mono.append(
-                nn.BatchNorm2d(
-                    int(nnsize * c), track_running_stats=True, affine=bn_affine
-                )
-            )
+            mono.append(nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine))
             for i in range(nb_nets):
                 conv_nets[i] = nn.Sequential(
                     conv_nets[i],
-                    nn.BatchNorm2d(
-                        int(nnsize * c), track_running_stats=True, affine=bn_affine
-                    ),
+                    nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine),
                 )
         self.mono = nn.Sequential(*mono)
         self.conv_nets = nn.ModuleList(conv_nets)

@@ -33,9 +33,7 @@ class NanoConvLogitModel(torch.jit.ScriptModule):
         self.game_params = game_params
         info = zutils.get_game_info(game_params)
         c, h, w = self.c, self.h, self.w = info["feature_size"][:3]
-        c_prime, h_prime, w_prime = self.c_prime, self.h_prime, self.w_prime = info[
-            "action_size"
-        ][:3]
+        c_prime, h_prime, w_prime = self.c_prime, self.h_prime, self.w_prime = info["action_size"][:3]
         if h_prime != h or w_prime != w:
             raise RuntimeError(
                 f'The game "{self.game_name}" is not eligible to a conv-computed logit '
@@ -80,11 +78,7 @@ class NanoConvLogitModel(torch.jit.ScriptModule):
             )
         ]
         if bn or bn_affine:
-            net.append(
-                nn.BatchNorm2d(
-                    int(nnsize * c), track_running_stats=True, affine=bn_affine
-                )
-            )
+            net.append(nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine))
         self.net = nn.Sequential(*net)
         self.v = nn.Linear(int(nnsize * c) * h * w, 1)
         self.pi_logit = nn.Conv2d(

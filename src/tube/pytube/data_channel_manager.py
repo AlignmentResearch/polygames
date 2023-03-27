@@ -15,9 +15,7 @@ class DataChannelManager:
             self.channels[c.name] = c
 
         self.num_thread = num_thread if num_thread is not None else len(channels)
-        self.executor = concurrent.futures.ThreadPoolExecutor(
-            max_workers=self.num_thread
-        )
+        self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=self.num_thread)
 
         self.channels_waiting_reply = set()
         self.futures = []

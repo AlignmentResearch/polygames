@@ -47,9 +47,7 @@ class ResConvConvLogitPoolModelV2(torch.jit.ScriptModule):
         info = zutils.get_game_info(game_params)
         c, h, w = self.c, self.h, self.w = info["feature_size"][:3]
         r_c, r_h, r_w = info["raw_feature_size"]
-        c_prime, h_prime, w_prime = self.c_prime, self.h_prime, self.w_prime = info[
-            "action_size"
-        ][:3]
+        c_prime, h_prime, w_prime = self.c_prime, self.h_prime, self.w_prime = info["action_size"][:3]
         if h_prime != h or w_prime != w:
             raise RuntimeError(
                 f'The game "{self.game_name}" is not eligible to a conv-computed logit '
@@ -130,8 +128,7 @@ class ResConvConvLogitPoolModelV2(torch.jit.ScriptModule):
         for i in range(nb_nets):
             nets = [
                 nn.Conv2d(
-                    int(nnsize * c)
-                    + int(nnsize * c * (self.global_pooling if _ == 0 else 0)) * 2,
+                    int(nnsize * c) + int(nnsize * c * (self.global_pooling if _ == 0 else 0)) * 2,
                     int(nnsize * c),
                     nnks,
                     stride=stride,

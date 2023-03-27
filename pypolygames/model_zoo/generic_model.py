@@ -46,9 +46,7 @@ class GenericModel(torch.jit.ScriptModule):
         self.game_params = game_params
         info = zutils.get_game_info(game_params)
         c, h, w = self.c, self.h, self.w = info["feature_size"][:3]
-        c_prime, h_prime, w_prime = self.c_prime, self.h_prime, self.w_prime = info[
-            "action_size"
-        ][:3]
+        c_prime, h_prime, w_prime = self.c_prime, self.h_prime, self.w_prime = info["action_size"][:3]
 
         # fc size
         if model_params.fcsize is None:
@@ -128,38 +126,14 @@ class GenericModel(torch.jit.ScriptModule):
         pi1 = [nn.Linear(int(nnsize * c) * h * w, fcsize)]
         pi2 = [nn.Linear(fcsize, fcsize)]
         if bn or bn_affine:
-            net1.append(
-                nn.BatchNorm2d(
-                    int(nnsize * c), track_running_stats=True, affine=bn_affine
-                )
-            )
-            net2.append(
-                nn.BatchNorm2d(
-                    int(nnsize * c), track_running_stats=True, affine=bn_affine
-                )
-            )
-            net3.append(
-                nn.BatchNorm2d(
-                    int(nnsize * c), track_running_stats=True, affine=bn_affine
-                )
-            )
-            net4.append(
-                nn.BatchNorm2d(
-                    int(nnsize * c), track_running_stats=True, affine=bn_affine
-                )
-            )
-            v1.append(
-                nn.BatchNorm1d(fcsize, track_running_stats=True, affine=bn_affine)
-            )
-            v2.append(
-                nn.BatchNorm1d(fcsize, track_running_stats=True, affine=bn_affine)
-            )
-            pi1.append(
-                nn.BatchNorm1d(fcsize, track_running_stats=True, affine=bn_affine)
-            )
-            pi2.append(
-                nn.BatchNorm1d(fcsize, track_running_stats=True, affine=bn_affine)
-            )
+            net1.append(nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine))
+            net2.append(nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine))
+            net3.append(nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine))
+            net4.append(nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine))
+            v1.append(nn.BatchNorm1d(fcsize, track_running_stats=True, affine=bn_affine))
+            v2.append(nn.BatchNorm1d(fcsize, track_running_stats=True, affine=bn_affine))
+            pi1.append(nn.BatchNorm1d(fcsize, track_running_stats=True, affine=bn_affine))
+            pi2.append(nn.BatchNorm1d(fcsize, track_running_stats=True, affine=bn_affine))
         self.net1 = nn.Sequential(*net1)
         self.net2 = nn.Sequential(*net2)
         self.net3 = nn.Sequential(*net3)

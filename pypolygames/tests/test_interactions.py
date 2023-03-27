@@ -44,9 +44,7 @@ GAME_ACTIONS = {
 }
 
 
-@pytest.mark.parametrize(
-    "game_name", [game_name for game_name in listings.games(olympiads=True)]
-)
+@pytest.mark.parametrize("game_name", [game_name for game_name in listings.games(olympiads=True)])
 def test_game_interactions(game_name: str):
     raise SkipTest
     if game_name in ["Einstein", "DiceShogi"]:
@@ -109,15 +107,11 @@ def test_game_interactions(game_name: str):
     filepath.parent.mkdir(exist_ok=True)
     if not filepath.exists():
         filepath.write_text(all_text)
-        raise AssertionError(
-            "Logs were written, rerun once again to test reproducibility"
-        )
+        raise AssertionError("Logs were written, rerun once again to test reproducibility")
     expected = filepath.read_text()
     if all_text != expected:
         print("\n\n\nHERE IS THE DIFF:\n\n\n")
-        pprint(
-            list(difflib.Differ().compare(all_text.splitlines(), expected.splitlines()))
-        )
+        pprint(list(difflib.Differ().compare(all_text.splitlines(), expected.splitlines())))
         raise ValueError(
             f"String differ. If the new string is better, delete {filepath}\n"
             "and rerun twice (pytest pypolygames/tests/test_interactions)\n"

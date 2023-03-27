@@ -29,10 +29,7 @@ def mcts_loss(
     pred_logit = pred_logit * pi_mask - 400 * (1 - pi_mask)
     if predicts > 0:
         predict_pi_err = (
-            (
-                F.mse_loss(pred_predict_logit, predict_pi, reduction="none")
-                * predict_pi_mask
-            )
+            (F.mse_loss(pred_predict_logit, predict_pi, reduction="none") * predict_pi_mask)
             .flatten(2)
             .sum(2)
             .flatten(1)
@@ -40,10 +37,7 @@ def mcts_loss(
         )
 
     v_err = F.mse_loss(pred_v, v, reduction="none").squeeze(1)
-    pred_log_pi = (
-        nn.functional.log_softmax(pred_logit.flatten(1), dim=1).view_as(pred_logit)
-        * pi_mask
-    )
+    pred_log_pi = nn.functional.log_softmax(pred_logit.flatten(1), dim=1).view_as(pred_logit) * pi_mask
     pi_err = -(pred_log_pi * pi).sum(1)
 
     err = v_err * 1.5 + pi_err + (predict_pi_err * 0.1 if predicts > 0 else 0)

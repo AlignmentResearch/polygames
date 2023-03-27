@@ -40,9 +40,7 @@ def create_training_env(
     model_fname = game_name + "_model_latest.pt"
     training_env = TrainingEnvironment()
     with tempfile.TemporaryDirectory() as save_dir:
-        train_option, eval_option = ppg.workflow.set_up_options(
-            seed=seed, save_dir=save_dir, game_name=game_name
-        )
+        train_option, eval_option = ppg.workflow.set_up_options(seed=seed, save_dir=save_dir, game_name=game_name)
 
         model_fpath = os.path.join(save_dir, model_fname)
         model = ppg.workflow.create_model(game_name).to(model_device)

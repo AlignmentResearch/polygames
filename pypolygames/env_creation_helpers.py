@@ -75,19 +75,14 @@ def create_model(
 ) -> torch.jit.ScriptModule:
     if model_params.model_name is not None:
         if model_params.model_name in model_zoo.MODELS:
-            model = model_zoo.MODELS[model_params.model_name](
-                game_params=game_params, model_params=model_params
-            )
+            model = model_zoo.MODELS[model_params.model_name](game_params=game_params, model_params=model_params)
         else:
             raise RuntimeError(
-                f'The model "{model_params.model_name}" has not been implemented '
-                f'in the "model_zoo" package'
+                f'The model "{model_params.model_name}" has not been implemented ' f'in the "model_zoo" package'
             )
     else:
         print("creating a generic model")
-        model = model_zoo.GenericModel(
-            game_params=game_params, model_params=model_params
-        )
+        model = model_zoo.GenericModel(game_params=game_params, model_params=model_params)
     if resume_training:
         if model_state_dict is not None:
             print("load state dict!")
@@ -124,9 +119,7 @@ def _set_mcts_option(
     return mcts_option
 
 
-def _create_pure_mcts_player(
-    game: polygames.Game, mcts_option: mcts.MctsOption, num_actor: int
-) -> mcts.MctsPlayer:
+def _create_pure_mcts_player(game: polygames.Game, mcts_option: mcts.MctsOption, num_actor: int) -> mcts.MctsPlayer:
     """a player that uses only mcts + random rollout, no neural net"""
     player = mcts.MctsPlayer(mcts_option)
     for _ in range(num_actor):
@@ -228,9 +221,7 @@ def create_player(
             sampling_mcts=sampling_mcts,
         )
         if pure_mcts:
-            return _create_pure_mcts_player(
-                game=game, mcts_option=mcts_option, num_actor=num_actor
-            )
+            return _create_pure_mcts_player(game=game, mcts_option=mcts_option, num_actor=num_actor)
         else:
             return _create_neural_mcts_player(
                 game=game,

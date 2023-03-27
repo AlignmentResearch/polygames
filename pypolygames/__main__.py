@@ -49,18 +49,10 @@ This directory will be the `checkpoint_dir` directory used by evaluation to retr
 
 def _check_arg_consistency(args: argparse.Namespace) -> None:
     # Most of the consistency is done in the `__post_init__` methods in the params class
-    if (
-        args.command_history.last_command_contains("pure_mcts")
-        and getattr(args, "game_name", None) is None
-    ):
-        raise ValueError(
-            "In '--pure_mcts' the game must be specified with '--game_name'"
-        )
+    if args.command_history.last_command_contains("pure_mcts") and getattr(args, "game_name", None) is None:
+        raise ValueError("In '--pure_mcts' the game must be specified with '--game_name'")
     if args.command_history.last_command_contains("human"):
-        if (
-            getattr(args, "pure_mcts", None) is False
-            and getattr(args, "init_checkpoint", None) is None
-        ):
+        if getattr(args, "pure_mcts", None) is False and getattr(args, "init_checkpoint", None) is None:
             raise ValueError(
                 "The human player need to play either a '--pure_mcts' "
                 "or a '--init_checkpoint' neural network powered MCTS"
@@ -76,18 +68,12 @@ def _check_arg_consistency(args: argparse.Namespace) -> None:
     if args.command_history.last_command_contains(
         "per_thread_batchsize"
     ) and args.command_history.last_command_contains("act_batchsize"):
-        raise ValueError(
-            "When '--per_thread_batchsize' is set, '--act_batchsize' is not used"
-        )
+        raise ValueError("When '--per_thread_batchsize' is set, '--act_batchsize' is not used")
 
-    if (
-        getattr(args, "total_time", 0) is not None
-        and getattr(args, "total_time", 0) > 0
-    ):
+    if getattr(args, "total_time", 0) is not None and getattr(args, "total_time", 0) > 0:
         if args.command_history.last_command_contains("num_rollouts"):
             raise ValueError(
-                "When a '--total_time' is set, "
-                "the '--num_rollouts' will adapt automatically and should not be set"
+                "When a '--total_time' is set, " "the '--num_rollouts' will adapt automatically and should not be set"
             )
 
 
@@ -99,9 +85,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.set_defaults(func=run_training_and_evaluation_from_args_warning)
 
-    subparsers = parser.add_subparsers(
-        help="Modes to be chosen from: `python -m pypolygames MODE`"
-    )
+    subparsers = parser.add_subparsers(help="Modes to be chosen from: `python -m pypolygames MODE`")
 
     # TRAINING
     parser_train = subparsers.add_parser("train")
@@ -194,15 +178,12 @@ def parse_args() -> argparse.Namespace:
     )
     human_game_params_group = parser_human.add_argument_group(
         "Game parameters",
-        "Mandatory for pure MTCS, "
-        "but not to be specified in case of loading a pretrained model",
+        "Mandatory for pure MTCS, " "but not to be specified in case of loading a pretrained model",
     )
     for arg_name, arg_field in GameParams.arg_fields():
         train_game_params_group.add_argument(arg_field.name, **arg_field.opts)
         traineval_game_params_group.add_argument(arg_field.name, **arg_field.opts)
-        game_params_group.add_argument(
-            arg_field.name, **{**arg_field.opts, **dict(help=argparse.SUPPRESS)}
-        )
+        game_params_group.add_argument(arg_field.name, **{**arg_field.opts, **dict(help=argparse.SUPPRESS)})
         human_game_params_group.add_argument(arg_field.name, **arg_field.opts)
         parser_convert.add_argument(arg_field.name, **arg_field.opts)
         parser_draw_model.add_argument(arg_field.name, **arg_field.opts)
@@ -219,16 +200,13 @@ def parse_args() -> argparse.Namespace:
     model_params_group = parser.add_argument_group("Model parameters")
     human_model_params_group = parser_human.add_argument_group(
         "Model parameters",
-        "The machine model can be either a '--pure_mcts' or "
-        "a '--init_checkpoint' neural network powered MCTS",
+        "The machine model can be either a '--pure_mcts' or " "a '--init_checkpoint' neural network powered MCTS",
     )
     for arg_name, arg_field in ModelParams.arg_fields():
         if arg_name != "pure_mcts":
             train_model_params_group.add_argument(arg_field.name, **arg_field.opts)
             traineval_model_params_group.add_argument(arg_field.name, **arg_field.opts)
-            model_params_group.add_argument(
-                arg_field.name, **{**arg_field.opts, **dict(help=argparse.SUPPRESS)}
-            )
+            model_params_group.add_argument(arg_field.name, **{**arg_field.opts, **dict(help=argparse.SUPPRESS)})
         if arg_name in {"pure_mcts", "init_checkpoint"}:
             human_model_params_group.add_argument(arg_field.name, **arg_field.opts)
         if arg_name != "pure_mcts":
@@ -237,28 +215,18 @@ def parse_args() -> argparse.Namespace:
 
     # Optimizer params
     train_optim_params_group = parser_train.add_argument_group("Optimizer parameters")
-    traineval_optim_params_group = parser_traineval.add_argument_group(
-        "Optimizer parameters"
-    )
+    traineval_optim_params_group = parser_traineval.add_argument_group("Optimizer parameters")
     optim_params_group = parser.add_argument_group("Optimizer parameters")
     for _, arg_field in OptimParams.arg_fields():
         train_optim_params_group.add_argument(arg_field.name, **arg_field.opts)
         traineval_optim_params_group.add_argument(arg_field.name, **arg_field.opts)
-        optim_params_group.add_argument(
-            arg_field.name, **{**arg_field.opts, **dict(help=argparse.SUPPRESS)}
-        )
+        optim_params_group.add_argument(arg_field.name, **{**arg_field.opts, **dict(help=argparse.SUPPRESS)})
 
     # Simulation params
-    train_simulation_params_group = parser_train.add_argument_group(
-        "Simulation parameters"
-    )
-    traineval_simulation_params_group = parser_traineval.add_argument_group(
-        "Simulation parameters"
-    )
+    train_simulation_params_group = parser_train.add_argument_group("Simulation parameters")
+    traineval_simulation_params_group = parser_traineval.add_argument_group("Simulation parameters")
     simulation_params_group = parser.add_argument_group("Simulation parameters")
-    human_simulation_params_group = parser_human.add_argument_group(
-        "Simulation parameters"
-    )
+    human_simulation_params_group = parser_human.add_argument_group("Simulation parameters")
     for arg_name, arg_field in SimulationParams.arg_fields():
         if arg_name not in {
             "human_first",
@@ -266,52 +234,34 @@ def parse_args() -> argparse.Namespace:
             "total_time",
         }:  # , "num_actor"}:
             train_simulation_params_group.add_argument(arg_field.name, **arg_field.opts)
-            traineval_simulation_params_group.add_argument(
-                arg_field.name, **arg_field.opts
-            )
-            simulation_params_group.add_argument(
-                arg_field.name, **{**arg_field.opts, **dict(help=argparse.SUPPRESS)}
-            )
+            traineval_simulation_params_group.add_argument(arg_field.name, **arg_field.opts)
+            simulation_params_group.add_argument(arg_field.name, **{**arg_field.opts, **dict(help=argparse.SUPPRESS)})
         # if arg_name in {"num_actor", "num_rollouts"}:
         if True:
             human_simulation_params_group.add_argument(arg_field.name, **arg_field.opts)
 
     # Execution params
-    train_execution_params_group = parser_train.add_argument_group(
-        "Execution parameters"
-    )
-    traineval_execution_params_group = parser_traineval.add_argument_group(
-        "Execution parameters"
-    )
-    human_execution_params_group = parser_human.add_argument_group(
-        "Execution parameters"
-    )
+    train_execution_params_group = parser_train.add_argument_group("Execution parameters")
+    traineval_execution_params_group = parser_traineval.add_argument_group("Execution parameters")
+    human_execution_params_group = parser_human.add_argument_group("Execution parameters")
     execution_params_group = parser.add_argument_group("Execution parameters")
     for arg_name, arg_field in ExecutionParams.arg_fields():
         if arg_name not in {"human_first", "time_ratio", "total_time"}:
             train_execution_params_group.add_argument(arg_field.name, **arg_field.opts)
-            traineval_execution_params_group.add_argument(
-                arg_field.name, **arg_field.opts
-            )
-            execution_params_group.add_argument(
-                arg_field.name, **{**arg_field.opts, **dict(help=argparse.SUPPRESS)}
-            )
+            traineval_execution_params_group.add_argument(arg_field.name, **arg_field.opts)
+            execution_params_group.add_argument(arg_field.name, **{**arg_field.opts, **dict(help=argparse.SUPPRESS)})
         if arg_name in {"human_first", "time_ratio", "total_time", "device", "seed"}:
             human_execution_params_group.add_argument(arg_field.name, **arg_field.opts)
 
     # Evaluation params
     eval_eval_params_group = parser_eval.add_argument_group("Evaluation parameters")
-    traineval_eval_params_group = parser_traineval.add_argument_group(
-        "Evaluation parameters"
-    )
+    traineval_eval_params_group = parser_traineval.add_argument_group("Evaluation parameters")
     eval_params_group = parser.add_argument_group("Evaluation parameters")
     for arg_name, arg_field in EvalParams.arg_fields():
         eval_eval_params_group.add_argument(arg_field.name, **arg_field.opts)
         if arg_name not in {"checkpoint_dir", "checkpoint"}:
             traineval_eval_params_group.add_argument(arg_field.name, **arg_field.opts)
-            eval_params_group.add_argument(
-                arg_field.name, **{**arg_field.opts, **dict(help=argparse.SUPPRESS)}
-            )
+            eval_params_group.add_argument(arg_field.name, **{**arg_field.opts, **dict(help=argparse.SUPPRESS)})
 
     args = parser.parse_args()
     args.command_history = CommandHistory()
@@ -340,21 +290,15 @@ def update_and_create_checkpoint_dir(
         model_name = model_params.model_name
         game_features = _get_game_features(game_params)
         timestamp = _get_timestamp()
-        subfolder = (
-            f"game_{game_name}_model_{model_name}_feat_{game_features}_GMT_{timestamp}"
-        )
+        subfolder = f"game_{game_name}_model_{model_name}_feat_{game_features}_GMT_{timestamp}"
         execution_params.checkpoint_dir = Path("exps").absolute() / "dev" / subfolder
     execution_params.checkpoint_dir.mkdir(exist_ok=True, parents=True)
 
 
 def instanciate_params_from_args(
     Dataclass, args: argparse.Namespace
-) -> Union[
-    GameParams, ModelParams, OptimParams, SimulationParams, ExecutionParams, EvalParams
-]:
-    return Dataclass(
-        **{param: getattr(args, param, None) for param, _ in Dataclass.arg_fields()}
-    )
+) -> Union[GameParams, ModelParams, OptimParams, SimulationParams, ExecutionParams, EvalParams]:
+    return Dataclass(**{param: getattr(args, param, None) for param, _ in Dataclass.arg_fields()})
 
 
 def run_training_from_args(args: argparse.Namespace):

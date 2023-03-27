@@ -42,9 +42,7 @@ def create_optimizer(
     optim_params: OptimParams,
     optim_state_dict: Optional[dict] = None,
 ) -> torch.optim.Optimizer:
-    optim = torch.optim.Adam(
-        model.parameters(), lr=optim_params.lr, eps=optim_params.eps
-    )
+    optim = torch.optim.Adam(model.parameters(), lr=optim_params.lr, eps=optim_params.eps)
     if optim_state_dict is not None and not optim_params.reset_optimizer_state:
         try:
             optim.load_state_dict(optim_state_dict)
@@ -139,12 +137,8 @@ def create_training_environment(
             simulation_params.train_channel_timeout_ms,
             simulation_params.train_channel_num_slots,
         )
-        model_manager_opponent.set_find_batch_size_max_bs(
-            simulation_params.bsfinder_max_bs
-        )
-        model_manager_opponent.set_find_batch_size_max_ms(
-            simulation_params.bsfinder_max_ms
-        )
+        model_manager_opponent.set_find_batch_size_max_bs(simulation_params.bsfinder_max_bs)
+        model_manager_opponent.set_find_batch_size_max_ms(simulation_params.bsfinder_max_ms)
         print("tournament_mode is " + str(execution_params.tournament_mode))
         if execution_params.tournament_mode:
             model_manager_opponent.set_is_tournament_opponent(True)
@@ -205,15 +199,9 @@ def create_training_environment(
                     sample_before_step_idx=simulation_params.sample_before_step_idx,
                     randomized_rollouts=simulation_params.randomized_rollouts,
                     sampling_mcts=simulation_params.sampling_mcts,
-                    rnn_state_shape=op_rnn_state_shape
-                    if op_rnn_state_shape is not None
-                    else rnn_state_shape,
-                    rnn_seqlen=op_rnn_seqlen
-                    if op_rnn_seqlen is not None
-                    else execution_params.rnn_seqlen,
-                    logit_value=op_logit_value
-                    if op_logit_value is not None
-                    else logit_value,
+                    rnn_state_shape=op_rnn_state_shape if op_rnn_state_shape is not None else rnn_state_shape,
+                    rnn_seqlen=op_rnn_seqlen if op_rnn_seqlen is not None else execution_params.rnn_seqlen,
+                    logit_value=op_logit_value if op_logit_value is not None else logit_value,
                 )
                 player_2.set_name("opponent")
                 if next(seed_generator) % 2 == 0:
@@ -255,9 +243,7 @@ def create_training_environment(
 #######################################################################################
 
 
-def warm_up_replay_buffer(
-    model_manager: polygames.ModelManager, replay_warmup: int
-) -> None:
+def warm_up_replay_buffer(model_manager: polygames.ModelManager, replay_warmup: int) -> None:
     model_manager.start()
     prev_buffer_size = -1
     t = t_init = time.time()
@@ -286,10 +272,7 @@ def warm_up_replay_buffer(
         f"({model_manager.buffer_size()}/{replay_warmup})"
         "                                                                          "
     )
-    print(
-        "avg speed: %.2f frames/s"
-        % ((model_manager.buffer_size() - size0) / (time.time() - t0))
-    )
+    print("avg speed: %.2f frames/s" % ((model_manager.buffer_size() - size0) / (time.time() - t0)))
 
 
 #######################################################################################
@@ -419,12 +402,8 @@ def _train_epoch(
             post_num_sample = model_manager.buffer_num_sample()
             delta_add = post_num_add - pre_num_add
             delta_sample = post_num_sample - pre_num_sample
-            _running_add_rate = _running_add_rate * alpha + (
-                delta_add / time_elapsed
-            ) * (1 - alpha)
-            _running_sample_rate = _running_sample_rate * alpha + (
-                delta_sample / time_elapsed
-            ) * (1 - alpha)
+            _running_add_rate = _running_add_rate * alpha + (delta_add / time_elapsed) * (1 - alpha)
+            _running_sample_rate = _running_sample_rate * alpha + (delta_sample / time_elapsed) * (1 - alpha)
             pre_num_add = post_num_add
             pre_num_sample = post_num_sample
             print("running add rate: %.2f / s" % (_running_add_rate))
@@ -452,9 +431,7 @@ def _train_epoch(
         loss, v_err, pi_err, predict_err = model_loss.mcts_loss(model, lossmodel, batch)
         loss.backward()
 
-        grad_norm = nn.utils.clip_grad_norm_(
-            lossmodel.parameters(), optim_params.grad_clip
-        )
+        grad_norm = nn.utils.clip_grad_norm_(lossmodel.parameters(), optim_params.grad_clip)
         optim.step()
         optim.zero_grad()
 
@@ -479,12 +456,8 @@ def _train_epoch(
         post_num_sample = model_manager.buffer_num_sample()
         delta_add = post_num_add - pre_num_add
         delta_sample = post_num_sample - pre_num_sample
-        _running_add_rate = _running_add_rate * alpha + (delta_add / time_elapsed) * (
-            1 - alpha
-        )
-        _running_sample_rate = _running_sample_rate * alpha + (
-            delta_sample / time_elapsed
-        ) * (1 - alpha)
+        _running_add_rate = _running_add_rate * alpha + (delta_add / time_elapsed) * (1 - alpha)
+        _running_sample_rate = _running_sample_rate * alpha + (delta_sample / time_elapsed) * (1 - alpha)
         pre_num_add = post_num_add
         pre_num_sample = post_num_sample
 
@@ -527,9 +500,7 @@ def train_model(
     rc, rh, rw = info["raw_feature_size"][:3]
     c_prime, h_prime, w_prime = info["action_size"][:3]
 
-    predicts = (
-        2 if game_params.predict_end_state else 0
-    ) + game_params.predict_n_states
+    predicts = (2 if game_params.predict_end_state else 0) + game_params.predict_n_states
 
     batchsizes = {
         "s": [c, h, w],
@@ -699,9 +670,7 @@ def run_training(
         )
     if command_history.last_command_contains("init_checkpoint"):
         if ckpts:
-            raise RuntimeError(
-                "Cannot restart from init_checkpoint, already restarting from non-empty checkpoint_dir"
-            )
+            raise RuntimeError("Cannot restart from init_checkpoint, already restarting from non-empty checkpoint_dir")
         # pretrained model, consider new training from epoch zero
         print("loading pretrained model from checkpoint...")
         checkpoint = utils.load_checkpoint(checkpoint_path=model_params.init_checkpoint)
@@ -747,9 +716,7 @@ def run_training(
 
     ddpmodel = None
     if os.environ.get("RANK") is not None:
-        torch.distributed.init_process_group(
-            backend="gloo", timeout=datetime.timedelta(0, 864000)
-        )
+        torch.distributed.init_process_group(backend="gloo", timeout=datetime.timedelta(0, 864000))
         ddpmodel = nn.parallel.DistributedDataParallel(
             ModelWrapperForDDP(model),
             broadcast_buffers=False,

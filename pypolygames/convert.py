@@ -37,9 +37,7 @@ def convert_checkpoint(
     checkpoint = utils.load_checkpoint(checkpoint_path=model_params.init_checkpoint)
     old_model_params = checkpoint["model_params"]
     old_game_params = checkpoint["game_params"]
-    sanitize_game_params(
-        old_game_params
-    )  # backwards compatibility for models without game_options
+    sanitize_game_params(old_game_params)  # backwards compatibility for models without game_options
     model_state_dict = checkpoint["model_state_dict"]
 
     print(old_model_params.model_name)
@@ -75,11 +73,7 @@ def convert_checkpoint(
             "Note: converting model for zero-shot evaluation only! Added/reinitialized params will be all 0 and untrainable!"
         )
 
-    if (
-        auto_tune_nnsize
-        or move_source_channels is not None
-        or state_source_channels is not None
-    ):
+    if auto_tune_nnsize or move_source_channels is not None or state_source_channels is not None:
         # We'll need to load the game info
         old_game_info = zutils.get_game_info(old_game_params)
         new_game_info = zutils.get_game_info(new_game_params)
@@ -97,18 +91,14 @@ def convert_checkpoint(
     if move_source_channels is not None:
         c_action_new, _, _ = new_game_info["action_size"][:3]
         if c_action_new != len(move_source_channels):
-            print(
-                "ERROR: if --move_source_channels is specified, it must have exactly c_action_new entries!"
-            )
+            print("ERROR: if --move_source_channels is specified, it must have exactly c_action_new entries!")
             print("c_action_new = ", c_action_new)
             print("len(move_source_channels) = ", len(move_source_channels))
 
     if state_source_channels is not None:
         c_state_new, _, _ = new_game_info["feature_size"][:3]
         if c_state_new != len(state_source_channels):
-            print(
-                "ERROR: if --state_source_channels is specified, it must have exactly c_state_new entries!"
-            )
+            print("ERROR: if --state_source_channels is specified, it must have exactly c_state_new entries!")
             print("c_state_new = ", c_state_new)
             print("len(state_source_channels) = ", len(state_source_channels))
 
@@ -122,11 +112,7 @@ def convert_checkpoint(
         if not k in s:
             moved = False
             for k2, dst in s.items():
-                if (
-                    not k2 in model_state_dict
-                    and src.shape == dst.shape
-                    and not k2 in taken
-                ):
+                if not k2 in model_state_dict and src.shape == dst.shape and not k2 in taken:
                     print("%s shape %s moved to %s" % (k, src.shape, k2))
                     taken.append(k2)
                     dst.copy_(src)
@@ -215,10 +201,7 @@ def convert_checkpoint(
                 src_d = src_c + src_s
                 dst_d = dst_c + src_s
 
-                print(
-                    "Moving global pooling weights from %d:%d to %d:%d"
-                    % (src_c, src_d, dst_c, dst_d)
-                )
+                print("Moving global pooling weights from %d:%d to %d:%d" % (src_c, src_d, dst_c, dst_d))
 
                 min_c = min(src_c, dst_c)
                 dst[:min_c, dst_c:dst_d, :, :] = src[:min_c, src_c:src_d, :, :]
@@ -230,9 +213,7 @@ def convert_checkpoint(
                 )
 
                 # dst.narrow(0, 0, src_c).narrow(1, dst_c+dst_s, src_s).copy_(src.narrow(1, src_c+src_s, src_s))
-                dst[:min_c, dst_c + dst_s : dst_d + dst_s, :, :] = src[
-                    :min_c, src_c + src_s : src_d + src_s, :, :
-                ]
+                dst[:min_c, dst_c + dst_s : dst_d + dst_s, :, :] = src[:min_c, src_c + src_s : src_d + src_s, :, :]
 
                 src = src[:, :src_c, :, :]
                 dst = dst[:, :dst_c, :, :]

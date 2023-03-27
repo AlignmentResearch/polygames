@@ -13,9 +13,7 @@ def get_gpu_usage_nvidia():
         nvidia_exe = "nvidia-smi"
         nvquery = "index,utilization.gpu,memory.total,memory.used"
         nvformat = "csv,noheader,nounits"
-        stdout = subprocess.check_output(
-            [nvidia_exe, f"--query-gpu={nvquery}", f"--format={nvformat}"]
-        )
+        stdout = subprocess.check_output([nvidia_exe, f"--query-gpu={nvquery}", f"--format={nvformat}"])
     except subprocess.CalledProcessError as e:
         return f"GPU: ({nvidia_exe} error code {e.returncode})"
     except FileNotFoundError as e:

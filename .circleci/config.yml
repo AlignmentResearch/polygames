@@ -83,6 +83,10 @@ jobs:
     resource_class: large  # Needs to be large to have enough RAM
     steps:
       - checkout-without-force
+      - run:
+          name: Check formatting
+          command: |
+            black --check .
       - build-polygames
       - run:
           name: Test games

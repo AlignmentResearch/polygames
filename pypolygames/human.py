@@ -40,9 +40,7 @@ def create_human_environment(
     time_ratio = execution_params.time_ratio
     total_time = execution_params.total_time
     context = tube.Context()
-    actor_channel = (
-        None if pure_mcts else tube.DataChannel("act", simulation_params.num_actor, 1)
-    )
+    actor_channel = None if pure_mcts else tube.DataChannel("act", simulation_params.num_actor, 1)
     rnn_state_shape = []
     if model is not None and hasattr(model, "rnn_cells") and model.rnn_cells > 0:
         rnn_state_shape = [model.rnn_cells, model.rnn_channels]
@@ -110,9 +108,7 @@ def create_tp_environment(
     time_ratio = execution_params.time_ratio
     total_time = execution_params.total_time
     context = tube.Context()
-    actor_channel = (
-        None if pure_mcts else tube.DataChannel("act", simulation_params.num_actor, 1)
-    )
+    actor_channel = None if pure_mcts else tube.DataChannel("act", simulation_params.num_actor, 1)
     game = create_game(
         game_params,
         num_episode=1,
@@ -202,15 +198,11 @@ def _play_game_against_neural_mcts(
             batches_s = torch.chunk(batch[actor_channel.name]["s"], nb_devices, dim=0)
             has_rnn = "rnn_state" in batch[actor_channel.name]
             if has_rnn:
-                batches_rnn_state = torch.chunk(
-                    batch[actor_channel.name]["rnn_state"], nb_devices, dim=0
-                )
+                batches_rnn_state = torch.chunk(batch[actor_channel.name]["rnn_state"], nb_devices, dim=0)
             futures = []
             reply_eval = {"v": None, "pi": None}
             if has_rnn:
-                for device, model, batch_s, batch_rnn_state in zip(
-                    devices, models, batches_s, batches_rnn_state
-                ):
+                for device, model, batch_s, batch_rnn_state in zip(devices, models, batches_s, batches_rnn_state):
                     futures.append(
                         executor.submit(
                             _forward_pass_on_device,
@@ -222,22 +214,14 @@ def _play_game_against_neural_mcts(
                     )
                 results = [future.result() for future in futures]
                 reply_eval["v"] = torch.cat([result["v"] for result in results], dim=0)
-                reply_eval["pi"] = torch.cat(
-                    [result["pi"] for result in results], dim=0
-                )
-                reply_eval["rnn_state_out"] = torch.cat(
-                    [result["rnn_state"] for result in results], dim=0
-                )
+                reply_eval["pi"] = torch.cat([result["pi"] for result in results], dim=0)
+                reply_eval["rnn_state_out"] = torch.cat([result["rnn_state"] for result in results], dim=0)
             else:
                 for device, model, batch_s in zip(devices, models, batches_s):
-                    futures.append(
-                        executor.submit(_forward_pass_on_device, device, model, batch_s)
-                    )
+                    futures.append(executor.submit(_forward_pass_on_device, device, model, batch_s))
                 results = [future.result() for future in futures]
                 reply_eval["v"] = torch.cat([result["v"] for result in results], dim=0)
-                reply_eval["pi"] = torch.cat(
-                    [result["pi"] for result in results], dim=0
-                )
+                reply_eval["pi"] = torch.cat([result["pi"] for result in results], dim=0)
             dcm.set_reply(actor_channel.name, reply_eval)
     dcm.terminate()
 
@@ -253,9 +237,7 @@ def play_game(
     if pure_mcts:
         _play_game_against_mcts(context)
     else:
-        _play_game_against_neural_mcts(
-            devices=devices, models=models, context=context, actor_channel=actor_channel
-        )
+        _play_game_against_neural_mcts(devices=devices, models=models, context=context, actor_channel=actor_channel)
     print("game over")
     return get_result_for_human_player()
 
@@ -271,9 +253,7 @@ def play_tp_game(  # FIXME TODO not sure this helps
     if pure_mcts:
         _play_game_against_mcts(context)
     else:
-        _play_game_against_neural_mcts(
-            devices=devices, models=models, context=context, actor_channel=actor_channel
-        )
+        _play_game_against_neural_mcts(devices=devices, models=models, context=context, actor_channel=actor_channel)
     print("#game over")
     return get_result_for_human_player()
 
@@ -309,9 +289,7 @@ def run_human_played_game(
         models = []
         devices = [torch.device(device) for device in execution_params.devices]
         for device in devices:
-            model = create_model(game_params=game_params, model_params=model_params).to(
-                device
-            )
+            model = create_model(game_params=game_params, model_params=model_params).to(device)
             print("updating model...")
             model.load_state_dict(model_state_dict)
             model.eval()
@@ -366,9 +344,7 @@ def run_tp_played_game(
         models = []
         devices = [torch.device(device) for device in execution_params.device]
         for device in devices:
-            model = create_model(game_params=game_params, model_params=model_params).to(
-                device
-            )
+            model = create_model(game_params=game_params, model_params=model_params).to(device)
             print("#updating model...")
             model.load_state_dict(model_state_dict)
             model.eval()

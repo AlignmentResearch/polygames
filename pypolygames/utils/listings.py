@@ -44,6 +44,4 @@ def games(olympiads: bool = False) -> tp.List[str]:
     assert filepath.exists()
     pattern = r".*if\s*?\(\s*?isGameNameMatched\s*?\(\s*?\{\s*?\"(?P<name>\w+)\"[^}]*\}\s*?\)\s*?\)\s*?\{.*"
     iterator = re.finditer(pattern, filepath.read_text())
-    return list(
-        x.group("name") for x in iterator if not x.group().strip().startswith("//")
-    )
+    return list(x.group("name") for x in iterator if not x.group().strip().startswith("//"))

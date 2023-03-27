@@ -30,9 +30,7 @@ def lg_clean_str(thestr):
 
 def lg_get_onmove_games(thecookies):
     """Get the list of games "on move". Return a list [(game id, game name)]."""
-    myresponse = requests.get(
-        "http://www.littlegolem.net/jsp/game/", cookies=thecookies
-    )
+    myresponse = requests.get("http://www.littlegolem.net/jsp/game/", cookies=thecookies)
     if myresponse.status_code != requests.codes.ok:
         raise ConnectionError("failed to request littlegolem (lg_get_onmove_games)")
     myhtml = BeautifulSoup(myresponse.text, "html.parser")
@@ -40,17 +38,12 @@ def lg_get_onmove_games(thecookies):
     if not mydivs:
         return []
     mytrs = mydivs[0].select("tbody")[0].select("tr")
-    return [
-        (lg_clean_str(mytds[0].a.text), mytds[4].text)
-        for mytds in (mytr.select("td") for mytr in mytrs)
-    ]
+    return [(lg_clean_str(mytds[0].a.text), mytds[4].text) for mytds in (mytr.select("td") for mytr in mytrs)]
 
 
 def lg_get_hsgf(thegid):
     """Get the description of a game, in the hsgf format."""
-    myurl = "http://www.littlegolem.net/servlet/sgf/{}/game{}.hsgf".format(
-        thegid, thegid
-    )
+    myurl = "http://www.littlegolem.net/servlet/sgf/{}/game{}.hsgf".format(thegid, thegid)
     myresponse = requests.get(myurl)
     if myresponse.status_code != requests.codes.ok:
         raise ConnectionError("failed to request littlegolem (lg_get_hsgf)")
@@ -59,11 +52,7 @@ def lg_get_hsgf(thegid):
 
 
 def lg_play(thecookies, thegid, themove):
-    myurl = (
-        "http://www.littlegolem.net/jsp/game/game.jsp?sendgame={}&sendmove={}".format(
-            thegid, themove
-        )
-    )
+    myurl = "http://www.littlegolem.net/jsp/game/game.jsp?sendgame={}&sendmove={}".format(thegid, themove)
     myresponse = requests.post(myurl, cookies=thecookies)
     if myresponse.status_code != requests.codes.ok:
         raise ConnectionError("failed to request littlegolem (lg_play)")
@@ -199,9 +188,7 @@ def hex_convert_hsgf_to_polygames(hsgf):
             if swapped:
                 x, y = y, x
             last_action = chr(ord("a") + x) + str(1 + y)
-            s += (
-                last_action + "\n"
-            )  # Swap is implemented as replaying the last action in Hex.
+            s += last_action + "\n"  # Swap is implemented as replaying the last action in Hex.
             turn = 1 - turn
     if turn == 0:  # By default we assume that we play first.
         s += "swap\n"  # Please note that this has nothing to do with the pie rule.
@@ -238,11 +225,7 @@ def havannah_convert_hsgf_to_polygames(hsgf, boardsize):
             s += last_action + "\n"
             turn = 1 - turn
             continue
-        if (
-            (e[0] == "W" or e[0] == "B")
-            and e[1] == "["
-            and (e[4] == "]" or e[5] == "]")
-        ):
+        if (e[0] == "W" or e[0] == "B") and e[1] == "[" and (e[4] == "]" or e[5] == "]"):
             # in littlegolem x, y = y, x in polygames
             x = int(e[3])
             if e[4] != "]":
@@ -252,9 +235,7 @@ def havannah_convert_hsgf_to_polygames(hsgf, boardsize):
             if y >= boardsize:
                 v = y - boardsize + 2
             last_action = str((x * -1) + (boardsize * 2 - v)) + "," + str(y)
-            s += (
-                last_action + "\n"
-            )  # Swap is implemented as replaying the last action in Hex.
+            s += last_action + "\n"  # Swap is implemented as replaying the last action in Hex.
             turn = 1 - turn
     if turn == 0:  # By default we assume that we play first.
         s += "swap\n"  # Please note that this has nothing to do with the pie rule.
@@ -267,24 +248,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Play polygames on littlegolem.")
     parser.add_argument("--username", type=str, help="Username for login")
     parser.add_argument("--password", type=str, help="Password for login")
-    parser.add_argument(
-        "--hex11_model", type=str, help="Model to use for playing hex11pie"
-    )
-    parser.add_argument(
-        "--hex13_model", type=str, help="Model to use for playing hex13pie"
-    )
-    parser.add_argument(
-        "--havannah8_model", type=str, help="Model to use for playing havannah8pie"
-    )
-    parser.add_argument(
-        "--breakthrough_model", type=str, help="Model to use for playing breakthrough"
-    )
-    parser.add_argument(
-        "--havannah10_model", type=str, help="Model to use for playing havannah10pie"
-    )
-    parser.add_argument(
-        "--einstein_model", type=str, help="Model to use for playing einstein"
-    )
+    parser.add_argument("--hex11_model", type=str, help="Model to use for playing hex11pie")
+    parser.add_argument("--hex13_model", type=str, help="Model to use for playing hex13pie")
+    parser.add_argument("--havannah8_model", type=str, help="Model to use for playing havannah8pie")
+    parser.add_argument("--breakthrough_model", type=str, help="Model to use for playing breakthrough")
+    parser.add_argument("--havannah10_model", type=str, help="Model to use for playing havannah10pie")
+    parser.add_argument("--einstein_model", type=str, help="Model to use for playing einstein")
 
     args = parser.parse_args()
 
@@ -357,32 +326,21 @@ if __name__ == "__main__":
                         last_action,
                     ) = havannah_convert_hsgf_to_polygames(myhsgf, 10)
                     model_path = args.havannah10_model
-                elif (
-                    mygname[:7] == "havannah"[:7]
-                    and "ize 8" in mygname
-                    and args.havannah8_model
-                ):
+                elif mygname[:7] == "havannah"[:7] and "ize 8" in mygname and args.havannah8_model:
                     (
                         polygames_commands,
                         swapped,
                         last_action,
                     ) = havannah_convert_hsgf_to_polygames(myhsgf, 8)
                     model_path = args.havannah8_model
-                elif (
-                    mygname[:7] == "havannah"[:7]
-                    and "ize 10" in mygname
-                    and args.havannah10_model
-                ):
+                elif mygname[:7] == "havannah"[:7] and "ize 10" in mygname and args.havannah10_model:
                     (
                         polygames_commands,
                         swapped,
                         last_action,
                     ) = havannah_convert_hsgf_to_polygames(myhsgf, 10)
                     model_path = args.havannah10_model
-                elif (
-                    mygname[:8] == "EinStein würfelt nicht! 3-points match"[:8]
-                    and args.einstein_model
-                ):
+                elif mygname[:8] == "EinStein würfelt nicht! 3-points match"[:8] and args.einstein_model:
                     # pass in gid to handle specially for Einstein. e.g. parse board and dice value from html
                     (
                         polygames_commands,
@@ -400,17 +358,10 @@ if __name__ == "__main__":
                 # Singularity command line below might be old fashioned ?
                 # command = "singularity exec --nv --overlay overlay.img /checkpoint/polygames/polygames_190927.simg python -m pypolygames human --init_checkpoint " + model_path
                 command = "python -m pypolygames human --init_checkpoint " + model_path
-                command += (
-                    " --total_time 60000 --time_ratio 0.01 --human_first --num_actor 8"
-                )
+                command += " --total_time 60000 --time_ratio 0.01 --human_first --num_actor 8"
                 import subprocess
 
-                command = (
-                    'echo -e "'
-                    + polygames_commands.translate({ord(c): "\\n" for c in "\n"})
-                    + '" | '
-                    + command
-                )
+                command = 'echo -e "' + polygames_commands.translate({ord(c): "\\n" for c in "\n"}) + '" | ' + command
                 print(command)
 
                 mcts_value = None
@@ -432,16 +383,10 @@ if __name__ == "__main__":
                     for i in range(5):
                         for j in range(5):
                             idx = i * 5 + j
-                            if (
-                                ord(state_str[idx]) - ord("a") == origin_num - 1
-                                and origin[0] == "x"
-                            ):
+                            if ord(state_str[idx]) - ord("a") == origin_num - 1 and origin[0] == "x":
                                 origin_idx = idx
                                 break
-                            if (
-                                ord(state_str[idx]) - ord("A") == origin_num - 1
-                                and origin[0] == "o"
-                            ):
+                            if ord(state_str[idx]) - ord("A") == origin_num - 1 and origin[0] == "o":
                                 origin_idx = idx
                                 break
                     # print(origin_idx)
@@ -479,31 +424,25 @@ if __name__ == "__main__":
                     if last_action != None and last_action.lower() == move.lower():
                         mymove = "swap"
                 elif (
-                    mygname[:10] == "Havannah Size 8"[:10]
-                    or mygname[:4] == "havannah.in"[:4]
+                    mygname[:10] == "Havannah Size 8"[:10] or mygname[:4] == "havannah.in"[:4]
                 ) and "Size 8" in mygname:
                     print("playing havannah 8")
                     boardsize = 8  # ONLY FOR SIZE 8
                     listmove = move.split(",")
                     x = int(listmove[0])
                     y = int(listmove[1])
-                    mymove = chr(ord("a") + y + boardsize - 1) + chr(
-                        ord("a") + x + boardsize - 1
-                    )  # ,11
+                    mymove = chr(ord("a") + y + boardsize - 1) + chr(ord("a") + x + boardsize - 1)  # ,11
                     if last_action != None and last_action.lower() == move.lower():
                         mymove = "swap"
                 elif (
-                    mygname[:4] == "havannah.in"[:4]
-                    or mygname[:10] == "Havannah Size 10"[:10]
+                    mygname[:4] == "havannah.in"[:4] or mygname[:10] == "Havannah Size 10"[:10]
                 ) and "Size 10" in mygname:
                     print("playing havannah 10")
                     boardsize = 10  # ONLY FOR SIZE 10
                     listmove = move.split(",")
                     x = int(listmove[0])
                     y = int(listmove[1])
-                    mymove = chr(ord("a") + y + boardsize - 5) + chr(
-                        ord("a") + x + boardsize - 5
-                    )  # ,11
+                    mymove = chr(ord("a") + y + boardsize - 5) + chr(ord("a") + x + boardsize - 5)  # ,11
                     if last_action != None and last_action.lower() == move.lower():
                         mymove = "swap"
                 elif mygname == "Breakthrough Size 8":

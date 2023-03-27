@@ -15,17 +15,11 @@ def extract(bench, log, data, hasBulk=True):
 
     def do_extract(bench, queue_header):
         block = re.search(
-            r"^"
-            + bench
-            + r":.*?"
-            + queue_header
-            + r"\s*(.*?)\s*^\s*Operations per second",
+            r"^" + bench + r":.*?" + queue_header + r"\s*(.*?)\s*^\s*Operations per second",
             log,
             re.S | re.M | re.I,
         ).group(1)
-        for threads, opsst in re.findall(
-            r"^\s*(\d+)\s+thread.*?([0-9\.]+[kMG]?\s*$)", block, re.M | re.I
-        ):
+        for threads, opsst in re.findall(r"^\s*(\d+)\s+thread.*?([0-9\.]+[kMG]?\s*$)", block, re.M | re.I):
             threads = int(threads)
             multiplier = 1
             if opsst[-1] in "kMG":
