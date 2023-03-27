@@ -35,7 +35,7 @@ commands:
           name: Build Polygames in debug
           command: |
             cd build
-            CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=debug -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF -DUSE_MOLD=ON
+            CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF -DUSE_MOLD=ON
             make -j4 --debug=b # Limit concurrent jobs to limit memory use
   checkout-without-force:
     # This massive hack lets us not recompile the program every time. Remove the --force argument from `git checkout` below.
