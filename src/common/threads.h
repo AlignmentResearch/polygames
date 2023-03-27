@@ -45,6 +45,8 @@ private:
 };
 
 class Task {
+    /* A collection of functions to run in parallel, and utilities to enqueue them in Threads and wait for all of them
+     * to finish. */
 public:
     void push_back(std::function<void()> f);
     void enqueue_all(Threads &threads);
