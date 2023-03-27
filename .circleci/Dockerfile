@@ -5,7 +5,7 @@ LABEL org.opencontainers.image.source=https://github.com/AlignmentResearch/polyg
 # Install binary dependencies
 RUN sudo apt-get update -q \
     && sudo apt-get install -y --no-install-recommends \
-        wget cmake pkg-config lcov libzmq3-dev mold \
+        wget cmake pkg-config clang lcov libzmq3-dev mold \
     && sudo apt-get clean \
     && sudo rm -rf /var/lib/apt/lists/*
 
