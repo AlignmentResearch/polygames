@@ -66,6 +66,7 @@ jobs:
       - run:
           name: Test python
           command: |
+              pip install -r .circleci/requirements.txt
               pytest pypolygames --durations=10 --verbose
       - run:
           name: Run training
