@@ -37,16 +37,17 @@ commands:
             cat build/src/third_party/fmt/CMakeFiles/fmt.dir/flags.make
             cat build/src/CMakeFiles/_games.dir/flags.make
             cat build/src/CMakeFiles/_zstd.dir/flags.make
-            cat tests/CMakeFiles/polygames-tests.dir/flags.make
+            cat build/tests/CMakeFiles/polygames-tests.dir/flags.make
 
             cd build
             CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=debug -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF -DUSE_MOLD=ON
             #make -j2  --debug=b # Limit concurrent jobs to limit memory use
 
+            cd ..
             cat build/src/third_party/fmt/CMakeFiles/fmt.dir/flags.make
             cat build/src/CMakeFiles/_games.dir/flags.make
             cat build/src/CMakeFiles/_zstd.dir/flags.make
-            cat tests/CMakeFiles/polygames-tests.dir/flags.make
+            cat build/tests/CMakeFiles/polygames-tests.dir/flags.make
 
 jobs:
   all-tests:
@@ -58,6 +59,9 @@ jobs:
     resource_class: large  # Needs to be large to have enough RAM
     steps:
       - checkout
+      - run: git submodule sync
+      - run: git submodule update --init
+
       - build-polygames
       - run:
           name: Test games
