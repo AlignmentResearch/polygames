@@ -8,7 +8,7 @@ parameters:
 
   docker_img_version:
     type: string
-    default: "0.6"
+    default: "0.7"
 
 workflows:
   test-jobs:
@@ -26,7 +26,6 @@ workflows:
       - docker-publish:
           context:
             - ghcr-auth
-            # TODO: this won't work because the current token, connected to the `rhaps0dy` account, only has read permissions.
 
 commands:
   build-polygames:
@@ -35,7 +34,6 @@ commands:
           name: Build Polygames in debug
           command: |
             cd build
-            CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=debug -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF -DUSE_MOLD=ON
             make -j4 --debug=b # Limit concurrent jobs to limit memory use
   checkout-without-force:
     # This massive hack lets us not recompile the program every time. Remove the --force argument from `git checkout` below.
