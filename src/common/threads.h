@@ -28,11 +28,15 @@ public:
 
     size_t getNumThreads() { return numThreads; }
 
-    friend std::default_delete<Threads>;  // Allow unique_ptr to delete this
+    // Allow make_unique to create this
+    friend std::unique_ptr<Threads> std::make_unique<Threads>(size_t &);
+    // Allow unique_ptr to delete this
+    friend std::default_delete<Threads>;
 private:
     Threads(size_t nThreads);
     ~Threads();
 
+    static std::mutex instanceMutex;
     static std::unique_ptr<Threads> instance;
 
     size_t numThreads;

@@ -1,11 +1,13 @@
 #include "threads.h"
 
-#include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include <cassert>
 
 namespace threads {
 
+
+std::mutex Threads::instanceMutex;
 std::unique_ptr<Threads> Threads::instance = nullptr;
 
 void Threads::init(size_t nThreads) {
@@ -20,19 +22,23 @@ void Threads::init(size_t nThreads) {
       std::cout << "Starting " << nThreads << "threads" << std::endl;
     }
 
+    std::unique_lock lock(instanceMutex);
     if (!instance) {
         // using new is a bit bad, but unique_ptr cannot call the private constructor.
-        instance = std::unique_ptr<Threads>(new Threads(nThreads));
+        instance = std::make_unique<Threads>(nThreads);
     } else {
         if (instance->numThreads != nThreads) {
-            std::cerr << "WARNING: Number of threads already set to " << instance->numThreads
-                << ", requested: " << nThreads << ". Ignoring request." << std::endl;
+          std::ostringstream oss;
+          oss << "WARNING: Number of threads already set to " << instance->numThreads
+              << ", requested: " << nThreads << ". Ignoring request." << std::endl;
+          throw std::logic_error(oss.str());
         }
 
     }
 }
 
 Threads& Threads::inst() {
+    std::unique_lock lock(instanceMutex);
     if (!instance) {
         throw std::logic_error("Singleton instance not initialized");
     }
