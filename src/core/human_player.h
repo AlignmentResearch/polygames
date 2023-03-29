@@ -19,7 +19,7 @@ class HumanPlayer : public Player {
 
   _Action act(State& state) {
     int index = state.humanInputAction();
-    assert(false);
+    assert(false);  // <-- what??
     auto& legalActions = state.GetLegalActions();
     assert(index < (int)legalActions.size());
     std::cout << " applying action... " << std::endl;

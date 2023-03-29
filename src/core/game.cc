@@ -1172,13 +1172,13 @@ void Game::mainLoop() {
         std::cout << "Warming up model.\n";
         auto opt = mctsPlayer->option();
         mctsPlayer->option().totalTime = 0;
-        mctsPlayer->option().numRolloutPerThread = 20;
+        mctsPlayer->option().numRolloutPerThread = 20;  // Why is this hardcoded in all of a sudden?
         mctsPlayer->option().randomizedRollouts = false;
         mctsPlayer->reset();
         mctsPlayer->actMcts(*state_);
         mctsPlayer->actMcts(*state_);
         mctsPlayer->actMcts(*state_);
-        mctsPlayer->actMcts(*state_);
+        mctsPlayer->actMcts(*state_);  // Why does this happen 4 times?
 
         mctsPlayer->option() = opt;
         mctsPlayer->reset();
@@ -1463,6 +1463,15 @@ void Game::step() {
 
     // std::cout << ">>>>actual act" << std::endl;
     _Action action = state_->GetLegalActions().at(result.bestAction);
+
+    std::cout << "the chosen action is" << std::endl;
+    std::cout << result.bestAction << " = (" << action << ")" << std::endl;
+    std::cout << "the policy was" << std::endl;
+    std::cout << result.mctsPolicy << std::endl;
+    std::cout << "so the move had probability ", mctsPolicy[int(result.bestAction)] << std::endl;
+    std::cout << "taken over this sumVisits " << result.sumVisits << std::endl;
+    // std::cout << "the values were (not impl yet)" << std::endl;
+
     lastAction_ = state_->actionDescription(action);
     bool noHuman = std::none_of(players_.begin(), players_.end(),
                                 [](const std::shared_ptr<Player>& player) {
@@ -1486,6 +1495,7 @@ void Game::step() {
       state_->forcedDice = std::stoul(line, nullptr, 0);
     }
     state_->forward(result.bestAction);
+    state_->printCurrentBoard();
   }
 }
 

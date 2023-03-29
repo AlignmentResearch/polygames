@@ -63,7 +63,7 @@ def create_human_environment(
     player = create_player(
         seed_generator=seed_generator,
         game=game,
-        player="mcts",
+        player="mcts",  # shouldn't this either be "mcts" or "forward"?
         num_actor=simulation_params.num_actor,
         num_rollouts=simulation_params.num_rollouts,
         pure_mcts=pure_mcts,

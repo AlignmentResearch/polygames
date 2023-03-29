@@ -390,7 +390,7 @@ class SimulationParams:
     rewind: int = 0
     randomized_rollouts: bool = False
     sampling_mcts: bool = False
-    sample_before_step_idx: int = 30
+    sample_before_step_idx: int = 30  # TODO: change back to 30
     train_channel_timeout_ms: int = 1000
     train_channel_num_slots: int = 10000
 
@@ -707,11 +707,11 @@ class EvalParams:
                 "In '--real_time' the evaluation follow the training "
                 "so '--checkpoint' should not be set"
             )
-        if self.checkpoint_dir is None and self.checkpoint is None:
-            raise ValueError(
-                "Either a '--checkpoint_dir' or a path to a '--checkpoint' "
-                "must be specified"
-            )
+        # if self.checkpoint_dir is None and self.checkpoint is None:
+        #     raise ValueError(
+        #         "Either a '--checkpoint_dir' or a path to a '--checkpoint' "
+        #         "must be specified"
+        #     )
         if self.checkpoint_dir is not None and self.checkpoint is not None:
             raise ValueError(
                 "Either a '--checkpoint_dir' or a path to a '--checkpoint' "

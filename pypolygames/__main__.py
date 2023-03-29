@@ -28,6 +28,7 @@ from .human import run_human_played_game
 from .human import run_tp_played_game
 from .convert import convert_checkpoint
 from .draw_model import draw_model
+from .pure_mcts import run_pure_mcts_played_game
 
 DOC = """The python package `pypolygames` can be used in either of the following modes:
 
@@ -98,6 +99,10 @@ def parse_args() -> argparse.Namespace:
         help="Modes to be chosen from: `python -m pypolygames MODE`"
     )
 
+    # PURE MCTS
+    parser_mcts = subparsers.add_parser("pure_mcts")
+    parser_mcts.set_defaults(func=run_pure_mcts_played_game_from_args)
+
     # TRAINING
     parser_train = subparsers.add_parser("train")
     parser_train.set_defaults(func=run_training_from_args)
@@ -166,6 +171,11 @@ def parse_args() -> argparse.Namespace:
         "Mandatory for pure MTCS, "
         "but not to be specified in case of loading a pretrained model",
     )
+    mcts_game_params_group = parser_mcts.add_argument_group(
+        "Game parameters",
+        "Mandatory for pure MTCS, "
+        "but not to be specified in case of loading a pretrained model",
+    )
     for arg_name, arg_field in GameParams.arg_fields():
         train_game_params_group.add_argument(arg_field.name, **arg_field.opts)
         traineval_game_params_group.add_argument(arg_field.name, **arg_field.opts)
@@ -173,6 +183,7 @@ def parse_args() -> argparse.Namespace:
             arg_field.name, **{**arg_field.opts, **dict(help=argparse.SUPPRESS)}
         )
         human_game_params_group.add_argument(arg_field.name, **arg_field.opts)
+        mcts_game_params_group.add_argument(arg_field.name, **arg_field.opts)
         parser_convert.add_argument(arg_field.name, **arg_field.opts)
         parser_draw_model.add_argument(arg_field.name, **arg_field.opts)
 
@@ -191,6 +202,11 @@ def parse_args() -> argparse.Namespace:
         "The machine model can be either a '--pure_mcts' or "
         "a '--init_checkpoint' neural network powered MCTS",
     )
+    mcts_model_params_group = parser_mcts.add_argument_group(
+        "Model parameters",
+        "The machine model can be either a '--pure_mcts' or "
+        "a '--init_checkpoint' neural network powered MCTS",
+    )
     for arg_name, arg_field in ModelParams.arg_fields():
         if arg_name != "pure_mcts":
             train_model_params_group.add_argument(arg_field.name, **arg_field.opts)
@@ -200,6 +216,7 @@ def parse_args() -> argparse.Namespace:
             )
         if arg_name in {"pure_mcts", "init_checkpoint"}:
             human_model_params_group.add_argument(arg_field.name, **arg_field.opts)
+            mcts_model_params_group.add_argument(arg_field.name, **arg_field.opts)
         if arg_name != "pure_mcts":
             parser_convert.add_argument(arg_field.name, **arg_field.opts)
             parser_draw_model.add_argument(arg_field.name, **arg_field.opts)
@@ -228,6 +245,9 @@ def parse_args() -> argparse.Namespace:
     human_simulation_params_group = parser_human.add_argument_group(
         "Simulation parameters"
     )
+    mcts_simulation_params_group = parser_mcts.add_argument_group(
+        "Simulation parameters"
+    )
     for arg_name, arg_field in SimulationParams.arg_fields():
         if arg_name not in {
             "human_first",
@@ -244,6 +264,7 @@ def parse_args() -> argparse.Namespace:
         #if arg_name in {"num_actor", "num_rollouts"}:
         if True:
             human_simulation_params_group.add_argument(arg_field.name, **arg_field.opts)
+            mcts_simulation_params_group.add_argument(arg_field.name, **arg_field.opts)
 
     # Execution params
     train_execution_params_group = parser_train.add_argument_group(
@@ -253,6 +274,9 @@ def parse_args() -> argparse.Namespace:
         "Execution parameters"
     )
     human_execution_params_group = parser_human.add_argument_group(
+        "Execution parameters"
+    )
+    mcts_execution_params_group = parser_mcts.add_argument_group(
         "Execution parameters"
     )
     execution_params_group = parser.add_argument_group("Execution parameters")
@@ -267,6 +291,7 @@ def parse_args() -> argparse.Namespace:
             )
         if arg_name in {"human_first", "time_ratio", "total_time", "device", "seed"}:
             human_execution_params_group.add_argument(arg_field.name, **arg_field.opts)
+            mcts_execution_params_group.add_argument(arg_field.name, **arg_field.opts)
 
     # Evaluation params
     eval_eval_params_group = parser_eval.add_argument_group("Evaluation parameters")
@@ -405,6 +430,19 @@ def run_human_played_game_from_args(args: argparse.Namespace):
         execution_params=execution_params,
     )
 
+def run_pure_mcts_played_game_from_args(args: argparse.Namespace):
+    game_params = instanciate_params_from_args(GameParams, args)
+    model_params = instanciate_params_from_args(ModelParams, args)
+    simulation_params = instanciate_params_from_args(SimulationParams, args)
+    simulation_params.num_game = 1
+    execution_params = instanciate_params_from_args(ExecutionParams, args)
+    run_pure_mcts_played_game(
+        game_params=game_params,
+        model_params=model_params,
+        simulation_params=simulation_params,
+        execution_params=execution_params,
+    )
+
 
 def run_tp_played_game_from_args(args: argparse.Namespace):
     game_params = instanciate_params_from_args(GameParams, args)
@@ -460,4 +498,5 @@ def run_training_and_evaluation_from_args_warning(args: argparse.Namespace):
 
 if __name__ == "__main__":
     args = parse_args()
+    print("the args are now", args)
     args.func(args)

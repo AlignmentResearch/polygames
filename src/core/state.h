@@ -461,6 +461,7 @@ class State {
     }
   }
 
+  // TODO: seems only Einstein has this implemented
   virtual void setStateFromStr(const std::string& /*str*/) {
   }
 
