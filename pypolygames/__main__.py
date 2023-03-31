@@ -238,6 +238,9 @@ def parse_args() -> argparse.Namespace:
     train_simulation_params_group = parser_train.add_argument_group(
         "Simulation parameters"
     )
+    eval_simulation_params_group = parser_eval.add_argument_group(
+        "Simulation parameters"
+    )
     traineval_simulation_params_group = parser_traineval.add_argument_group(
         "Simulation parameters"
     )
@@ -255,6 +258,7 @@ def parse_args() -> argparse.Namespace:
             "total_time",
         }:  # , "num_actor"}:
             train_simulation_params_group.add_argument(arg_field.name, **arg_field.opts)
+            eval_simulation_params_group.add_argument(arg_field.name, **arg_field.opts)
             traineval_simulation_params_group.add_argument(
                 arg_field.name, **arg_field.opts
             )
@@ -375,7 +379,10 @@ def run_training_from_args(args: argparse.Namespace):
 def run_evaluation_from_args(args: argparse.Namespace):
     eval_params = instanciate_params_from_args(EvalParams, args)
     execution_params = instanciate_params_from_args(ExecutionParams, args)
-    run_evaluation(eval_params=eval_params, execution_params=execution_params)
+    simulation_params = instanciate_params_from_args(SimulationParams, args)
+    run_evaluation(eval_params=eval_params, 
+                   execution_params=execution_params,
+                   simulation_params=simulation_params)
 
 
 def run_training_and_evaluation_from_args(args: argparse.Namespace):

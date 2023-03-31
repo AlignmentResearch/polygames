@@ -281,10 +281,10 @@ class MctsResult {
     maxWeight = weight(maxWeight);
 
     // Print the piVals of all possible actions
-    std::cout << "PiVals of all possible actions:" << std::endl;
-    for (size_t i = 0; i != mctsPolicy.size(); ++i) {
-      std::cout << "Action " << i << ": " << mctsPolicy[i] << std::endl;
-    }
+    // std::cout << "PiVals of all possible actions:" << std::endl;
+    // for (size_t i = 0; i != mctsPolicy.size(); ++i) {
+    //   std::cout << "Action " << i << ": " << mctsPolicy[i] << std::endl;
+    // }
   
     bestAction = sampleDiscreteProbability(
         mctsPolicy.size(), maxWeight,
