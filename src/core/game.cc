@@ -1463,13 +1463,16 @@ void Game::step() {
 
     // std::cout << ">>>>actual act" << std::endl;
     _Action action = state_->GetLegalActions().at(result.bestAction);
-
-    std::cout << "the chosen action is" << std::endl;
-    std::cout << result.bestAction << " = (" << action << ")" << std::endl;
-    std::cout << "the policy was" << std::endl;
-    std::cout << result.mctsPolicy << std::endl;
-    std::cout << "so the move had probability ", mctsPolicy[int(result.bestAction)] << std::endl;
-    std::cout << "taken over this sumVisits " << result.sumVisits << std::endl;
+    
+    float bestMoveProbability = result.mctsPolicy[int(result.bestAction)];
+    if (bestMoveProbability < 0.01) {
+      std::cout << "the chosen action is" << std::endl;
+      std::cout << result.bestAction << " = (" << action << ")" << std::endl;
+      std::cout << "the policy was" << std::endl;
+      std::cout << result.mctsPolicy << std::endl;
+      std::cout << "so the move had policy weight " << bestMoveProbability << std::endl;
+      std::cout << "taken over this sumVisits " << result.sumVisits << std::endl;
+    }
     // std::cout << "the values were (not impl yet)" << std::endl;
 
     lastAction_ = state_->actionDescription(action);
@@ -1495,7 +1498,9 @@ void Game::step() {
       state_->forcedDice = std::stoul(line, nullptr, 0);
     }
     state_->forward(result.bestAction);
-    state_->printCurrentBoard();
+    if (bestMoveProbability < 0.01) {
+      state_->printCurrentBoard();
+    }
   }
 }
 

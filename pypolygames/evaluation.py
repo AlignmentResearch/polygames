@@ -147,7 +147,7 @@ def create_evaluation_environment(
             actor_channel=actor_channel_eval,
             model_manager=None,
             human_mode=False,
-            sample_before_step_idx=8,
+            sample_before_step_idx=0,
             randomized_rollouts=False,
             sampling_mcts=False,
         )
@@ -165,7 +165,7 @@ def create_evaluation_environment(
                 actor_channel=actor_channel_opponent,
                 model_manager=None,
                 human_mode=False,
-                sample_before_step_idx=8,
+                sample_before_step_idx=0,
                 randomized_rollouts=False,
                 sampling_mcts=False,
             )

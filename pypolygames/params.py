@@ -390,7 +390,7 @@ class SimulationParams:
     rewind: int = 0
     randomized_rollouts: bool = False
     sampling_mcts: bool = False
-    sample_before_step_idx: int = 30  # TODO: change back to 30
+    sample_before_step_idx: int = 30  # Why 30? Where is the default value used?
     train_channel_timeout_ms: int = 1000
     train_channel_num_slots: int = 10000
 
