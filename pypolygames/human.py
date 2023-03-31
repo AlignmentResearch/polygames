@@ -305,6 +305,8 @@ def run_human_played_game(
             model.load_state_dict(model_state_dict)
             model.eval()
             models.append(model)
+    else:
+        model = None
 
     print("creating human-played environment")
     context, actor_channel, get_result_for_human_player = create_human_environment(
