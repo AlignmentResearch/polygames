@@ -24,6 +24,7 @@ PYBIND11_MODULE(mcts, m) {
       .def(py::init<const MctsOption&>())
       .def_readwrite("puct", &MctsOption::puct)
       .def_readwrite("sample_before_step_idx", &MctsOption::sampleBeforeStepIdx)
+      .def_readwrite("smooth_mcts_sampling", &MctsOption::smoothMctsSampling)
       .def_readwrite("num_rollout_per_thread", &MctsOption::numRolloutPerThread)
       .def_readwrite("seed", &MctsOption::seed)
       .def_readwrite("virtual_loss", &MctsOption::virtualLoss)

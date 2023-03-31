@@ -109,6 +109,7 @@ def _set_mcts_option(
     sample_before_step_idx: int = 0,
     randomized_rollouts: bool = False,
     sampling_mcts: bool = False,
+    smooth_mcts_sampling: bool = False
 ) -> mcts.MctsOption:
     # TODO: put hardcoded value in conf file
     mcts_option = mcts.MctsOption()
@@ -121,6 +122,7 @@ def _set_mcts_option(
     mcts_option.time_ratio = time_ratio
     mcts_option.randomized_rollouts = randomized_rollouts
     mcts_option.sampling_mcts = sampling_mcts
+    mcts_option.smooth_mcts_sampling = smooth_mcts_sampling
     return mcts_option
 
 

@@ -568,7 +568,12 @@ std::vector<MctsResult> MctsPlayer::actMcts(
       // std::cout << "still below num random moves, so we sample:" << std::endl;
       // std::cout << "note that this changes the bestAction" << std::endl;
       // std::cout << "previously the best action was " << result[i].bestAction << std::endl;
-      result[i].sample();
+      if (option_.smoothMctsSampling) {
+        result[i].sampleWithSmoothing();
+      } else {
+        result[i].sampleWithoutSmoothing();
+      }
+      
       // std::cout << "now it is " << result[i].bestAction << std::endl;
     }
   }

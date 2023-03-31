@@ -54,6 +54,9 @@ class MctsOption {
   bool samplingMcts = false;
 
   float forcedRolloutsMultiplier = 2.0f;
+
+  // When we sample in MCTS, do we want to use the (weird) smoothing or not
+  bool smoothMctsSampling = false;
 };
 
 class MctsStats {
@@ -194,9 +197,9 @@ size_t sampleDiscreteProbability(size_t nElements,
   }
 
   // Print out the probability of each element
-  for (size_t i = 0; i != nElements; ++i) {
-    std::cout << "Element " << i << ": " << getValue(i) / happysum << std::endl;
-  }
+  // for (size_t i = 0; i != nElements; ++i) {
+  //   std::cout << "Element " << i << ": " << getValue(i) / happysum << std::endl;
+  // }
 
   for (size_t i = 0; i != 4; ++i) {
     size_t index = std::uniform_int_distribution<int>(0.0f, nElements - 1)(rng);
@@ -265,12 +268,33 @@ class MctsResult {
   }
 
   // assume already normalized
-  void sample() {
-    // auto weight = [this](float pival) {
-    //   return std::exp(pival * pival * 2) - (1.0f - 0.5f / mctsPolicy.size());
-    // };
+  void sampleWithoutSmoothing() {
     auto weight = [this](float pival) {
       return pival;
+    };
+    float maxWeight = 0.0f;
+    for (size_t i = 0; i != mctsPolicy.size(); ++i) {
+      if (mctsPolicy[i] > maxWeight) {
+        maxWeight = mctsPolicy[i];
+      }
+    }
+    maxWeight = weight(maxWeight);
+
+    // Print the piVals of all possible actions
+    // std::cout << "PiVals of all possible actions:" << std::endl;
+    // for (size_t i = 0; i != mctsPolicy.size(); ++i) {
+    //   std::cout << "Action " << i << ": " << mctsPolicy[i] << std::endl;
+    // }
+  
+    bestAction = sampleDiscreteProbability(
+        mctsPolicy.size(), maxWeight,
+        [&](size_t i) { return weight(mctsPolicy[i]); }, *rng_);
+  }
+
+  // assume already normalized
+  void sampleWithSmoothing() {
+    auto weight = [this](float pival) {
+      return std::exp(pival * pival * 2) - (1.0f - 0.5f / mctsPolicy.size());
     };
     float maxWeight = 0.0f;
     for (size_t i = 0; i != mctsPolicy.size(); ++i) {
