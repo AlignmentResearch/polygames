@@ -65,7 +65,7 @@ commands:
             cd '/home/circleci/project'
             git remote set-url origin "$CIRCLE_REPOSITORY_URL" || true
 
-            git fetch --force origin --depth 10 +refs/heads/circleci-with-docker:refs/remotes/origin/circleci-with-docker
+            git fetch --force origin --depth 10 +refs/heads/$CIRCLE_BRANCH:refs/remotes/origin/$CIRCLE_BRANCH
 
             # Removes --force compared to original
             git checkout -B "$CIRCLE_BRANCH" "$CIRCLE_SHA1"
@@ -81,6 +81,10 @@ jobs:
     resource_class: large  # Needs to be large to have enough RAM
     steps:
       - checkout-without-force
+      - run:
+          name: Check formatting
+          command: |
+            black --check .
       - build-polygames
       - run:
           name: C++ tests

@@ -44,9 +44,7 @@ class UConvConvLogitModel(torch.jit.ScriptModule):
         self.game_params = game_params
         info = zutils.get_game_info(game_params)
         c, h, w = self.c, self.h, self.w = info["feature_size"][:3]
-        c_prime, h_prime, w_prime = self.c_prime, self.h_prime, self.w_prime = info[
-            "action_size"
-        ][:3]
+        c_prime, h_prime, w_prime = self.c_prime, self.h_prime, self.w_prime = info["action_size"][:3]
         if h_prime != h or w_prime != w:
             raise RuntimeError(
                 f'The game "{self.game_name}" is not eligible to a conv-computed logit '
@@ -110,9 +108,7 @@ class UConvConvLogitModel(torch.jit.ScriptModule):
             )
         ]
         if bn or bn_affine:
-            mono.append(
-                nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine)
-            )
+            mono.append(nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine))
         self.mono = nn.Sequential(*mono)
 
         unet_list = [None] * (2 * nb_unets_div_by_2 + 1)
@@ -145,15 +141,11 @@ class UConvConvLogitModel(torch.jit.ScriptModule):
                 for j in range(nb_layers_per_net):
                     nets1[j] = nn.Sequential(
                         nets1[j],
-                        nn.BatchNorm2d(
-                            int(nnsize * c), track_running_stats=True, affine=bn_affine
-                        ),
+                        nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine),
                     )
                     nets2[j] = nn.Sequential(
                         nets2[j],
-                        nn.BatchNorm2d(
-                            int(nnsize * c), track_running_stats=True, affine=bn_affine
-                        ),
+                        nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine),
                     )
             if pooling:
                 for j in range(nb_layers_per_net):
@@ -193,9 +185,7 @@ class UConvConvLogitModel(torch.jit.ScriptModule):
             for j in range(nb_layers_per_net):
                 middle_nets[j] = nn.Sequential(
                     middle_nets[j],
-                    nn.BatchNorm2d(
-                        int(nnsize * c), track_running_stats=True, affine=bn_affine
-                    ),
+                    nn.BatchNorm2d(int(nnsize * c), track_running_stats=True, affine=bn_affine),
                 )
         if pooling:
             for j in range(nb_layers_per_net):
@@ -213,15 +203,18 @@ class UConvConvLogitModel(torch.jit.ScriptModule):
 
         self.v = nn.Linear(int(nnsize * c) * h * w, 1)
         self.pi_logit = nn.Conv2d(
-            int(nnsize * c), c_prime, nnks, stride=stride, padding=padding, dilation=dilation
+            int(nnsize * c),
+            c_prime,
+            nnks,
+            stride=stride,
+            padding=padding,
+            dilation=dilation,
         )
 
     @torch.jit.script_method
     def _forward(self, x: torch.Tensor, return_logit: bool):
         h = self.mono(x)  # linear transformation only
-        saved_h = [
-            h
-        ] * self.nb_unets_div_by_2  # saves output of last linear transformation
+        saved_h = [h] * self.nb_unets_div_by_2  # saves output of last linear transformation
         layer_no = 0
         for unet in self.unets:
             sublayer_no = 0

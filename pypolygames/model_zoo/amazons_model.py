@@ -31,9 +31,7 @@ class AmazonsModel(torch.jit.ScriptModule):
         self.game_params = game_params
         info = zutils.get_game_info(game_params)
         c, h, w = self.c, self.h, self.w = info["feature_size"][:3]
-        c_prime, h_prime, w_prime = self.c_prime, self.h_prime, self.w_prime = info[
-            "action_size"
-        ][:3]
+        c_prime, h_prime, w_prime = self.c_prime, self.h_prime, self.w_prime = info["action_size"][:3]
 
         # fc size
         if model_params.fcsize is None:
@@ -55,9 +53,7 @@ class AmazonsModel(torch.jit.ScriptModule):
         padding = zutils.get_consistent_padding_from_nnks(nnks=nnks, dilation=dilation)
         self.model_params = model_params
 
-        self.net1 = nn.Conv2d(
-            c, int(nnsize * c), nnks, stride=stride, padding=padding, dilation=dilation
-        )
+        self.net1 = nn.Conv2d(c, int(nnsize * c), nnks, stride=stride, padding=padding, dilation=dilation)
         self.net2 = nn.Conv2d(
             int(nnsize * c),
             int(nnsize * c),
@@ -113,12 +109,8 @@ class AmazonsModel(torch.jit.ScriptModule):
             return v, pi_logit
         # TODO(oteytaud): remove duplicate reshaping.
         v1 = nn.functional.softmax(pi_logit[:, :c_prime].reshape(-1, c_prime, 1, 1), 1)
-        v2 = nn.functional.softmax(
-            pi_logit[:, c_prime : c_prime + h_prime].reshape(-1, 1, h_prime, 1), 2
-        )
-        v3 = nn.functional.softmax(
-            pi_logit[:, c_prime + h_prime :].reshape(-1, 1, 1, w_prime), 3
-        )
+        v2 = nn.functional.softmax(pi_logit[:, c_prime : c_prime + h_prime].reshape(-1, 1, h_prime, 1), 2)
+        v3 = nn.functional.softmax(pi_logit[:, c_prime + h_prime :].reshape(-1, 1, 1, w_prime), 3)
         pi = v1 * v2 * v3
         pi = nn.functional.softmax(pi.view(pi.shape[0], -1), 1).reshape(pi.shape)
         # This representation is not sparse, that's a temporary hack
@@ -139,7 +131,7 @@ class AmazonsModel(torch.jit.ScriptModule):
         v: torch.Tensor,
         pi: torch.Tensor,
         pi_mask: torch.Tensor,
-        stat: utils.MultiCounter
+        stat: utils.MultiCounter,
     ) -> float:
         # print(x.size())
         # print(x[0])

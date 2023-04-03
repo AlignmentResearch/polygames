@@ -44,9 +44,7 @@ class Plotter:
                     zip(
                         *[
                             (100 * w / total, 100 * t / total, 100 * l / total)
-                            for w, t, l, total in zip(
-                                nb_wins, nb_ties, nb_losses, nb_totals
-                            )
+                            for w, t, l, total in zip(nb_wins, nb_ties, nb_losses, nb_totals)
                         ]
                     ),
                 )
