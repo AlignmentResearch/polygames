@@ -77,16 +77,3 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 include_directories(src/third_party/pybind11/include/)
 add_subdirectory(src)
 add_subdirectory(tests)
-
-# tests
-add_executable(test_state src/core/test_state.cc src/core/state.cc)
-target_link_libraries(test_state PUBLIC _tube _mcts _games ${JNI_LIBRARIES} ${PYTHON_LIBRARIES})
-
-enable_testing()
-
-add_test(NAME test_replay_buffer
-    COMMAND ${PYTHON_EXECUTABLE} -m test_replay_buffer
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests/python)
-
-set_tests_properties(test_replay_buffer
-    PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_SOURCE_DIR}:$ENV{PYTHONPATH}")

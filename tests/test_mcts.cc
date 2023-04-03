@@ -7,8 +7,8 @@
 
 #include "core/state.h"
 #include "games/connectfour.h"
-#include "mcts.h"
-#include "types.h"
+#include "mcts/mcts.h"
+#include "mcts/types.h"
 #include "utils.h"
 #include "common/threads.h"
 
@@ -17,6 +17,7 @@
 #include <iomanip>
 #include <iostream>
 #include <random>
+#include <gtest/gtest.h>
 
 using namespace core;
 using namespace mcts;
@@ -46,19 +47,18 @@ class TestActor : public core::Actor {
 };
 
 
-int main(int argc, char* argv[]) {
+TEST(MCTSGroup, rollout_no_error) {
   // args are thread, rollouts
-  assert(argc == 3);
   StateForConnectFour state(42);  // State(seed)
   state.Initialize();
   MctsOption option;
   // option.numThread = 2;
-  option.numRolloutPerThread = std::stoi(std::string(argv[2]));
+  option.numRolloutPerThread = 2 ;//std::stoi(std::string(argv[2]));
   option.puct = 1.0;
   option.virtualLoss = 1.0;
   std::vector<std::unique_ptr<MctsPlayer>> players;
 
-  size_t n_threads = std::stoi(std::string(argv[1]));
+  size_t n_threads = 2; //std::stoi(std::string(argv[1]));
   for (size_t i = 0; i < 2; ++i) {
     players.push_back(std::make_unique<MctsPlayer>(option));
     for (size_t j = 0; j < n_threads; ++j) {
@@ -100,5 +100,4 @@ int main(int argc, char* argv[]) {
   state.printCurrentBoard();
   // std::cout << "winner is " << state.checkWinner() << std::endl;
   // assert(state.checkWinner() == 0);
-  return 0;
 }

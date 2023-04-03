@@ -16,8 +16,3 @@ target_link_libraries(_mcts PUBLIC ${TORCH_LIBRARIES} _tube)
 # pybind lib
 pybind11_add_module(mcts pybind.cc)
 target_link_libraries(mcts PUBLIC libpolygames)
-
-# tests
-add_executable(test_mcts test.cc)
-target_link_directories(test_mcts PUBLIC ${PYTHON_INCLUDE_DIRS}/../../lib)  # Hack to find lib dir
-target_link_libraries(test_mcts PUBLIC _mcts libpolygames ${PYTHON_LIBRARIES})

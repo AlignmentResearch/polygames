@@ -5,9 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "game.h"
-#include "state.h"
+#include "core/game.h"
+#include "core/state.h"
 #include <iostream>
+#include <gtest/gtest.h>
 
 float goodEval(core::State& s) {
   float numWins = 0;
@@ -130,7 +131,7 @@ void doTest(core::State& s) {
 // TODO: there should be better way (using gtest?) than writing a main
 // this is just for demo purpose
 // After compilation, run test_state from build folder to run the test
-int main() {
+TEST(StateTestGroup, test_state) {
   int seed = 999;
 
   {

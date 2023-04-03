@@ -1,7 +1,6 @@
 include_directories(
 ../src
  ../src/games
- ../src/games/weakschur
  ../src/third_party
  ../src/third_party/fmt/include
  ../src/tube/src_cpp
@@ -17,7 +16,6 @@ add_executable( polygames-tests
  ../src/mcts/node.cc
  ../src/tube/src_cpp/data_channel.cc
  ../src/core/replay_buffer.cc
- tests.cc
 
  # Include your tests here.
  connectfour-tests.cc
@@ -25,6 +23,8 @@ add_executable( polygames-tests
  havannah-tests.cc
  hex-state-tests.cc
  hex-tests.cc
+ test_state.cc
+ test_mcts.cc
 
  # TODO: add and fix tests
  #ludii-game-tests.cc
@@ -39,24 +39,8 @@ add_executable( polygames-tests
   ../src/distributed/distributed.cc
   ../src/common/thread_id.cc
   ../src/common/threads.cc
-  ../src/games/weakschur/WeakSchur.cpp
-  ../src/games/weakschur/SchurMatrix.cpp
-  ../src/games/weakschur/SchurVector.cpp
-  ../src/games/breakthrough.cc
-  ../src/games/amazons.cc
-../src/games/breakthrough.cc
-../src/games/chess.cc
-../src/games/chinesecheckers.cc
-../src/games/game_base.cc
-../src/games/gomoku_swap2.cc
-../src/games/mastermind_state.cc
-../src/games/minesweeper.cc
-../src/games/nogo_action.cc
-../src/games/nogo_game.cc
-../src/games/nogo_state.cc
-../src/games/othello_opt.cc
-../src/games/tristan_nogo.cc
-../src/games/yinsh.cc
+
+  GTest::gtest_main
  )
 
 #link_directories(/polygames/build/src/third_party/fmt)
@@ -89,9 +73,11 @@ target_link_libraries( polygames-tests
     $<TARGET_OBJECTS:_zstd>
     ${PYTHON_LIBRARIES}
     fmt
-    gtest_main
     gtest
     libpolygames
+    _tube
+    _mcts
+    _games
     )
 
 install (TARGETS polygames-tests DESTINATION bin)
