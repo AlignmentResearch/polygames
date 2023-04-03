@@ -191,10 +191,10 @@ size_t sampleDiscreteProbability(size_t nElements,
     throw std::runtime_error("sampleDiscreteProbability was passed 0 elements");
   }
   // First things first, we print out the probability distribution
-  float happysum = 0.0f;
-  for (size_t i = 0; i != nElements; ++i) {
-    happysum += getValue(i);
-  }
+  // float happysum = 0.0f;
+  // for (size_t i = 0; i != nElements; ++i) {
+  //   happysum += getValue(i);
+  // }
 
   // Print out the probability of each element
   // for (size_t i = 0; i != nElements; ++i) {
