@@ -48,17 +48,16 @@ class TestActor : public core::Actor {
 
 
 TEST(MCTSGroup, rollout_no_error) {
-  // args are thread, rollouts
+
   StateForConnectFour state(42);  // State(seed)
   state.Initialize();
   MctsOption option;
-  // option.numThread = 2;
-  option.numRolloutPerThread = 2 ;//std::stoi(std::string(argv[2]));
+  option.numRolloutPerThread = 20;
   option.puct = 1.0;
   option.virtualLoss = 1.0;
   std::vector<std::unique_ptr<MctsPlayer>> players;
 
-  size_t n_threads = 2; //std::stoi(std::string(argv[1]));
+  size_t n_threads = 2;
   for (size_t i = 0; i < 2; ++i) {
     players.push_back(std::make_unique<MctsPlayer>(option));
     for (size_t j = 0; j < n_threads; ++j) {

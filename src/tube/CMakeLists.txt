@@ -17,7 +17,7 @@ pkg_check_modules(ZeroMQ REQUIRED libzmq>=4.3)
 
 
 # lib for other c++ programs
-add_library(_tube
+add_library(_tube STATIC
   src_cpp/data_channel.cc
 )
 target_include_directories(_tube PUBLIC ${TORCH_INCLUDE_DIRS})

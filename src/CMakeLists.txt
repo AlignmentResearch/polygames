@@ -65,8 +65,7 @@ if (JNI_FOUND)
     games/ludii/ludii_state_wrapper.cc)
 endif()
 
-add_library(_games
-  ${_games_SOURCES})
+add_library(_games OBJECT ${_games_SOURCES})
 target_include_directories(_games PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/torchRL)
 target_include_directories(_games SYSTEM PUBLIC ${TORCH_INCLUDE_DIRS})
 target_include_directories(_games PUBLIC ${PYTHON_INCLUDE_DIRS})

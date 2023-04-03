@@ -83,21 +83,14 @@ jobs:
       - checkout-without-force
       - build-polygames
       - run:
-          name: Test games
+          name: C++ tests
           command: |
-            ./build/test_state
+            cd ./build/tests
+            ctest --parallel 4 --output-on-failure --output-junit junit.xml
+      - store_test_results: # report the test results (in ./build/tests/junit.xml) to CircleCI
+          path: ./build/tests
       - run:
-          name: Test polygames-tests (unit tests)
-          command: |
-            ./build/tests/polygames-tests
-
-      - run:
-          name: Test MCTS
-          command: |
-              ./build/src/mcts/test_mcts 1 100
-              ./build/src/mcts/test_mcts 4 50
-      - run:
-          name: Test python
+          name: Python tests
           command: |
               pytest pypolygames --durations=10 --verbose
       - run:
