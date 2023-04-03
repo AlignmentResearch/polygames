@@ -505,5 +505,4 @@ def run_training_and_evaluation_from_args_warning(args: argparse.Namespace):
 
 if __name__ == "__main__":
     args = parse_args()
-    print("the args are now", args)
     args.func(args)
