@@ -249,7 +249,7 @@ class MctsResult {
   void add(Action a, float visits) {
     if (mctsPolicy.size() <= (size_t)a) {
       if (mctsPolicy.capacity() <= (size_t)a) {
-        mctsPolicy.reserve(mctsPolicy.size() * 2); // bad: this assumes that a is not too big
+        mctsPolicy.reserve(mctsPolicy.size() * 2);
       }
       mctsPolicy.resize(a + 1);
     }
