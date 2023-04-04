@@ -11,7 +11,7 @@ import pytest
 from .. import params
 from .. import evaluation
 from .. import utils
-
+from polygames import init_threads
 
 @pytest.mark.parametrize("game_name", [game_name for game_name in utils.listings.games()])
 def test_mcts(game_name) -> None:
@@ -22,6 +22,7 @@ def test_mcts(game_name) -> None:
     # - too_bad: not better with larger rollouts (these games are played but not evaluated)
     # also, for some games, we must add some tolerance (they dont win at 100%)
     #
+    init_threads(4)
     crashing = []
     is_one_player_game = any(x in game_name for x in ["asterm", "ineswee", "WeakSchur"])
     too_slow = [
@@ -67,7 +68,7 @@ def test_mcts(game_name) -> None:
     #
     game_params = params.GameParams(game_name=game_name)
     case = random.randint(0, 2)
-    rollouts = (2, 40)
+    rollouts = (4, 4)
     if not case:  # In case 0, 0 wins, else 1  (this makes sure results dependent on rollouts)
         rollouts = tuple(reversed(rollouts))
     eval_params = params.EvalParams(

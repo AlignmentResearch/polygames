@@ -20,8 +20,7 @@ pkg_check_modules(ZeroMQ REQUIRED libzmq>=4.3)
 add_library(_tube STATIC
   src_cpp/data_channel.cc
 )
-target_include_directories(_tube PUBLIC ${TORCH_INCLUDE_DIRS})
-target_include_directories(_tube PUBLIC ${PYTHON_INCLUDE_DIRS} ${ZEROMQ_INCLUDE_DIRS})
+target_include_directories(_tube SYSTEM PUBLIC ${TORCH_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS} ${ZEROMQ_INCLUDE_DIRS})
 target_link_directories(_tube PUBLIC ${TORCH_INSTALL_PREFIX}/lib)
 target_link_libraries(_tube PUBLIC ${TORCH_LIBRARIES} fmt ${ZEROMQ_LIBRARIES} torch_python)
 

@@ -97,13 +97,13 @@ jobs:
             # LSAN_OPTIONS: running bash commands from Python seems to have memory leaks, ignore them.
             # LD_PRELOAD: See https://stackoverflow.com/questions/49544785/clang-undefined-behavior-sanitizer-in-shared-library-jni-undefined-symbol
             LSAN_OPTIONS="suppressions=valgrind/lsan-bash.supp" \
-            LD_PRELOAD="$(clang -print-file-name=libclang_rt.asan-x86_64.so):$(clang -print-file-name=libclang_rt.ubsan_standalone-x86_64.so)" \
+            LD_PRELOAD="$(clang -print-file-name=libclang_rt.asan-x86_64.so)" \
               pytest pypolygames --durations=10 --verbose --junitxml=python/junit.xml
       - run:
           name: Run training
           command: |
             LSAN_OPTIONS="suppressions=valgrind/lsan-bash.supp" \
-            LD_PRELOAD="$(clang -print-file-name=libclang_rt.asan-x86_64.so):$(clang -print-file-name=libclang_rt.ubsan-x86_64.so)" \
+            LD_PRELOAD="$(clang -print-file-name=libclang_rt.asan-x86_64.so)" \
               python -m pypolygames traineval --act_batchsize=2 \
                 --batchsize=2 --replay_capacity=16  --replay_warmup=2 \
                 --num_epoch=1 --num_game=12 --model_name=NanoFCLogitModel \

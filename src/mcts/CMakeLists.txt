@@ -6,16 +6,15 @@ add_library(_mcts STATIC
   storage.cc
 )
 
-target_include_directories(_mcts PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/..
+target_include_directories(_mcts PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
+target_include_directories(_mcts SYSTEM PUBLIC
   ${TORCH_INCLUDE_DIRS}
   ${PYTHON_INCLUDE_DIRS})
 
 target_link_libraries(_mcts PUBLIC
   pthread
   ${TORCH_LIBRARIES}
-  $<TARGET_OBJECTS:_tube>
-  )
+)
 
 # pybind lib
 pybind11_add_module(mcts pybind.cc)

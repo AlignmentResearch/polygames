@@ -32,6 +32,7 @@ add_executable( polygames-tests
  #ludii-game-tests.cc
  )
 
+target_include_directories(polygames-tests PRIVATE SYSTEM ${TORCH_INCLUDE_DIRS})
 target_link_libraries(polygames-tests
     libpolygames
     ${GTEST_LIBRARIES}

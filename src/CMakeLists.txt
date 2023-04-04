@@ -68,7 +68,7 @@ endif()
 add_library(_games OBJECT ${_games_SOURCES})
 target_include_directories(_games PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/torchRL)
 target_include_directories(_games SYSTEM PUBLIC ${TORCH_INCLUDE_DIRS})
-target_include_directories(_games PUBLIC ${PYTHON_INCLUDE_DIRS})
+target_include_directories(_games SYSTEM PUBLIC ${PYTHON_INCLUDE_DIRS})
 
 target_sources(libpolygames PRIVATE
   core/game.cc
@@ -77,21 +77,25 @@ target_sources(libpolygames PRIVATE
   core/model_manager.cc
 )
 
-target_include_directories(libpolygames PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/torchRL)
-target_link_libraries(libpolygames PUBLIC
+target_include_directories(libpolygames PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/torchRL )
+target_include_directories(libpolygames SYSTEM PUBLIC ${PYTHON_INCLUDE_DIRS} ${TORCH_INCLUDE_DIRS})
+target_link_libraries(libpolygames PRIVATE
   _tube
   _mcts
   _games
   $<TARGET_OBJECTS:_zstd>
   $<TARGET_OBJECTS:_distributed>
   $<TARGET_OBJECTS:_common>
+)
+target_link_libraries(libpolygames PUBLIC
   ${PYTHON_LIBRARIES}
+  ${TORCH_LIBRARIES}
   ${CMAKE_THREAD_LIBS_INIT}
   )
 set_target_properties(libpolygames PROPERTIES PREFIX "")
 
 if (JNI_FOUND)
-  target_include_directories(_games PUBLIC ${JNI_INCLUDE_DIRS})
+  target_include_directories(_games SYSTEM PUBLIC ${JNI_INCLUDE_DIRS})
   target_link_libraries(libpolygames PUBLIC ${JNI_LIBRARIES})
 endif()
 
