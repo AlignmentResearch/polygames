@@ -34,22 +34,18 @@ def create_pure_mcts_environment(
     simulation_params: SimulationParams,
     execution_params: ExecutionParams,
     pure_mcts: bool,
-    model
+    player_1_rollouts: int = 100,
+    player_2_rollouts: int = 1000,
+    player_1_sample: bool = False,
+    player_2_sample: bool = False,
+    player_1_smooth: bool = False,
+    player_2_smooth: bool = False,
 ) -> Tuple[tube.Context, Optional[tube.DataChannel], Callable[[], int]]:
     human_first = execution_params.human_first
-    time_ratio = execution_params.time_ratio
-    total_time = execution_params.total_time
+    actor_channel = None
+
     context = tube.Context()
-    actor_channel = (
-        None if pure_mcts else tube.DataChannel("act", simulation_params.num_actor, 1)
-    )
-    rnn_state_shape = []
-    if model is not None and hasattr(model, "rnn_cells") and model.rnn_cells > 0:
-      rnn_state_shape = [model.rnn_cells, model.rnn_channels]
-    rnn_state_size = 0
-    if len(rnn_state_shape) >= 2:
-      rnn_state_size = rnn_state_shape[0] * rnn_state_shape[1]
-    logit_value = getattr(model, "logit_value", False)
+
     game = create_game(
         game_params,
         num_episode=1,
@@ -64,41 +60,27 @@ def create_pure_mcts_environment(
         seed_generator=seed_generator,
         game=game,
         player="mcts",
-        num_actor=simulation_params.num_actor,
-        # num_rollouts=simulation_params.num_rollouts,
-        num_rollouts=0,
+        num_actor=1,
+        num_rollouts=player_1_rollouts,
         pure_mcts=True,
         actor_channel=actor_channel,
-        model_manager=None,
-        human_mode=True,
-        total_time=total_time,
-        time_ratio=time_ratio,
         sample_before_step_idx=80,
+        smooth_mcts_sampling=player_1_smooth,
         randomized_rollouts=False,
-        sampling_mcts=False,
-        rnn_state_shape=rnn_state_shape,
-        rnn_seqlen=execution_params.rnn_seqlen,
-        logit_value=logit_value,
+        sampling_mcts=simulation_params.sampling_mcts,
     )
     player2 = create_player(
         seed_generator=seed_generator,
         game=game,
         player="mcts",
-        num_actor=simulation_params.num_actor,
-        # num_rollouts=simulation_params.num_rollouts,
-        num_rollouts=100,
+        num_actor=1,
+        num_rollouts=player_2_rollouts,
         pure_mcts=True,
         actor_channel=actor_channel,
-        model_manager=None,
-        human_mode=True,
-        total_time=total_time,
-        time_ratio=time_ratio,
         sample_before_step_idx=80,
+        smooth_mcts_sampling=player_2_smooth,
         randomized_rollouts=False,
-        sampling_mcts=False,
-        rnn_state_shape=rnn_state_shape,
-        rnn_seqlen=execution_params.rnn_seqlen,
-        logit_value=logit_value,
+        sampling_mcts=simulation_params.sampling_mcts,
     )
     game.add_eval_player(player1)
     game.add_eval_player(player2)
@@ -165,7 +147,6 @@ def run_pure_mcts_played_game(
         simulation_params=simulation_params,
         execution_params=execution_params,
         pure_mcts=model_params.pure_mcts,
-        model=model
     )
 
     human_score = play_game(
