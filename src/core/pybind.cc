@@ -21,8 +21,13 @@ namespace py = pybind11;
 using namespace core;
 
 PYBIND11_MODULE(polygames, m) {
-
   m.def("init_threads", &threads::Threads::init);
+
+  auto m_mcts = m.def_submodule("mcts", "the MCTS algorithm");
+  mcts::pybind_submodule(m_mcts);
+
+  auto m_tube = m.def_submodule("tube", "Store replay buffers and networking");
+  tube::pybind_submodule(m_tube);
 
   py::class_<Game, tube::EnvThread, std::shared_ptr<Game>>(m, "Game")
       .def(py::init<std::string, std::vector<std::string>, int, int, bool, bool, bool, bool, bool, int,
@@ -90,10 +95,4 @@ PYBIND11_MODULE(polygames, m) {
       .def("set_find_batch_size_max_bs", &ModelManager::setFindBatchSizeMaxBs);
 
   py::class_<SampleResult>(m, "SampleResult").def("get", &SampleResult::get);
-
-  auto m_mcts = m.def_submodule("mcts", "the MCTS algorithm");
-  mcts::pybind_submodule(m_mcts);
-
-  auto m_tube = m.def_submodule("tube", "Store replay buffers and networking");
-  tube::pybind_submodule(m_tube);
 }
