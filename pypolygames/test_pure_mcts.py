@@ -3,18 +3,24 @@ import subprocess
 my_env = {"PYTHONPATH": "/polygames"}
 
 num_bad = 0
-for i in range(1000):
-    if i % 10 == 0:
-        print(i)
+for i in range(100):
+    game_command = ['python', '-m', 'pypolygames', 'pure_mcts', 
+                    '--game_name', 'TicTacToe', '--seed', str(i)]
+
+    # game_command += ['--sampling_mcts', 'True']
+
     result = subprocess.run(
-        ["python", "-m", "pypolygames", "pure_mcts", "--game_name", "TicTacToe", "--seed", str(i)],
+        game_command,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
         env=my_env,
     )
 
-    if "the chosen action is" in result.stdout:
-        print(result.stdout)
-        break
-        num_bad += 1
+    result_string = result.stdout
+    result_list = result_string.splitlines()
+    result_line = result_list[6]
+
+    # result_location = result.stdout.find("player") + len("player") + 2
+        # if "result for the first player" in line:
+    print(i, result_line)
