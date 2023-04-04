@@ -11,8 +11,8 @@ RUN sudo apt-get update -q \
 
 WORKDIR "/home/circleci/project"
 # Install Python dependencies
-COPY --chown=circleci:circleci ./requirements.txt ./requirements-circleci.txt
-RUN pip install --upgrade pip -r requirements-orig.txt && rm -rf "${HOME}/.cache"
+COPY --chown=circleci:circleci .circleci/requirements.txt ./requirements-circleci.txt
+RUN pip install --upgrade pip -r requirements-circleci.txt && rm -rf "${HOME}/.cache"
 
 # Copy whole repo
 COPY --chown=circleci:circleci . .
