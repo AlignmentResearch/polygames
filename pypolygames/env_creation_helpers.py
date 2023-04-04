@@ -23,9 +23,9 @@ def sanitize_game_params(game_params: GameParams) -> None:
     # EDIT: now it a simulation parameter, but for retro-compatibility
     #  we keep that function
     game_params.per_thread_batchsize = 0
-    
+
     # Many old models don't have the game_options attribute
-    if not hasattr(game_params, 'game_options'):
+    if not hasattr(game_params, "game_options"):
         game_params.game_options = list()
 
 
@@ -40,7 +40,7 @@ def create_game(
     predict_n_states: int = 0,
 ) -> polygames.Game:
     # Many old models don't have the game_options attribute
-    if hasattr(game_params, 'game_options'):
+    if hasattr(game_params, "game_options"):
         game_options = game_params.game_options
         if game_options is None:
             game_options = list()
@@ -75,19 +75,14 @@ def create_model(
 ) -> torch.jit.ScriptModule:
     if model_params.model_name is not None:
         if model_params.model_name in model_zoo.MODELS:
-            model = model_zoo.MODELS[model_params.model_name](
-                game_params=game_params, model_params=model_params
-            )
+            model = model_zoo.MODELS[model_params.model_name](game_params=game_params, model_params=model_params)
         else:
             raise RuntimeError(
-                f'The model "{model_params.model_name}" has not been implemented '
-                f'in the "model_zoo" package'
+                f'The model "{model_params.model_name}" has not been implemented ' f'in the "model_zoo" package'
             )
     else:
         print("creating a generic model")
-        model = model_zoo.GenericModel(
-            game_params=game_params, model_params=model_params
-        )
+        model = model_zoo.GenericModel(game_params=game_params, model_params=model_params)
     if resume_training:
         if model_state_dict is not None:
             print("load state dict!")
@@ -124,14 +119,20 @@ def _set_mcts_option(
     return mcts_option
 
 
-def _create_pure_mcts_player(
-    game: polygames.Game, mcts_option: mcts.MctsOption, num_actor: int
-) -> mcts.MctsPlayer:
+def _create_pure_mcts_player(game: polygames.Game, mcts_option: mcts.MctsOption, num_actor: int) -> mcts.MctsPlayer:
     """a player that uses only mcts + random rollout, no neural net"""
     player = mcts.MctsPlayer(mcts_option)
     for _ in range(num_actor):
         actor = polygames.Actor(
-            None, game.get_feat_size(), game.get_action_size(), [], 0, False, False, False, None
+            None,
+            game.get_feat_size(),
+            game.get_action_size(),
+            [],
+            0,
+            False,
+            False,
+            False,
+            None,
         )
         player.set_actor(actor)
     return player
@@ -147,7 +148,6 @@ def _create_neural_mcts_player(
     rnn_seqlen: int = 0,
     logit_value: bool = False,
 ) -> mcts.MctsPlayer:
-
     player = mcts.MctsPlayer(mcts_option)
     for _ in range(num_actor):
         num_actor += 1
@@ -165,6 +165,7 @@ def _create_neural_mcts_player(
         player.set_actor(actor)
     return player
 
+
 def _create_forward_player(
     game: polygames.Game,
     actor_channel: tube.DataChannel,
@@ -173,7 +174,6 @@ def _create_forward_player(
     rnn_seqlen: int = 0,
     logit_value: bool = False,
 ) -> mcts.MctsPlayer:
-
     player = polygames.ForwardPlayer()
     actor = polygames.Actor(
         actor_channel,
@@ -210,39 +210,37 @@ def create_player(
     logit_value: bool = False,
 ):
     if player == "mcts":
-      mcts_option = _set_mcts_option(
-          num_rollouts=num_rollouts,
-          seed=next(seed_generator),
-          human_mode=human_mode,
-          time_ratio=time_ratio,
-          total_time=total_time,
-          sample_before_step_idx=sample_before_step_idx,
-          randomized_rollouts=randomized_rollouts,
-          sampling_mcts=sampling_mcts,
-      )
-      if pure_mcts:
-          return _create_pure_mcts_player(
-              game=game, mcts_option=mcts_option, num_actor=num_actor
-          )
-      else:
-          return _create_neural_mcts_player(
-              game=game,
-              mcts_option=mcts_option,
-              num_actor=num_actor,
-              actor_channel=actor_channel,
-              model_manager=model_manager,
-              rnn_state_shape=rnn_state_shape,
-              rnn_seqlen=rnn_seqlen,
-              logit_value=logit_value
-          )
+        mcts_option = _set_mcts_option(
+            num_rollouts=num_rollouts,
+            seed=next(seed_generator),
+            human_mode=human_mode,
+            time_ratio=time_ratio,
+            total_time=total_time,
+            sample_before_step_idx=sample_before_step_idx,
+            randomized_rollouts=randomized_rollouts,
+            sampling_mcts=sampling_mcts,
+        )
+        if pure_mcts:
+            return _create_pure_mcts_player(game=game, mcts_option=mcts_option, num_actor=num_actor)
+        else:
+            return _create_neural_mcts_player(
+                game=game,
+                mcts_option=mcts_option,
+                num_actor=num_actor,
+                actor_channel=actor_channel,
+                model_manager=model_manager,
+                rnn_state_shape=rnn_state_shape,
+                rnn_seqlen=rnn_seqlen,
+                logit_value=logit_value,
+            )
     elif player == "forward":
         return _create_forward_player(
-              game=game,
-              actor_channel=actor_channel,
-              model_manager=model_manager,
-              rnn_state_shape=rnn_state_shape,
-              rnn_seqlen=rnn_seqlen,
-              logit_value=logit_value
+            game=game,
+            actor_channel=actor_channel,
+            model_manager=model_manager,
+            rnn_state_shape=rnn_state_shape,
+            rnn_seqlen=rnn_seqlen,
+            logit_value=logit_value,
         )
     else:
         raise RuntimeError("Unknown player " + player)

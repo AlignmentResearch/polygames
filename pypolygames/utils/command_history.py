@@ -14,12 +14,7 @@ from ..params import GenericParams
 class CommandHistory:
     def __init__(self):
         # remove '='
-        command = [
-            x
-            for x in itertools.chain.from_iterable(
-                map(lambda x: x.split("="), sys.argv)
-            )
-        ]
+        command = [x for x in itertools.chain.from_iterable(map(lambda x: x.split("="), sys.argv))]
         self._commands = [command]
 
     def build_history(self, former_command_history: "CommandHistory"):
@@ -41,19 +36,13 @@ class CommandHistory:
                 return True
         return False
 
-    def last_command_contains_params(
-        self, DataclassParams: GenericParams, exclude: Optional[List[str]] = None
-    ) -> bool:
+    def last_command_contains_params(self, DataclassParams: GenericParams, exclude: Optional[List[str]] = None) -> bool:
         if exclude is None:
             exclude = []
-        exclude = [
-            f"--{option}" if option[:2] != "--" else option for option in exclude
-        ]
+        exclude = [f"--{option}" if option[:2] != "--" else option for option in exclude]
         if self._commands:
             for _, arg_field in DataclassParams.arg_fields():
-                if arg_field.name not in exclude and self.last_command_contains(
-                    arg_field.name
-                ):
+                if arg_field.name not in exclude and self.last_command_contains(arg_field.name):
                     return True
         return False
 

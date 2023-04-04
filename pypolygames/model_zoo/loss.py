@@ -4,12 +4,12 @@ import torch.nn.functional as F
 
 from typing import Tuple
 
-def mcts_loss(
-   self,
-   model,
-   batch,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
 
+def mcts_loss(
+    self,
+    model,
+    batch,
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     predicts = getattr(self, "predicts", 0)
 
     x = batch["s"]
@@ -25,10 +25,16 @@ def mcts_loss(
     else:
         pred_v, pred_logit, *_ = model._forward(x, return_logit=True)
 
-    pi_mask = pi_mask.view(pred_logit.shape);
+    pi_mask = pi_mask.view(pred_logit.shape)
     pred_logit = pred_logit * pi_mask - 400 * (1 - pi_mask)
     if predicts > 0:
-        predict_pi_err = (F.mse_loss(pred_predict_logit, predict_pi, reduction="none") * predict_pi_mask).flatten(2).sum(2).flatten(1).mean(1)
+        predict_pi_err = (
+            (F.mse_loss(pred_predict_logit, predict_pi, reduction="none") * predict_pi_mask)
+            .flatten(2)
+            .sum(2)
+            .flatten(1)
+            .mean(1)
+        )
 
     v_err = F.mse_loss(pred_v, v, reduction="none").squeeze(1)
     pred_log_pi = nn.functional.log_softmax(pred_logit.flatten(1), dim=1).view_as(pred_logit) * pi_mask
@@ -36,6 +42,9 @@ def mcts_loss(
 
     err = v_err * 1.5 + pi_err + (predict_pi_err * 0.1 if predicts > 0 else 0)
 
-    return err.mean(), v_err.detach().mean(), pi_err.detach().mean(), (predict_pi_err.detach().mean() if predicts > 0 else None)
-
-
+    return (
+        err.mean(),
+        v_err.detach().mean(),
+        pi_err.detach().mean(),
+        (predict_pi_err.detach().mean() if predicts > 0 else None),
+    )

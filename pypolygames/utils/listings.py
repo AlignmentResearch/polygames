@@ -17,7 +17,13 @@ def games(olympiads: bool = False) -> tp.List[str]:
         only list olympiad games
     """
     if olympiads:
-        pies = {"Hex11pie", "Hex13pie", "Hex19pie", "Havannah5pie", "Havannah8pie"} & set(
+        pies = {
+            "Hex11pie",
+            "Hex13pie",
+            "Hex19pie",
+            "Havannah5pie",
+            "Havannah8pie",
+        } & set(
             games()
         )  # to ready yet
         return [
@@ -38,6 +44,4 @@ def games(olympiads: bool = False) -> tp.List[str]:
     assert filepath.exists()
     pattern = r".*if\s*?\(\s*?isGameNameMatched\s*?\(\s*?\{\s*?\"(?P<name>\w+)\"[^}]*\}\s*?\)\s*?\)\s*?\{.*"
     iterator = re.finditer(pattern, filepath.read_text())
-    return list(
-        x.group("name") for x in iterator if not x.group().strip().startswith("//")
-    )
+    return list(x.group("name") for x in iterator if not x.group().strip().startswith("//"))

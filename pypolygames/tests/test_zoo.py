@@ -12,6 +12,7 @@ from ..model_zoo.utils import get_game_info
 from .. import params
 from .. import utils
 
+
 # NOTE: this loss function is taken from
 # https://github.com/facebookarchive/Polygames/blob/86465b47a6eb24c60fa8857cc0946fff010ada9d/pypolygames/model_zoo/nano_fc_logit_model.py#L102
 def loss(
@@ -49,9 +50,7 @@ def test_models(model_name) -> None:
     if model_name in ["Connect4BenchModel", "ResConvConvLogitPoolModelV2"]:
         raise SkipTest(f"Skipping {model_name}")
     game_params = params.GameParams(
-        game_name="Tristannogo"
-        if "GameOfTheAmazons" not in model_name
-        else "GameOfTheAmazons"
+        game_name="Tristannogo" if "GameOfTheAmazons" not in model_name else "GameOfTheAmazons"
     )
     model_params = params.ModelParams(model_name=model_name)
     info = get_game_info(game_params)
@@ -66,7 +65,5 @@ def test_models(model_name) -> None:
     # loss
     multi_counter = utils.MultiCounter(root=None)
     pi_mask = torch.ones(outputs["pi"].shape)
-    
-    loss(
-        model, input_data, outputs["v"], outputs["pi"], pi_mask, multi_counter
-    )  # make sure it computes something
+
+    loss(model, input_data, outputs["v"], outputs["pi"], pi_mask, multi_counter)  # make sure it computes something

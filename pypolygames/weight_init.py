@@ -19,20 +19,12 @@ def _init_weight_from_method(init_method):
 
 
 WEIGHT_INIT = OrderedDict(
-    xavier_uniform=_init_weight_from_method(
-        lambda net: torch.nn.init.xavier_uniform_(net.weight, gain=1.0)
-    ),
-    xavier_normal=_init_weight_from_method(
-        lambda net: torch.nn.init.xavier_normal_(net.weight, gain=1.0)
-    ),
+    xavier_uniform=_init_weight_from_method(lambda net: torch.nn.init.xavier_uniform_(net.weight, gain=1.0)),
+    xavier_normal=_init_weight_from_method(lambda net: torch.nn.init.xavier_normal_(net.weight, gain=1.0)),
     kaiming_uniform=_init_weight_from_method(
-        lambda net: torch.nn.init.kaiming_uniform_(
-            net.weight, a=0, mode="fan_in", nonlinearity="relu"
-        )
+        lambda net: torch.nn.init.kaiming_uniform_(net.weight, a=0, mode="fan_in", nonlinearity="relu")
     ),
     kaiming_normal=_init_weight_from_method(
-        lambda net: torch.nn.init.kaiming_normal_(
-            net.weight, a=0, mode="fan_in", nonlinearity="relu"
-        )
+        lambda net: torch.nn.init.kaiming_normal_(net.weight, a=0, mode="fan_in", nonlinearity="relu")
     ),
 )

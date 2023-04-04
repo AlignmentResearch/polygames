@@ -11,12 +11,14 @@ from typing import Iterator, Tuple, Union, List, Optional, Dict, Any
 
 from .weight_init import WEIGHT_INIT
 
+
 def boolarg(x):
-  if str(x).lower() in ["true", "yes", "on", "1", "y"]:
-    return True
-  if str(x).lower() in ["false", "no", "off", "0", "n"]:
-    return False
-  raise RuntimeError("Unknown bool value " + str(x))
+    if str(x).lower() in ["true", "yes", "on", "1", "y"]:
+        return True
+    if str(x).lower() in ["false", "no", "off", "0", "n"]:
+        return False
+    raise RuntimeError("Unknown bool value " + str(x))
+
 
 @dataclass
 class ArgFields:
@@ -83,15 +85,13 @@ class GameParams:
             out_features=ArgFields(
                 opts=dict(
                     action="store_false" if cls.out_features else "store_true",
-                    help="If set, the input to the NN includes a channel "
-                    "with 1 on the frontier",
+                    help="If set, the input to the NN includes a channel " "with 1 on the frontier",
                 )
             ),
             turn_features=ArgFields(
                 opts=dict(
                     action="store_false" if cls.turn_features else "store_true",
-                    help="If set, the input to the NN includes a channel "
-                    "with the player index broadcasted",
+                    help="If set, the input to the NN includes a channel " "with the player index broadcasted",
                 )
             ),
             turn_features_mc=ArgFields(
@@ -109,21 +109,17 @@ class GameParams:
                     "4 geometric channels representing the position on the board",
                 )
             ),
-            random_features=ArgFields(
-                opts=dict(type=int, help="Number of random features the input includes")
-            ),
+            random_features=ArgFields(opts=dict(type=int, help="Number of random features the input includes")),
             one_feature=ArgFields(
                 opts=dict(
                     action="store_false" if cls.one_feature else "store_true",
-                    help="If set, the input to the NN includes "
-                    "a channel with 1 everywhere",
+                    help="If set, the input to the NN includes " "a channel with 1 everywhere",
                 )
             ),
             history=ArgFields(
                 opts=dict(
                     type=int,
-                    help="Number of last steps whose representation is "
-                    "added in the featurization",
+                    help="Number of last steps whose representation is " "added in the featurization",
                 )
             ),
             predict_end_state=ArgFields(
@@ -143,7 +139,7 @@ class GameParams:
                     type=str,
                     help="Type of player to use. One of: mcts, forward",
                 )
-            )
+            ),
         )
         for param, arg_field in params.items():
             if arg_field.name is None:
@@ -187,8 +183,7 @@ class ModelParams:
         if self.init_checkpoint is not None:
             if self.pure_mcts:
                 raise ValueError(
-                    "The MCTS can be either assisted with a "
-                    "'--init_checkpoint' neural network or be a '--pure_mcts'"
+                    "The MCTS can be either assisted with a " "'--init_checkpoint' neural network or be a '--pure_mcts'"
                 )
             self.init_checkpoint = self.init_checkpoint.absolute()
         # if self.bn and self.bn_affine:
@@ -211,28 +206,18 @@ class ModelParams:
             pure_mcts=ArgFields(
                 opts=dict(
                     action="store_false" if cls.pure_mcts else "store_true",
-                    help="If set, the inference will be done with MCTS only "
-                    "- no Neural Network",
+                    help="If set, the inference will be done with MCTS only " "- no Neural Network",
                 )
             ),
             model_name=ArgFields(
                 opts=dict(
                     type=str,
-                    help="Model name - if left unspecified "
-                    "it will default to a generic model",
+                    help="Model name - if left unspecified " "it will default to a generic model",
                 )
             ),
-            nb_nets=ArgFields(
-                opts=dict(type=int, help="Number of subnets, when applicable")
-            ),
-            nb_layers_per_net=ArgFields(
-                opts=dict(type=int, help="Number of layer per subnets, when applicable")
-            ),
-            nnsize=ArgFields(
-                opts=dict(
-                    type=float, help="Number of units per hidden layer, when applicable"
-                )
-            ),
+            nb_nets=ArgFields(opts=dict(type=int, help="Number of subnets, when applicable")),
+            nb_layers_per_net=ArgFields(opts=dict(type=int, help="Number of layer per subnets, when applicable")),
+            nnsize=ArgFields(opts=dict(type=float, help="Number of units per hidden layer, when applicable")),
             fcsize=ArgFields(
                 opts=dict(
                     type=int,
@@ -250,8 +235,7 @@ class ModelParams:
             pooling=ArgFields(
                 opts=dict(
                     action="store_false" if cls.pooling else "store_true",
-                    help="If set, adds pooling layers following convolutional layers, "
-                    "when applicable",
+                    help="If set, adds pooling layers following convolutional layers, " "when applicable",
                 )
             ),
             bn=ArgFields(
@@ -259,8 +243,7 @@ class ModelParams:
                     action="store_false" if cls.bn else "store_true",
                     # help="If set, adds batch normalisation with "
                     # "no learnable affine parameters",
-                    help="If set, adds batch normalisation with "
-                    "learnable affine parameters",
+                    help="If set, adds batch normalisation with " "learnable affine parameters",
                 )
             ),
             # bn_affine=ArgFields(
@@ -289,7 +272,7 @@ class ModelParams:
                     help="Global pooling - this will, for the models that support it, "
                     "add global pooling over some channels after convolutional layers. "
                     "The parameter is the proportion of the channels that should be pooled. "
-                    "Eg. 0.1 will specify that we should pool 10%% of the channels"
+                    "Eg. 0.1 will specify that we should pool 10%% of the channels",
                 )
             ),
             batchnorm_momentum=ArgFields(
@@ -335,9 +318,7 @@ class OptimParams:
     def arg_fields(cls) -> Iterator[Tuple[str, ArgFields]]:
         params = OrderedDict(
             num_epoch=ArgFields(opts=dict(type=int, help=f"Number of epochs")),
-            epoch_len=ArgFields(
-                opts=dict(type=int, help=f"Number of train batches per epoch")
-            ),
+            epoch_len=ArgFields(opts=dict(type=int, help=f"Number of train batches per epoch")),
             batchsize=ArgFields(
                 opts=dict(
                     type=int,
@@ -349,17 +330,14 @@ class OptimParams:
             eps=ArgFields(
                 opts=dict(
                     type=float,
-                    help="Term added to the denominator to improve "
-                    "numerical stability ",
+                    help="Term added to the denominator to improve " "numerical stability ",
                 )
             ),
-            grad_clip=ArgFields(
-                opts=dict(type=float, help=f"Max norm of the gradients")
-            ),
+            grad_clip=ArgFields(opts=dict(type=float, help=f"Max norm of the gradients")),
             reset_optimizer_state=ArgFields(
                 opts=dict(
                     action="store_false" if cls.reset_optimizer_state else "store_true",
-                    help="If set, any internal state of optimizer from checkpoint will be reset"
+                    help="If set, any internal state of optimizer from checkpoint will be reset",
                 )
             ),
         )
@@ -406,12 +384,8 @@ class SimulationParams:
     @classmethod
     def arg_fields(cls) -> Iterator[Tuple[str, ArgFields]]:
         params = OrderedDict(
-            num_game=ArgFields(
-                opts=dict(type=int, help=f"Number of game-running threads")
-            ),
-            num_threads=ArgFields(
-                opts=dict(type=int, help=f"Number of async threads")
-            ),
+            num_game=ArgFields(opts=dict(type=int, help=f"Number of game-running threads")),
+            num_threads=ArgFields(opts=dict(type=int, help=f"Number of async threads")),
             num_actor=ArgFields(
                 opts=dict(
                     type=int,
@@ -420,26 +394,18 @@ class SimulationParams:
                     "- the more num_actor, the larger the MCTS",
                 )
             ),
-            num_rollouts=ArgFields(
-                opts=dict(type=int, help="Number of rollouts per actor/thread")
-            ),
-            replay_capacity=ArgFields(
-                opts=dict(
-                    type=int, help="Nb of act_batches the replay buffer can contain"
-                )
-            ),
+            num_rollouts=ArgFields(opts=dict(type=int, help="Number of rollouts per actor/thread")),
+            replay_capacity=ArgFields(opts=dict(type=int, help="Nb of act_batches the replay buffer can contain")),
             replay_warmup=ArgFields(
                 opts=dict(
                     type=int,
-                    help="Nb of act_batches the replay buffer needs to buffer "
-                    "before the training can start",
+                    help="Nb of act_batches the replay buffer needs to buffer " "before the training can start",
                 )
             ),
             sync_period=ArgFields(
                 opts=dict(
                     type=int,
-                    help="Number of epochs between two consecutive sync "
-                    "between the model and the assembler",
+                    help="Number of epochs between two consecutive sync " "between the model and the assembler",
                 )
             ),
             act_batchsize=ArgFields(
@@ -461,8 +427,7 @@ class SimulationParams:
             bsfinder_max_bs=ArgFields(
                 opts=dict(
                     type=int,
-                    help="The maximum batch size for the automatic batch size "
-                    "finder to use",
+                    help="The maximum batch size for the automatic batch size " "finder to use",
                 )
             ),
             bsfinder_max_ms=ArgFields(
@@ -500,8 +465,7 @@ class SimulationParams:
             train_channel_timeout_ms=ArgFields(
                 opts=dict(
                     type=int,
-                    help="Timeout (in milliseconds) to wait for actors to produce "
-                    "trajectories",
+                    help="Timeout (in milliseconds) to wait for actors to produce " "trajectories",
                 )
             ),
             train_channel_num_slots=ArgFields(
@@ -553,9 +517,11 @@ class ExecutionParams:
         if self.checkpoint_dir is not None:
             self.checkpoint_dir = self.checkpoint_dir.resolve().absolute()
         if self.save_dir is not None:
-            raise RuntimeError("""--save_dir is deprecated, use --checkpoint_dir instead, with slightly different behavior:
+            raise RuntimeError(
+                """--save_dir is deprecated, use --checkpoint_dir instead, with slightly different behavior:
     - no subfolder creation.
-    - resumes from latest checkpoint if available in the directory.""")
+    - resumes from latest checkpoint if available in the directory."""
+            )
 
     @classmethod
     def arg_fields(cls) -> Iterator[Tuple[str, ArgFields]]:
@@ -564,13 +530,13 @@ class ExecutionParams:
                 opts=dict(
                     type=Path,
                     help="Directory for saving checkpoints. "
-                         "If the directory is not empty, the latest checkpoint will be resumed",
+                    "If the directory is not empty, the latest checkpoint will be resumed",
                 )
             ),
             save_dir=ArgFields(
                 opts=dict(
                     type=Path,
-                    help="Deprecated, use checkpoint_dir with slightly different behavior instead"
+                    help="Deprecated, use checkpoint_dir with slightly different behavior instead",
                 )
             ),
             save_uncompressed=ArgFields(
@@ -581,11 +547,8 @@ class ExecutionParams:
             ),
             do_not_save_replay_buffer=ArgFields(
                 opts=dict(
-                    action="store_false"
-                    if cls.do_not_save_replay_buffer
-                    else "store_true",
-                    help="If set, the replay buffer will be not saved "
-                    "in the checkpoint",
+                    action="store_false" if cls.do_not_save_replay_buffer else "store_true",
+                    help="If set, the replay buffer will be not saved " "in the checkpoint",
                 )
             ),
             saving_period=ArgFields(
@@ -594,20 +557,14 @@ class ExecutionParams:
                     help="Number of epochs between two consecutive checkpoints",
                 )
             ),
-            max_time=ArgFields(
-                opts=dict(type=int, help="Maximum time allowed for a run (in seconds)")
-            ),
+            max_time=ArgFields(opts=dict(type=int, help="Maximum time allowed for a run (in seconds)")),
             human_first=ArgFields(
                 opts=dict(
                     action="store_false" if cls.human_first else "store_true",
                     help="If set in a two-player game, " "the human player plays first",
                 )
             ),
-            time_ratio=ArgFields(
-                opts=dict(
-                    type=float, help="Part of the remaining time for the next move"
-                )
-            ),
+            time_ratio=ArgFields(opts=dict(type=float, help="Part of the remaining time for the next move")),
             total_time=ArgFields(
                 opts=dict(
                     type=float,
@@ -624,9 +581,7 @@ class ExecutionParams:
                     "- in training mode, only one device is allowed",
                 )
             ),
-            seed=ArgFields(
-                opts=dict(type=int, help="Seed for pseudo-random number generator")
-            ),
+            seed=ArgFields(opts=dict(type=int, help="Seed for pseudo-random number generator")),
             listen=ArgFields(
                 opts=dict(
                     type=str,
@@ -704,24 +659,16 @@ class EvalParams:
     def __post_init__(self) -> None:
         if self.real_time and self.checkpoint is not None:
             raise ValueError(
-                "In '--real_time' the evaluation follow the training "
-                "so '--checkpoint' should not be set"
+                "In '--real_time' the evaluation follow the training " "so '--checkpoint' should not be set"
             )
         if self.checkpoint_dir is None and self.checkpoint is None:
-            raise ValueError(
-                "Either a '--checkpoint_dir' or a path to a '--checkpoint' "
-                "must be specified"
-            )
+            raise ValueError("Either a '--checkpoint_dir' or a path to a '--checkpoint' " "must be specified")
         if self.checkpoint_dir is not None and self.checkpoint is not None:
             raise ValueError(
-                "Either a '--checkpoint_dir' or a path to a '--checkpoint' "
-                "must be specified, but not both"
+                "Either a '--checkpoint_dir' or a path to a '--checkpoint' " "must be specified, but not both"
             )
         if self.checkpoint is not None and self.plot_enabled:
-            raise ValueError(
-                "Plotting is not available if the evaluation is performed "
-                "only on one checkpoint"
-            )
+            raise ValueError("Plotting is not available if the evaluation is performed " "only on one checkpoint")
         if self.checkpoint_dir is not None:
             self.checkpoint_dir = self.checkpoint_dir.absolute()
         if self.checkpoint is not None:
@@ -743,8 +690,7 @@ class EvalParams:
             checkpoint_dir=ArgFields(
                 opts=dict(
                     type=Path,
-                    help="Directory storing the checkpoints "
-                    "- if set, '--checkpoint' should not be set",
+                    help="Directory storing the checkpoints " "- if set, '--checkpoint' should not be set",
                 )
             ),
             checkpoint=ArgFields(
@@ -763,15 +709,12 @@ class EvalParams:
                     '(e.g., "cpu", "cuda:0")',
                 )
             ),
-            num_game_eval=ArgFields(
-                opts=dict(
-                    type=int, help="Number of games played against a pure MCTS opponent"
-                )
-            ),
+            num_game_eval=ArgFields(opts=dict(type=int, help="Number of games played against a pure MCTS opponent")),
             num_parallel_games_eval=ArgFields(
                 opts=dict(
-                    type=int, help="Number of evaluation games to be played in parallel. "
-                                   "If set to None, all games are played in parallel"
+                    type=int,
+                    help="Number of evaluation games to be played in parallel. "
+                    "If set to None, all games are played in parallel",
                 )
             ),
             num_actor_eval=ArgFields(
@@ -787,8 +730,7 @@ class EvalParams:
             num_rollouts_eval=ArgFields(
                 opts=dict(
                     type=int,
-                    help="Number of rollouts per actor/thread for "
-                    "the model to be tested",
+                    help="Number of rollouts per actor/thread for " "the model to be tested",
                 )
             ),
             checkpoint_opponent=ArgFields(
@@ -819,9 +761,7 @@ class EvalParams:
                     help="Number of rollouts per actor/thread for the opponent",
                 )
             ),
-            seed_eval=ArgFields(
-                opts=dict(type=int, help="Seed for pseudo-random number generator")
-            ),
+            seed_eval=ArgFields(opts=dict(type=int, help="Seed for pseudo-random number generator")),
             plot_enabled=ArgFields(
                 opts=dict(
                     action="store_false" if cls.plot_enabled else "store_true",
@@ -841,12 +781,8 @@ class EvalParams:
                 arg_field.opts = {}
             if "help" not in arg_field.opts:
                 arg_field.opts["help"] = ""
-            arg_field.opts[
-                "help"
-            ] += f" (DEFAULT: {getattr(defaults, param)})"
+            arg_field.opts["help"] += f" (DEFAULT: {getattr(defaults, param)})"
             yield param, arg_field
 
 
-GenericParams = Union[
-    GameParams, ModelParams, OptimParams, SimulationParams, ExecutionParams
-]
+GenericParams = Union[GameParams, ModelParams, OptimParams, SimulationParams, ExecutionParams]
