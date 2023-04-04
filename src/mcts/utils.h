@@ -154,34 +154,6 @@ class MctsStats {
   // std::mutex mSelf_;
 };
 
-// ChatGPT
-// Note that this gives a warning since it's not using the provided rng
-// template <typename F, typename Rng>
-// size_t sampleDiscreteProbability(size_t nElements, float maxValue, F&& getValue, Rng& prevRng) {
-//   if (nElements == 0) {
-//     throw std::runtime_error("sampleDiscreteProbability was passed 0 elements");
-//   }
-//   size_t blabla = std::uniform_int_distribution<int>(0.0f, nElements - 1)(prevRng); // this is just so it doesn't complain
-//   std::random_device rd;
-//   std::mt19937 rng(rd());
-//   for (size_t i = 0; i != 4; ++i) {
-//     size_t index = std::uniform_int_distribution<size_t>(0, nElements - 1)(rng);
-//     if (std::uniform_real_distribution<float>(0.0f, 1.0f)(rng) <= getValue(index) / maxValue) {
-//       return index;
-//     }
-//   }
-//   thread_local std::vector<float> probs;
-//   probs.resize(nElements);
-//   float sum = 0.0f;
-//   for (size_t i = 0; i != nElements; ++i) {
-//     sum += getValue(i);
-//     probs[i] = sum;
-//   }
-//   float v = std::uniform_real_distribution<float>(0.0f, sum)(rng);
-//   return std::lower_bound(probs.begin(), std::prev(probs.end()), v) -
-//          probs.begin();
-// }
-
 template <typename F, typename Rng>
 size_t sampleDiscreteProbability(size_t nElements,
                                  float maxValue,
@@ -314,20 +286,6 @@ class MctsResult {
         mctsPolicy.size(), maxWeight,
         [&](size_t i) { return weight(mctsPolicy[i]); }, *rng_);
   }
-
-  // ChatGPT
-  // assume already normalized
-  // void sample() {
-  //   std::mt19937 rng{std::random_device{}()};
-  //   auto weight = [this](float pival) -> float {
-  //     return std::exp(pival * pival * 2) - (1.0f - 0.5f / mctsPolicy.size());
-  //   };
-  //   const float maxWeight = weight(*std::max_element(mctsPolicy.begin(), mctsPolicy.end()));
-  //   const size_t selectedIndex = sampleDiscreteProbability(mctsPolicy.size(), maxWeight,
-  //       [&](size_t i) -> float { return weight(mctsPolicy[i]); }, rng);
-  //   bestAction = selectedIndex;
-  // }
-
 
   void setMctsPolicy(std::vector<float> pi) {
     mctsPolicy = std::move(pi);
