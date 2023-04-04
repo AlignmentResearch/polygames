@@ -13,6 +13,9 @@
 #include "game.h"
 #include "model_manager.h"
 
+#include "mcts/pybind.h"
+#include "tube/src_cpp/pybind.h"
+
 namespace py = pybind11;
 
 using namespace core;
@@ -87,4 +90,10 @@ PYBIND11_MODULE(polygames, m) {
       .def("set_find_batch_size_max_bs", &ModelManager::setFindBatchSizeMaxBs);
 
   py::class_<SampleResult>(m, "SampleResult").def("get", &SampleResult::get);
+
+  auto m_mcts = m.def_submodule("mcts", "the MCTS algorithm");
+  mcts::pybind_submodule(m_mcts);
+
+  auto m_tube = m.def_submodule("tube", "Store replay buffers and networking");
+  tube::pybind_submodule(m_tube);
 }
