@@ -14,7 +14,7 @@ target_include_directories(_mcts SYSTEM PUBLIC
 target_link_libraries(_mcts PUBLIC
   pthread
   ${TORCH_LIBRARIES}
-  _core
+  _polygames
 )
 # We don't add the pybind11 module on purpose -- let `libpolygames` link all of it.
 # pybind11_add_module(mcts pybind.cc)

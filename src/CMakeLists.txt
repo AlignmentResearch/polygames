@@ -19,17 +19,15 @@ add_library(_common STATIC
   )
 
 # This used to be SHARED, can still be built this way if the user wants to make C++ applications and not import pybind
-add_library(_core STATIC
+add_library(_polygames STATIC
   core/game.cc
   core/state.cc
   core/replay_buffer.cc
   core/model_manager.cc
 )
 
-add_library(_polygames STATIC)
 target_include_directories(_polygames SYSTEM PUBLIC ${PYTHON_INCLUDE_DIRS} ${TORCH_INCLUDE_DIRS})
 target_link_libraries(_polygames PUBLIC
-  _core
   _tube
   _mcts
   _games
@@ -40,7 +38,6 @@ target_link_libraries(_polygames PUBLIC
   ${TORCH_LIBRARIES}
   ${CMAKE_THREAD_LIBS_INIT}
   )
-
 pybind11_add_module(polygames MODULE
   core/pybind.cc
 )
