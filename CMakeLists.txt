@@ -18,7 +18,7 @@ set(FLAGS_WARNINGS "-Wall -Wextra -Werror -Wno-unused-variable -Wno-unused-value
 
 # In debug use the three simultaneously supported sanitizers, see https://stackoverflow.com/a/47261999
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 ${FLAGS_WARNINGS} -fsanitize=address -fsanitize=undefined -fsanitize=leak")
-set(LINK_FLAGS "${LINK_FLAGS} -mllvm -asan-use-private-alias=1")
+set(LINK_FLAGS_DEBUG "${LINK_FLAGS} -mllvm -asan-use-private-alias=1 -lstatic-lubsan")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O3 -ffast-math ${FLAGS_WARNINGS}")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math ${FLAGS_WARNINGS}")
 
