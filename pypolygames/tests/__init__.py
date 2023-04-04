@@ -3,7 +3,4 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import pypolygames
-import tube
-import polygames
-import mcts
+import pypolygames  # load paths for all modules

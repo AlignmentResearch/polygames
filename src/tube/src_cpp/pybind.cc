@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <pybind11/pybind11.h>
+#include "pybind.h"
 #include <torch/extension.h>
 
 #include "context.h"

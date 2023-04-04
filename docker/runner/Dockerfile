@@ -41,5 +41,4 @@ ENV CXX=/usr/bin/clang++
 RUN cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF -DUSE_MOLD=ON \
     && make -j
 
-ENV PYTHONPATH="/polygames"
 CMD ["/bin/sh"]

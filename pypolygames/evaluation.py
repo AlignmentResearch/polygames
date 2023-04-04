@@ -11,7 +11,7 @@ from typing import Iterator, Tuple, List, Callable, Optional, Dict
 
 import torch
 
-import tube
+import polygames.tube as tube
 from pytube.data_channel_manager import DataChannelManager
 
 from .params import GameParams, EvalParams, ExecutionParams

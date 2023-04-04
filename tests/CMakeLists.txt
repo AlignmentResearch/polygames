@@ -3,6 +3,7 @@ FetchContent_Declare(
   googletest
   # Specify the commit you depend on and update it regularly.
   URL https://github.com/google/googletest/archive/5376968f6948923e2411081fd9372e71a59d8e77.zip
+  DOWNLOAD_EXTRACT_TIMESTAMP false
 )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
@@ -23,11 +24,10 @@ add_executable( polygames-tests
  #ludii-game-tests.cc
  )
 
-target_include_directories(polygames-tests PUBLIC SYSTEM ${TORCH_INCLUDE_DIRS})
-target_include_directories(polygames-tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../src/games)
+target_include_directories(polygames-tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../src/games ${CMAKE_CURRENT_SOURCE_DIR}/../src)
 
 target_link_libraries(polygames-tests
-    libpolygames
+    _polygames
     ${GTEST_LIBRARIES}
     gtest
     GTest::gtest_main

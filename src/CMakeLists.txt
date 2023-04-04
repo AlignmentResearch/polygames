@@ -3,7 +3,6 @@ include_directories(SYSTEM third_party)
 include_directories(SYSTEM third_party/fmt/include)
 
 add_subdirectory(third_party/fmt)
-add_subdirectory(third_party/pybind11)
 add_subdirectory(tube)
 add_subdirectory(mcts)
 add_subdirectory(games)
@@ -19,15 +18,16 @@ add_library(_common STATIC
   common/threads.cc
   )
 
-add_library(libpolygames SHARED
+# This used to be SHARED, can still be built this way if the user wants to make C++ applications and not import pybind
+add_library(_polygames STATIC
   core/game.cc
   core/state.cc
   core/replay_buffer.cc
   core/model_manager.cc
 )
 
-target_include_directories(libpolygames SYSTEM PUBLIC ${PYTHON_INCLUDE_DIRS} ${TORCH_INCLUDE_DIRS})
-target_link_libraries(libpolygames PUBLIC
+target_include_directories(_polygames SYSTEM PUBLIC ${PYTHON_INCLUDE_DIRS} ${TORCH_INCLUDE_DIRS})
+target_link_libraries(_polygames PUBLIC
   _tube
   _mcts
   _games
@@ -38,9 +38,9 @@ target_link_libraries(libpolygames PUBLIC
   ${TORCH_LIBRARIES}
   ${CMAKE_THREAD_LIBS_INIT}
   )
-set_target_properties(libpolygames PROPERTIES PREFIX "")
+set_target_properties(_polygames PROPERTIES PREFIX "")
 
-pybind11_add_module(polygames
+pybind11_add_module(polygames MODULE
   core/pybind.cc
 )
-target_link_libraries(polygames PUBLIC libpolygames)
+target_link_libraries(polygames PUBLIC _polygames)
