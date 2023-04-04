@@ -13,6 +13,7 @@ from .. import evaluation
 from .. import utils
 from polygames import init_threads
 
+
 @pytest.mark.parametrize("game_name", [game_name for game_name in utils.listings.games()])
 def test_mcts(game_name) -> None:
     #
