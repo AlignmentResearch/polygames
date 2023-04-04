@@ -27,6 +27,7 @@ RUN mkdir "/home/circleci/project/build"
 WORKDIR "/home/circleci/project/build"
 ENV CC=/usr/bin/clang
 ENV CXX=/usr/bin/clang++
+ENV ASAN_OPTIONS="detect_odr_violation=0"  # Don't error because `debug.c` is loaded twice with sanitizer
 RUN cmake .. -DCMAKE_BUILD_TYPE=debug -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF -DUSE_MOLD=ON && make -j
 
 # Back to project workdir
