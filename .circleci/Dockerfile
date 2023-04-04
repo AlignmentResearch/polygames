@@ -10,13 +10,17 @@ RUN sudo apt-get update -q \
     && sudo rm -rf /var/lib/apt/lists/*
 
 WORKDIR "/home/circleci/project"
+# Install Python dependencies
+COPY --chown=circleci:circleci ./requirements.txt ./requirements-circleci.txt
+RUN pip install --upgrade pip -r requirements-orig.txt && rm -rf "${HOME}/.cache"
+
 # Copy whole repo
 COPY --chown=circleci:circleci . .
 # Abort if repo is dirty
-RUN if [ ! -z "$(git status --porcelain)" ] ; then exit 1; fi
-
-# Install Python dependencies
-RUN pip install --upgrade pip -r .circleci/requirements.txt && rm -rf /home/circleci/.cache
+RUN mv requirements-circleci.txt .circleci/requirements.txt && \
+    if ! { [ -z "$(git status --porcelain --ignored=traditional)" ] \
+    && [ -z "$(cd src/third_party/pybind11 && git status --porcelain --ignored=traditional)" ] \
+    ; }; then exit 1; fi
 
 # TODO(nhowe): add support for Ludii
 RUN mkdir "/home/circleci/project/build"
