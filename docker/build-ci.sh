@@ -17,3 +17,8 @@ docker build --build-arg "POLYGAMES_VERSION=${VERSION}" \
 docker build --build-arg "POLYGAMES_VERSION=${VERSION}" \
     -t "ghcr.io/alignmentresearch/polygames:${VERSION}-ci-relwithdebinfo" \
     -f docker/ci-relwithdebinfo/Dockerfile .
+
+
+docker push "ghcr.io/alignmentresearch/polygames:${VERSION}-ci-base"
+docker push "ghcr.io/alignmentresearch/polygames:${VERSION}-ci-sanitize"
+docker push "ghcr.io/alignmentresearch/polygames:${VERSION}-ci-relwithdebinfo"
