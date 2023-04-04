@@ -7,12 +7,14 @@
 
 #include "mcts/mcts.h"
 #include "mcts/storage.h"
-#include "common/async.h"
 #include "common/thread_id.h"
 #include "common/threads.h"
 #include "core/state.h"
 
 #include <chrono>
+
+using threads::Threads;
+using threads::Task;
 
 namespace mcts {
 
@@ -167,19 +169,14 @@ int computeRolloutsImpl(const std::vector<Node*>& rootNode,
 
   std::vector<RolloutState> states(rootNode.size());
 
-  threads::init(1);  // NOTE we added this
-  async::Task task(threads::threads);
+  Threads &threads = Threads::inst();
 
-  size_t stride =
-      (states.size() + threads::threads.size() - 1) / threads::threads.size();
+  const size_t n_threads = threads.getNumThreads();
+  size_t stride = (states.size() + n_threads - 1) / n_threads;
 
-  std::vector<async::Thread*> reservedThreads(states.size());
-  for (size_t i = 0; i < states.size(); i += stride) {
-    reservedThreads[i] = &threads::threads.getThread();
-  }
+  Task rollout_states_task;
 
   int numRollout = 0;
-  std::vector<async::Handle> functionHandles(states.size());
 
   int rollouts = option.totalTime ? 0 : option.numRolloutPerThread;
 
@@ -396,10 +393,8 @@ int computeRolloutsImpl(const std::vector<Node*>& rootNode,
       }
     };
 
-    functionHandles[i] = task.getHandle(*reservedThreads[i], std::move(f));
-    functionHandles[i].setPriority(common::getThreadId());
+    rollout_states_task.push_back(std::move(f));
   }
-
   actor.batchResize(states.size());
 
   if (option.randomizedRollouts && rollouts >= 4) {
@@ -418,11 +413,9 @@ int computeRolloutsImpl(const std::vector<Node*>& rootNode,
                                   : numRollout < option.numRolloutPerThread) ||
                 numRollout < 2;
 
-    for (size_t i = 0; i < states.size(); i += stride) {
-      task.enqueue(functionHandles[i]);
-    }
+    rollout_states_task.enqueue_all(threads);
+    rollout_states_task.wait();
 
-    task.wait();
     if (!keepGoing) {
       break;
     }

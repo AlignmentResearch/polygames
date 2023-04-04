@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.7.1-cudnn8-devel-ubuntu22.04
+FROM nvidia/cuda:12.0.1-cudnn8-devel-ubuntu22.04
 ENV DEBIAN_FRONTEND noninteractive
 ENV LANG=C.UTF-8
 
@@ -8,7 +8,7 @@ RUN apt-get update -q \
     wget \
     git \
     python3 python3-dev python3-pip python3-setuptools python-is-python3 \
-    cmake pkg-config \
+    cmake pkg-config clang lldb \
     libmkl-core libmkl-intel-thread libmkl-intel-ilp64 \
     vim \
     tmux \
@@ -37,7 +37,7 @@ RUN wget https://github.com/bcpierce00/unison/releases/download/v2.52.1/unison-v
     && rm -rf unison*
 
 # Following https://stackoverflow.com/questions/35134713/disable-cache-for-specific-run-commands, build with
-# docker build --build-arg CACHEBUST="$(git ls-remote origin refs/heads/dockerfile)"
+# docker build --build-arg CACHEBUST="$(git ls-remote origin refs/heads/main)"
 ARG CACHEBUST=0
 # Copy code
 RUN git clone --recursive https://github.com/AlignmentResearch/polygames /polygames
@@ -51,7 +51,6 @@ RUN mkdir /polygames/build
 WORKDIR /polygames/build
 
 # TODO(nhowe): add support for Ludii
-RUN cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON -DWITH_LUDII=OFF && make -j
+RUN CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON -DWITH_LUDII=OFF && make -j
 
-WORKDIR /polygames
-ENV PYTHONPATH=/polygames
+RUN echo "export PYTHONPATH=/polygames" >> /root/.bashrc

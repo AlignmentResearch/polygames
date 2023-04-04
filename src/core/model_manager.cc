@@ -1,15 +1,17 @@
 
 #include "model_manager.h"
 
-#include "common/async.h"
 #include "common/thread_id.h"
 #include "distributed/distributed.h"
 #include "distributed/rpc.h"
 #include "replay_buffer.h"
 #include "tube/src_cpp/data_channel.h"
 
+#ifndef POLYGAMES_WITHOUT_CUDA
 #include <c10/cuda/CUDAGuard.h>
 #include <c10/cuda/CUDAStream.h>
+#endif
+
 #include <fmt/printf.h>
 #include <torch/extension.h>
 #include <torch/script.h>
@@ -555,10 +557,12 @@ class ModelManagerImpl {
     torch::NoGradGuard ng;
     bool isCuda = device_.is_cuda();
     PriorityMutex::setThreadPriority(common::getThreadId());
+#ifndef POLYGAMES_WITHOUT_CUDA
     std::optional<c10::cuda::CUDAStreamGuard> g;
     if (isCuda) {
       g.emplace(c10::cuda::getStreamFromPool(false, device_.index()));
     }
+#endif
     std::vector<torch::jit::IValue> inp;
     inp.push_back(input.to(device_, dtype_, true));
     if (rnnState.defined()) {
@@ -566,9 +570,11 @@ class ModelManagerImpl {
     }
     std::unique_lock<PriorityMutex> lk(*modelMutex_);
     auto output = model_->forward(inp);
+#ifndef POLYGAMES_WITHOUT_CUDA
     if (isCuda) {
       g->current_stream().synchronize();
     }
+#endif
     lk.unlock();
     auto reply = convertIValueToMap(output);
     v.copy_(reply["v"], true);
@@ -576,9 +582,11 @@ class ModelManagerImpl {
     if (rnnStateOut) {
       *rnnStateOut = reply["rnn_state"];
     }
+#ifndef POLYGAMES_WITHOUT_CUDA
     if (isCuda) {
       g->current_stream().synchronize();
     }
+#endif
   }
 
   struct Timer {
@@ -612,12 +620,12 @@ class ModelManagerImpl {
     torch::NoGradGuard ng;
     bool isCuda = device_.is_cuda();
     PriorityMutex::setThreadPriority(common::getThreadId());
+#ifndef POLYGAMES_WITHOUT_CUDA
     std::optional<c10::cuda::CUDAStreamGuard> g;
     if (isCuda) {
       g.emplace(c10::cuda::getStreamFromPool(false, device_.index()));
-    } else {
-      return 1;
     }
+#endif
     std::vector<torch::jit::IValue> inp;
     torch::Tensor gpuinput = input.to(device_, dtype_, true);
     torch::Tensor gpurnnState;
@@ -638,7 +646,11 @@ class ModelManagerImpl {
         }
         inp.push_back(torch::stack(batch).to(device_, dtype_, true));
       }
-      g->current_stream().synchronize();
+#ifndef POLYGAMES_WITHOUT_CUDA
+      if(isCuda) {
+        g->current_stream().synchronize();
+      }
+#endif
     };
     std::unique_lock<PriorityMutex> lk(*modelMutex_);
     if (hasFoundBatchSize_) {
@@ -646,9 +658,11 @@ class ModelManagerImpl {
     }
     auto call = [&]() {
       model_->forward(inp);
+#ifndef POLYGAMES_WITHOUT_CUDA
       if (isCuda) {
         g->current_stream().synchronize();
       }
+#endif
     };
     fmt::printf("Finding batch size\n");
     prep(1);

@@ -97,7 +97,7 @@ struct BatchExecutor {
   bool alignPlayers = true;
   std::vector<std::pair<size_t, size_t>> statePlayerSize;
   std::vector<size_t> remapPlayerIdx;
-  async::Task task;
+  threads::Task task;
   std::vector<torch::Tensor> actRnnState;
   const mcts::MctsOption* mctsOption = nullptr;
   std::vector<mcts::MctsResult> mctsResult;
@@ -486,11 +486,9 @@ struct BatchExecutor {
 
   std::vector<stateCallback> stateCallbacks;
 
-  std::vector<async::Handle> taskHandles;
-
   void prepareStateCallbacks() {
     stateCallbacks.clear();
-    taskHandles.clear();
+    task.clear();
     size_t offset = 0;
     for (size_t pi = 0; pi != statePlayerSize.size(); ++pi) {
       size_t currentPlayerIndex = statePlayerSize[pi].first;
@@ -504,9 +502,7 @@ struct BatchExecutor {
           }
         };
 
-        auto& thread = threads::threads.getThread();
-        taskHandles.push_back(task.getHandle(thread, std::move(f)));
-        taskHandles.back().setPriority(common::getThreadId());
+        task.push_back(std::move(f));
       }
       offset += currentPlayerStates;
     }
@@ -520,9 +516,7 @@ struct BatchExecutor {
     if (stateCallbacks.empty()) {
       return;
     }
-    for (auto& v : taskHandles) {
-      task.enqueue(v);
-    }
+    task.enqueue_all(threads::Threads::inst());
     task.wait();
   }
 
@@ -718,9 +712,6 @@ struct BatchExecutor {
   }
 
   void run() {
-
-    task = async::Task(threads::threads);
-
     for (auto& v : game->players_) {
       players_.push_back(&*v);
     }
@@ -1142,7 +1133,7 @@ struct BatchExecutor {
 void Game::mainLoop() {
   threads::setCurrentThreadName("game thread " +
                                 std::to_string(common::getThreadId()));
-  threads::init(0);
+  threads::Threads::init(0);
   if (players_.size() != (isOnePlayerGame() ? 1 : 2)) {
     std::cout << "Error: wrong number of players: " << players_.size()
               << std::endl;

@@ -1,188 +1,125 @@
-# Python CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
-version: 2
-jobs:
-  build:
-    branches:
-      ignore:
-        - dennis-tests
-    docker:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      #- image: circleci/python:3.6.1
-      #- image: singularityware/singularity:3.1-slim  # would be faster but interacts badly with cuda docker image loading
-      - image : nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04
+version: 2.1
 
-    # machine: true
-    working_directory: ~/repo
-    # resource_class: xlarge  # not activated for the project
+parameters:
+  action:
+    type: enum
+    enum: [oncommit, docker]
+    default: oncommit
 
+  docker_img_version:
+    type: string
+    default: "0.7"
+
+workflows:
+  test-jobs:
+    when:
+      equal: [oncommit, << pipeline.parameters.action >>]
+    jobs:
+      - all-tests:
+          context:
+            - ghcr-auth
+
+  docker-publish-jobs:
+    when:
+      equal: [docker, << pipeline.parameters.action >>]
+    jobs:
+      - docker-publish:
+          context:
+            - ghcr-auth
+
+commands:
+  build-polygames:
     steps:
-      - checkout
-
-        #- run:
-        #-   name: Install singularity
-        #-   command: |
-        #-       #chmod u+x ~/repo/.circleci/*.sh
-        #-       #/bin/bash ~/repo/.circleci/install_singularity.sh
-        #-       sudo wget -O- http://neuro.debian.net/lists/xenial.us-ca.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list && \
-        #-           sudo apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9 && \
-        #-           sudo apt-get update
-        #-       sudo apt-get install -y singularity-container
-
-      - restore_cache:
-          keys:
-          - tag3-conda-{{ checksum "singularity/environment.yml" }}-pytorch
-          - tag3-conda-{{ checksum "singularity/environment.yml" }}
-          - tag1-conda
-
       - run:
-          name: Install miniconda and clone pytorch
+          name: Build Polygames in debug
           command: |
-              apt-get update
-              apt-get install -y \
-                  build-essential \
-                  libzmq3-dev \
-                  cmake \
-                  wget \
-                  vim \
-                  git \
-                  ca-certificates \
-                  libjpeg-dev \
-                  openjdk-8-jdk \
-                  libgtest-dev \
-                  libpng-dev
-              rm -rf /var/lib/apt/lists/
-              # build gtest (for polygames-tests)
-              cd /usr/src/googletest/googletest
-              mkdir build
-              cd build
-              cmake ..
-              make
-              cp libgtest* /usr/lib/
-              cd ..
-              rm -rf build
-              # conda
-              CHECKPATH=/opt/conda
-              if [ -d "$CHECKPATH" ]; then
-                  echo "$CHECKPATH already exists"
-              else
-                  wget -O ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-                  bash ~/miniconda.sh -b -p /opt/conda
-                  rm ~/miniconda.sh
-                  git clone --recursive https://github.com/pytorch/pytorch --branch=v1.1.0 ~/pytorch
-              fi
-
-      - save_cache:
-          paths:
-            - /opt/conda
-            - ~/pytorch
-          key: tag1-conda
-
+            cd build
+            make -j4 --debug=b # Limit concurrent jobs to limit memory use
+  checkout-without-force:
+    # This massive hack lets us not recompile the program every time. Remove the --force argument from `git checkout` below.
+    steps:
       - run:
-          name: Install conda environment
+          name: (From CircleCI -checkout command) SSH keys and known_hosts, then fetch repository
           command: |
-              CHECKPATH=/opt/conda/envs/pypg
-              . /opt/conda/etc/profile.d/conda.sh
-              if [ -d "$CHECKPATH" ]; then
-                  echo "$CHECKPATH already exists"
-                  # conda env update -f singularity/environment.yml --name pypg
-              else
-                  conda env create -f singularity/environment.yml --name pypg
-                  conda activate pypg
-                  pip install mypy>=0.630 pytest>=4.3.0 pytest-cov>=2.6.1  # only required for testing
-              fi
+            export SSH_CONFIG_DIR="${HOME}/.ssh"
+            mkdir -p "$SSH_CONFIG_DIR"
+            chmod 0700 "$SSH_CONFIG_DIR"
+            printf "%s" 'github.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5mj0MNdBXA4/WnwH6XoPWJzK5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk=
+            github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg=
+            github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl
+            bitbucket.org ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==
+            gitlab.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY=
+            ' >> "$SSH_CONFIG_DIR/known_hosts"
+            chmod 0600 "$SSH_CONFIG_DIR/known_hosts"
+            rm -f "$SSH_CONFIG_DIR/id_rsa"
+            printf "%s" "$CHECKOUT_KEY" > "$SSH_CONFIG_DIR/id_rsa"
+            chmod 0600 "$SSH_CONFIG_DIR/id_rsa"
 
-      - save_cache:
-          paths:
-            - /opt/conda
-            - ~/pytorch
-          key: tag3-conda-{{ checksum "singularity/environment.yml" }}
+            export GIT_SSH_COMMAND='ssh -i "$SSH_CONFIG_DIR/id_rsa" -o UserKnownHostsFile="$SSH_CONFIG_DIR/known_hosts"'
 
-      - run:
-          name: Install pytorch
-          command: |
-              CHECKPATH=~/pytorch/done
-              if [ -f "$CHECKPATH" ]; then
-                      echo "pytorch already exists"
-              else
-                  . /opt/conda/etc/profile.d/conda.sh
-                  conda activate pypg
-                  which pip
-                  pip install -U pip
-                  cd ~/pytorch
-                  export CMAKE_PREFIX_PATH=${CONDA_PREFIX:-"$(dirname $(which conda))/../"}
-                  # export MAX_JOBS=$(cat /proc/cpuinfo | grep -c processor)
-                  # if (( $MAX_JOBS < 4 ));
-                  #     then MAX_JOBS=4;
-                  # fi;
-                  export MAX_JOBS=4  # calibrate for circleci resources...
-                  echo "Using $MAX_JOBS jobs for pytorch compilation"
-                  # # set cuda arch list so that the built binary can be run on both pascal and volta
-                  MAX_JOBS=$MAX_JOBS TORCH_CUDA_ARCH_LIST='6.0;7.0' pip install . -v
-                  touch $CHECKPATH
-              fi
+            # use git+ssh instead of https
+            git config --global url."ssh://git@github.com".insteadOf "https://github.com" || true
+            git config --global gc.auto 0 || true
 
-      - save_cache:
-          paths:
-            - /opt/conda
-            - ~/pytorch
-          key: tag3-conda-{{ checksum "singularity/environment.yml" }}-pytorch
+            # Set URL to SSH in the project dir
+            cd '/home/circleci/project'
+            git remote set-url origin "$CIRCLE_REPOSITORY_URL" || true
 
-      - run:
-          name: Build polygames
-          command: |
-              . /opt/conda/etc/profile.d/conda.sh
-              conda activate pypg
-              mkdir build
-              cd build
-              cmake ..
-              make -j 2
+            git fetch --force origin --depth 10 +refs/heads/circleci-with-docker:refs/remotes/origin/circleci-with-docker
 
-      - run:
-          name: Build polygames-tests
-          command: |
-              . /opt/conda/etc/profile.d/conda.sh
-              conda activate pypg
-              mkdir ludii
-              wget -P ludii https://ludii.games/downloads/Ludii.jar
-              mkdir tests/build
-              cd tests/build
-              cmake ..
-              make -j 2
+            # Removes --force compared to original
+            git checkout -B "$CIRCLE_BRANCH" "$CIRCLE_SHA1"
+            git --no-pager log --no-color -n 1 --format='HEAD is now at %h %s'
 
+jobs:
+  all-tests:
+    docker:
+      - image: ghcr.io/alignmentresearch/polygames-circleci:<< pipeline.parameters.docker_img_version >>
+        auth:
+          username: "$GHCR_DOCKER_USER"
+          password: "$GHCR_DOCKER_TOKEN"
+    resource_class: large  # Needs to be large to have enough RAM
+    steps:
+      - checkout-without-force
+      - build-polygames
       - run:
           name: Test games
           command: |
-              ./build/test_state
-
+            ./build/test_state
       - run:
           name: Test polygames-tests (unit tests)
           command: |
-              ./tests/build/polygames-tests
+            ./build/tests/polygames-tests
 
       - run:
-          name: Test Mcts
+          name: Test MCTS
           command: |
-              ./build/torchRL/mcts/test_mcts 1 100
-              ./build/torchRL/mcts/test_mcts 4 50
-
+              ./build/src/mcts/test_mcts 1 100
+              ./build/src/mcts/test_mcts 4 50
       - run:
           name: Test python
           command: |
-              . /opt/conda/etc/profile.d/conda.sh
-              conda activate pypg
               pytest pypolygames --durations=10 --verbose
-
       - run:
           name: Run training
           command: |
-              . /opt/conda/etc/profile.d/conda.sh
-              conda activate pypg
               python -m pypolygames traineval --act_batchsize=2 \
                   --batchsize=2 --replay_capacity=16  --replay_warmup=2 \
                   --num_epoch=1 --num_game=12 --model_name=NanoFCLogitModel \
                   --epoch_len=1 --device=cpu --game_name=TicTacToe --sync_period=1  --device_eval=cpu \
                   --num_actor_eval=2 --num_rollouts_opponent=50 --num_game_eval=4
+
+  docker-publish:
+    docker:
+      - image: cimg/python:3.10.6
+    resource_class: small
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
+      - run: |
+          TAG="ghcr.io/alignmentresearch/polygames-circleci:<< pipeline.parameters.docker_img_version >>"
+          docker build -f .circleci/Dockerfile -t "$TAG" .
+          echo "$GHCR_DOCKER_TOKEN" | docker login -u "$GHCR_DOCKER_USER" --password-stdin
+          docker push "$TAG"
