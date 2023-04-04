@@ -9,7 +9,7 @@ parameters:
   docker_img_version:
     type: string
     # Remember to also update `docker/build-all.sh`
-    default: "1.0"
+    default: "1.1"
 
 workflows:
   test-jobs:
