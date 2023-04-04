@@ -24,11 +24,11 @@ RUN apt-get update -q \
 
 # Install CUDA Python dependencies
 WORKDIR "/polygames"
-COPY --chown=circleci:circleci requirements-cuda.txt requirements.txt ./
+COPY --chown=root:root requirements-cuda.txt requirements.txt ./
 RUN pip install -r requirements.txt -r requirements-cuda.txt && rm -rf "${HOME}/.cache"
 
 # Copy whole repo
-COPY --chown=circleci:circleci . .
+COPY --chown=root:root . .
 # Abort if repo is dirty
 RUN if ! { [ -z "$(git status --porcelain --ignored=traditional)" ] \
     && [ -z "$(cd src/third_party/pybind11 && git status --porcelain --ignored=traditional)" ] \
@@ -41,5 +41,5 @@ ENV CXX=/usr/bin/clang++
 RUN cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF -DUSE_MOLD=ON \
     && make -j
 
-ENV PYTHONPATH="/home/circleci/project"
+ENV PYTHONPATH="/polygames"
 CMD ["/bin/sh"]

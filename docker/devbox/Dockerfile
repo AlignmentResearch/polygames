@@ -9,7 +9,7 @@ RUN wget https://github.com/alacritty/alacritty/releases/download/v0.11.0/alacri
     && rm alacritty.info
     && mkdir /run/sshd
 
-WORKDIR /root/.ssh
+WORKDIR "${HOME}/.ssh"
 ARG SSH_KEY
 RUN echo "${SSH_KEY}" > "${HOME}/.ssh/authorized_keys"
 
