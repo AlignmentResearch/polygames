@@ -85,7 +85,9 @@ def save_checkpoint(
 ) -> None:
     checkpoint_dir = execution_params.checkpoint_dir
     save_uncompressed = execution_params.save_uncompressed
-    checkpoint_name = f"checkpoint_{epoch}"
+    now = datetime.now()
+    formatted_date = now.strftime("%Y-%m-%d")
+    checkpoint_name = f"{game_params['game_name']}_{formatted_date}_{model_params['model_name']}_epoch{epoch}"
     checkpoint = {
         "command_history": command_history,
         "epoch": epoch,
