@@ -241,16 +241,8 @@ class MctsResult {
 
   // assume already normalized
   void sampleWithoutSmoothing() {
-    auto weight = [this](float pival) {
-      return pival;
-    };
-    float maxWeight = 0.0f;
-    for (size_t i = 0; i != mctsPolicy.size(); ++i) {
-      if (mctsPolicy[i] > maxWeight) {
-        maxWeight = mctsPolicy[i];
-      }
-    }
-    maxWeight = weight(maxWeight);
+
+    float maxWeight = std::max_element(mctsPolicy.begin(), mctsPolicy.end());
 
     // Print the piVals of all possible actions
     // std::cout << "PiVals of all possible actions:" << std::endl;
@@ -260,7 +252,7 @@ class MctsResult {
   
     bestAction = sampleDiscreteProbability(
         mctsPolicy.size(), maxWeight,
-        [&](size_t i) { return weight(mctsPolicy[i]); }, *rng_);
+        [&](size_t i) { return mctsPolicy[i]; }, *rng_);
   }
 
   // assume already normalized
@@ -268,12 +260,9 @@ class MctsResult {
     auto weight = [this](float pival) {
       return std::exp(pival * pival * 2) - (1.0f - 0.5f / mctsPolicy.size());
     };
-    float maxWeight = 0.0f;
-    for (size_t i = 0; i != mctsPolicy.size(); ++i) {
-      if (mctsPolicy[i] > maxWeight) {
-        maxWeight = mctsPolicy[i];
-      }
-    }
+    
+    float maxWeight = std::max_element(mctsPolicy.begin(), mctsPolicy.end());
+
     maxWeight = weight(maxWeight);
 
     // Print the piVals of all possible actions
