@@ -3,6 +3,7 @@ FROM ghcr.io/alignmentresearch/polygames:${POLYGAMES_VERSION}-ci-base
 LABEL org.opencontainers.image.source=https://github.com/AlignmentResearch/polygames
 
 # Need to mkdir so the user is circleci and the dir is writable
+RUN mkdir "/home/circleci/project/build"
 WORKDIR "/home/circleci/project/build"
 # Build with optimizations so the python tests are moderately fast
 ENV CC=/usr/bin/clang
