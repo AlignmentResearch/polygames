@@ -9,6 +9,11 @@ if [ -z "$VERSION" ]; then
 fi
 
 echo "Building version $VERSION"
-docker build -t "ghcr.io/alignmentresearch/polygames:${VERSION}-ci-base" -f docker/ci-base/Dockerfile .
-docker build -t "ghcr.io/alignmentresearch/polygames:${VERSION}-ci-sanitize" -f docker/ci-sanitize/Dockerfile .
-docker build -t "ghcr.io/alignmentresearch/polygames:${VERSION}-ci-relwithdebinfo" -f docker/ci-relwithdebinfo/Dockerfile .
+docker build -t "ghcr.io/alignmentresearch/polygames:${VERSION}-ci-base" \
+    -f docker/ci-base/Dockerfile .
+docker build --build-arg "POLYGAMES_VERSION=${VERSION}" \
+    -t "ghcr.io/alignmentresearch/polygames:${VERSION}-ci-sanitize" \
+    -f docker/ci-sanitize/Dockerfile .
+docker build --build-arg "POLYGAMES_VERSION=${VERSION}" \
+    -t "ghcr.io/alignmentresearch/polygames:${VERSION}-ci-relwithdebinfo" \
+    -f docker/ci-relwithdebinfo/Dockerfile .
