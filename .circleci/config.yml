@@ -107,6 +107,7 @@ jobs:
           name: Check formatting
           command: |
             black --check .
+      - build-polygames
       - run:
           name: Python tests
           command: |
