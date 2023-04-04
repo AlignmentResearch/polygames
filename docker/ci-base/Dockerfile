@@ -10,7 +10,7 @@ RUN sudo apt-get update -q \
 
 # Install CPU Python dependencies
 WORKDIR "/home/circleci/project"
-COPY --chown=circleci:circleci requirements-cpu.txt requirements.txt .
+COPY --chown=circleci:circleci requirements-cpu.txt requirements.txt ./
 RUN pip install -r requirements.txt -r requirements-cpu.txt && rm -rf "${HOME}/.cache"
 
 # Copy whole repo
