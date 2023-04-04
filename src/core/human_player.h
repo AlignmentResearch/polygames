@@ -16,18 +16,6 @@ class HumanPlayer : public Player {
   HumanPlayer() : Player(true){};
   virtual ~HumanPlayer(){};
 
-
-  _Action act(State& state) {
-    int index = state.humanInputAction();
-    assert(false);  // <-- what??
-    auto& legalActions = state.GetLegalActions();
-    assert(index < (int)legalActions.size());
-    std::cout << " applying action... " << std::endl;
-    return legalActions[index];
-    // std::cerr << " applied action... " << std::endl;
-  }
-};
-
 class TPPlayer : public Player {
  public:
   TPPlayer() : Player(true) {isTP_ = true;};
