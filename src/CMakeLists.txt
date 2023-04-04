@@ -75,13 +75,19 @@ target_sources(libpolygames PRIVATE
   core/state.cc
   core/replay_buffer.cc
   core/model_manager.cc
-  $<TARGET_OBJECTS:_zstd>
-  $<TARGET_OBJECTS:_distributed>
-  $<TARGET_OBJECTS:_common>
 )
 
 target_include_directories(libpolygames PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/torchRL)
-target_link_libraries(libpolygames PUBLIC _tube _mcts _games)
+target_link_libraries(libpolygames PUBLIC
+  _tube
+  _mcts
+  _games
+  $<TARGET_OBJECTS:_zstd>
+  $<TARGET_OBJECTS:_distributed>
+  $<TARGET_OBJECTS:_common>
+  ${PYTHON_LIBRARIES}
+  ${CMAKE_THREAD_LIBS_INIT}
+  )
 set_target_properties(libpolygames PROPERTIES PREFIX "")
 
 if (JNI_FOUND)

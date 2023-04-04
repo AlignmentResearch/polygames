@@ -32,20 +32,9 @@ add_executable( polygames-tests
  #ludii-game-tests.cc
  )
 
-target_include_directories(polygames-tests PUBLIC ${PYTHON_INCLUDE_DIRS})
-
 target_link_libraries(polygames-tests
-    ${CMAKE_THREAD_LIBS_INIT}
-    ${GTEST_LIBRARIES}
-    ${JNI_LIBRARIES}
-    ${PYTHON_LIBRARIES}
-    $<TARGET_OBJECTS:_zstd>
-    _tube
-    _mcts
-    $<TARGET_OBJECTS:_games>
-    $<TARGET_OBJECTS:_common>
-    $<TARGET_OBJECTS:_distributed>
     libpolygames
+    ${GTEST_LIBRARIES}
     gtest
     GTest::gtest_main
 )
