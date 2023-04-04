@@ -242,7 +242,8 @@ class MctsResult {
   // assume already normalized
   void sampleWithoutSmoothing() {
 
-    float maxWeight = std::max_element(mctsPolicy.begin(), mctsPolicy.end());
+    auto it = std::max_element(mctsPolicy.begin(), mctsPolicy.end());
+    float maxWeight = *it;
 
     // Print the piVals of all possible actions
     // std::cout << "PiVals of all possible actions:" << std::endl;
@@ -261,7 +262,8 @@ class MctsResult {
       return std::exp(pival * pival * 2) - (1.0f - 0.5f / mctsPolicy.size());
     };
     
-    float maxWeight = std::max_element(mctsPolicy.begin(), mctsPolicy.end());
+    auto it = std::max_element(mctsPolicy.begin(), mctsPolicy.end());
+    float maxWeight = *it;
 
     maxWeight = weight(maxWeight);
 
