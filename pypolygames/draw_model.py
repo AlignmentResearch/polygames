@@ -11,7 +11,7 @@ import torch
 
 import polygames
 
-from .model_zoo.utils import get_game_info 
+from .model_zoo.utils import get_game_info
 from .params import GameParams, ModelParams
 from .env_creation_helpers import (
     create_model,
@@ -24,9 +24,9 @@ def draw_model(
     out: str,
 ):
     import torchviz
-    m = create_model(game_params=game_params,
-                     model_params=model_params)
-                     
+
+    m = create_model(game_params=game_params, model_params=model_params)
+
     info = get_game_info(game_params)
     m.eval()  # necessary for batch norm as it expects more than 1 ex in training
     feature_size = info["feature_size"][:3]
@@ -34,5 +34,5 @@ def draw_model(
     input_data = torch.zeros([1] + feature_size, device=torch.device("cpu"))
     model_out = m(input_data)
     dot = torchviz.make_dot((model_out["v"], model_out["pi"]), params=dict(list(m.named_parameters())))
-    dot.format = 'png'
+    dot.format = "png"
     dot.render(out)

@@ -7,7 +7,7 @@ import os
 import sys
 
 root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(os.path.join(root, 'build'))
+sys.path.append(os.path.join(root, "build"))
 
 from collections import defaultdict
 import torch
@@ -17,8 +17,8 @@ from . import data_channel_manager
 
 
 def create_env(batchsize, num_env, timeout_ms):
-    dc_fast = xrl.DataChannel('fast', batchsize, timeout_ms)
-    dc_slow = xrl.DataChannel('slow', batchsize, timeout_ms)
+    dc_fast = xrl.DataChannel("fast", batchsize, timeout_ms)
+    dc_slow = xrl.DataChannel("slow", batchsize, timeout_ms)
     dc_manager = data_channel_manager.DataChannelManager([dc_fast, dc_slow])
 
     context = xrl.Context()
@@ -29,7 +29,7 @@ def create_env(batchsize, num_env, timeout_ms):
     return context, dc_manager
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     context, dc_manager = create_env(5, 8, 10)
     context.start()
 
@@ -37,18 +37,18 @@ if __name__ == '__main__':
     bcount = defaultdict(int)
 
     while not context.terminated():
-        print('get input')
+        print("get input")
         batches = dc_manager.get_input(max_timeout_s=1)
         for key, batch in batches.items():
-            batchsize = batch['s'].size(0)
-            print('@@@ receive:', key, ', batchsize:', batchsize)
+            batchsize = batch["s"].size(0)
+            print("@@@ receive:", key, ", batchsize:", batchsize)
             count[key] += 1
             bcount[batchsize] += 1
-            reply = {'a': batch['s']}
+            reply = {"a": batch["s"]}
             dc_manager.set_reply(key, reply)
 
         print(count)
         print(bcount)
 
-    print('end of the story')
+    print("end of the story")
     dc_manager.terminate()

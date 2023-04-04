@@ -15,8 +15,7 @@ from ..utils import listings
 
 
 class FileStream:
-    """Simplifies stdout reading
-    """
+    """Simplifies stdout reading"""
 
     def __init__(self) -> None:
         self.tempdir = tempfile.TemporaryDirectory()
@@ -30,24 +29,22 @@ class FileStream:
 
 
 # Specify any specific set of actions for your game
-GAME_ACTIONS = {"Breakthrough": ["1", "blublu"],
-                "GameOfTheAmazons": ["A7", "B6", "C6", "blublu"],
-                "Othello10": ["G6", "blublu"],
-                "Othello16": ["J9", "blublu"],
-                "Havannah5": ["0,4", "blublu"],
-                "Havannah8": ["0,7", "blublu"],
-                "Hex11": ["a1", "blublu"],
-                "Hex13": ["a1", "blublu"],
-                "Surakarta": ["A5-B4", "blublu"],
-                "DiceShogi": ["1", "1", "blublu"],
-                "ChineseCheckers": ["C4", "G35", "A10", "blublu"],
-                }
+GAME_ACTIONS = {
+    "Breakthrough": ["1", "blublu"],
+    "GameOfTheAmazons": ["A7", "B6", "C6", "blublu"],
+    "Othello10": ["G6", "blublu"],
+    "Othello16": ["J9", "blublu"],
+    "Havannah5": ["0,4", "blublu"],
+    "Havannah8": ["0,7", "blublu"],
+    "Hex11": ["a1", "blublu"],
+    "Hex13": ["a1", "blublu"],
+    "Surakarta": ["A5-B4", "blublu"],
+    "DiceShogi": ["1", "1", "blublu"],
+    "ChineseCheckers": ["C4", "G35", "A10", "blublu"],
+}
 
 
-@pytest.mark.parametrize(
-    "game_name", [game_name for game_name in listings.games(olympiads=True)]
-)
-
+@pytest.mark.parametrize("game_name", [game_name for game_name in listings.games(olympiads=True)])
 def test_game_interactions(game_name: str):
     raise SkipTest
     if game_name in ["Einstein", "DiceShogi"]:
@@ -56,9 +53,25 @@ def test_game_interactions(game_name: str):
     actions = GAME_ACTIONS.get(game_name, ["0", "blublu"])
     # let's play
     fsout = FileStream()
-    command = ['timeout', '--signal=SIGTERM', '20', 'python', '-um', 'pypolygames', 'human',
-               "--pure_mcts", f'--game_name={game_name}', '--num_rollouts=2', '--seed=12']
-    input_requests = ["Input", "Random outcome", "Chess you choose is:", "Where you wanna go:"]  # this may need to be made more robust
+    command = [
+        "timeout",
+        "--signal=SIGTERM",
+        "20",
+        "python",
+        "-um",
+        "pypolygames",
+        "human",
+        "--pure_mcts",
+        f"--game_name={game_name}",
+        "--num_rollouts=2",
+        "--seed=12",
+    ]
+    input_requests = [
+        "Input",
+        "Random outcome",
+        "Chess you choose is:",
+        "Where you wanna go:",
+    ]  # this may need to be made more robust
     text = ""
     popen = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=fsout.writer)
     try:
@@ -69,7 +82,7 @@ def test_game_interactions(game_name: str):
             text = fsout.reader.read()
             if text:
                 print(text)  # for debugging
-            time.sleep(.1)
+            time.sleep(0.1)
         for action in actions:
             print(f"*** PLAYING: {action} ***")
             popen.stdin.write((action + "\n").encode())
@@ -81,7 +94,7 @@ def test_game_interactions(game_name: str):
                 text = fsout.reader.read()
                 if text:
                     print(text)
-                time.sleep(.1)
+                time.sleep(0.1)
     except Exception as e:
         popen.terminate()  # make sure the process is killed, whatever happens
         raise e
@@ -99,8 +112,10 @@ def test_game_interactions(game_name: str):
     if all_text != expected:
         print("\n\n\nHERE IS THE DIFF:\n\n\n")
         pprint(list(difflib.Differ().compare(all_text.splitlines(), expected.splitlines())))
-        raise ValueError(f"String differ. If the new string is better, delete {filepath}\n"
-                         "and rerun twice (pytest pypolygames/tests/test_interactions)\n"
-                         "Alternatively, feel free to add failing games to the list of skipped\n"
-                         "tests at the top of this function, and notify jrapin or teytaud\n"
-                         "(we'll reactivate it for you later on, since it can be cumbersome).")
+        raise ValueError(
+            f"String differ. If the new string is better, delete {filepath}\n"
+            "and rerun twice (pytest pypolygames/tests/test_interactions)\n"
+            "Alternatively, feel free to add failing games to the list of skipped\n"
+            "tests at the top of this function, and notify jrapin or teytaud\n"
+            "(we'll reactivate it for you later on, since it can be cumbersome)."
+        )

@@ -87,7 +87,7 @@ target_link_libraries( polygames-tests
     ${JNI_LIBRARIES}
     ${TORCH_LIBRARIES}
     $<TARGET_OBJECTS:_zstd>
-    python3.10
+    ${PYTHON_LIBRARIES}
     fmt
     gtest_main
     gtest

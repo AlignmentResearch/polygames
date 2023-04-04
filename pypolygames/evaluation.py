@@ -65,11 +65,9 @@ def create_checkpoint_iter(eval_params: EvalParams, only_last: bool = False):
 
 
 def create_models_and_devices_opponent(
-    eval_params: EvalParams
+    eval_params: EvalParams,
 ) -> Tuple[List[torch.jit.ScriptModule], List[torch.device], GameParams]:
-    devices_opponent = [
-        torch.device(device_opponent) for device_opponent in eval_params.device_opponent
-    ]
+    devices_opponent = [torch.device(device_opponent) for device_opponent in eval_params.device_opponent]
     checkpoint_opponent = utils.load_checkpoint(eval_params.checkpoint_opponent)
     model_state_dict_opponent = checkpoint_opponent["model_state_dict"]
     game_params_opponent = checkpoint_opponent["game_params"]
@@ -84,10 +82,10 @@ def create_models_and_devices_opponent(
         ).to(device_opponent)
         remove = []
         for k, v in model_state_dict_opponent.items():
-          if "training" in k:
-            remove.append(k)
+            if "training" in k:
+                remove.append(k)
         for k in remove:
-          model_state_dict_opponent.pop(k)
+            model_state_dict_opponent.pop(k)
         model_opponent.load_state_dict(model_state_dict_opponent)
         model_opponent.eval()
         models_opponent.append(model_opponent)
@@ -108,12 +106,7 @@ def create_evaluation_environment(
     pure_mcts_eval: bool = False,
     pure_mcts_opponent: bool = True,
     num_evaluated_games: int = 0,
-) -> Tuple[
-    tube.Context,
-    Optional[tube.DataChannel],
-    Optional[tube.DataChannel],
-    Callable[[], List[int]],
-]:
+) -> Tuple[tube.Context, Optional[tube.DataChannel], Optional[tube.DataChannel], Callable[[], List[int]],]:
     num_game = eval_params.num_game_eval
     num_actor_eval = eval_params.num_actor_eval
     num_rollouts_eval = eval_params.num_rollouts_eval
@@ -124,20 +117,12 @@ def create_evaluation_environment(
     games = []
 
     context = tube.Context()
-    actor_channel_eval = (
-        None
-        if pure_mcts_eval
-        else tube.DataChannel("act_eval", num_game * num_actor_eval, 1)
-    )
+    actor_channel_eval = None if pure_mcts_eval else tube.DataChannel("act_eval", num_game * num_actor_eval, 1)
     actor_channel_opponent = (
-        None
-        if pure_mcts_opponent
-        else tube.DataChannel("act_opponent", num_game * num_actor_opponent, 1)
+        None if pure_mcts_opponent else tube.DataChannel("act_opponent", num_game * num_actor_opponent, 1)
     )
     for game_no in range(current_batch_size if current_batch_size else num_game):
-        game = create_game(
-            game_params, num_episode=1, seed=next(seed_generator), eval_mode=True
-        )
+        game = create_game(game_params, num_episode=1, seed=next(seed_generator), eval_mode=True)
         player = create_player(
             seed_generator=seed_generator,
             game=game,
@@ -198,6 +183,7 @@ def create_evaluation_environment(
 def player_moves_first(game_id, num_games_eval):
     return game_id < num_games_eval // 2
 
+
 #######################################################################################
 # EVALUATION
 #######################################################################################
@@ -229,19 +215,13 @@ def _play_game_neural_mcts_against_pure_mcts_opponent(
         assert len(batch) == 1  # only one channel
 
         # split in as many part as there are devices
-        batches_eval_s = torch.chunk(
-            batch[actor_channel_eval.name]["s"], nb_devices_eval, dim=0
-        )
+        batches_eval_s = torch.chunk(batch[actor_channel_eval.name]["s"], nb_devices_eval, dim=0)
         futures = []
         reply_eval = {"v": None, "pi": None}
         # multithread
         with ThreadPoolExecutor(max_workers=nb_devices_eval) as executor:
-            for device, model, batch_s in zip(
-                devices_eval, models_eval, batches_eval_s
-            ):
-                futures.append(
-                    executor.submit(_forward_pass_on_device, device, model, batch_s)
-                )
+            for device, model, batch_s in zip(devices_eval, models_eval, batches_eval_s):
+                futures.append(executor.submit(_forward_pass_on_device, device, model, batch_s))
             results = [future.result() for future in futures]
             reply_eval["v"] = torch.cat([result["v"] for result in results], dim=0)
             reply_eval["pi"] = torch.cat([result["pi"] for result in results], dim=0)
@@ -271,48 +251,30 @@ def _play_game_neural_mcts_against_neural_mcts_opponent(
 
         if actor_channel_eval.name in batch:
             # split in as many part as there are devices
-            batches_eval_s = torch.chunk(
-                batch[actor_channel_eval.name]["s"], nb_devices_eval, dim=0
-            )
+            batches_eval_s = torch.chunk(batch[actor_channel_eval.name]["s"], nb_devices_eval, dim=0)
             futures = []
             reply_eval = {"v": None, "pi": None}
             # multithread
             with ThreadPoolExecutor(max_workers=nb_devices_eval) as executor:
-                for device, model, batch_s in zip(
-                    devices_eval, models_eval, batches_eval_s
-                ):
-                    futures.append(
-                        executor.submit(_forward_pass_on_device, device, model, batch_s)
-                    )
+                for device, model, batch_s in zip(devices_eval, models_eval, batches_eval_s):
+                    futures.append(executor.submit(_forward_pass_on_device, device, model, batch_s))
                 results = [future.result() for future in futures]
                 reply_eval["v"] = torch.cat([result["v"] for result in results], dim=0)
-                reply_eval["pi"] = torch.cat(
-                    [result["pi"] for result in results], dim=0
-                )
+                reply_eval["pi"] = torch.cat([result["pi"] for result in results], dim=0)
             dcm.set_reply(actor_channel_eval.name, reply_eval)
 
         if actor_channel_opponent.name in batch:
             # split in as many part as there are devices
-            batches_opponent_s = torch.chunk(
-                batch[actor_channel_opponent.name]["s"], nb_devices_opponent, dim=0
-            )
+            batches_opponent_s = torch.chunk(batch[actor_channel_opponent.name]["s"], nb_devices_opponent, dim=0)
             futures = []
             reply_opponent = {"v": None, "pi": None}
             # multithread
             with ThreadPoolExecutor(max_workers=nb_devices_opponent) as executor:
-                for device, model, batch_s in zip(
-                    devices_opponent, models_opponent, batches_opponent_s
-                ):
-                    futures.append(
-                        executor.submit(_forward_pass_on_device, device, model, batch_s)
-                    )
+                for device, model, batch_s in zip(devices_opponent, models_opponent, batches_opponent_s):
+                    futures.append(executor.submit(_forward_pass_on_device, device, model, batch_s))
                 results = [future.result() for future in futures]
-                reply_opponent["v"] = torch.cat(
-                    [result["v"] for result in results], dim=0
-                )
-                reply_opponent["pi"] = torch.cat(
-                    [result["pi"] for result in results], dim=0
-                )
+                reply_opponent["v"] = torch.cat([result["v"] for result in results], dim=0)
+                reply_opponent["pi"] = torch.cat([result["pi"] for result in results], dim=0)
             dcm.set_reply(actor_channel_opponent.name, reply_opponent)
     dcm.terminate()
 
@@ -378,10 +340,12 @@ def evaluate_on_checkpoint(
 #######################################################################################
 
 
-def run_evaluation(eval_params: EvalParams, 
-                   execution_params: ExecutionParams,
-                   simulation_params: SimulationParams,
-                   only_last: bool = False) -> None:
+def run_evaluation(
+    eval_params: EvalParams,
+    execution_params: ExecutionParams,
+    simulation_params: SimulationParams,
+    only_last: bool = False,
+) -> None:
     start_time = time.time()
     logger_dir = eval_params.checkpoint_dir
     if eval_params.checkpoint_dir is None:
@@ -392,6 +356,10 @@ def run_evaluation(eval_params: EvalParams,
     print("#" * 70)
     print("#" + "EVALUATION".center(68) + "#")
     print("#" * 70)
+
+    # Print out the eval parameters for future reference
+    print("the eval parameters are")
+    print(eval_params)
 
     # evaluation is done on a NN-powered MCTS
     pure_mcts_eval = False
@@ -404,9 +372,7 @@ def run_evaluation(eval_params: EvalParams,
         plotter = create_plotter(eval_params=eval_params)
 
     print("finding checkpoints...")
-    checkpoint_iter = create_checkpoint_iter(
-        eval_params=eval_params, only_last=only_last
-    )
+    checkpoint_iter = create_checkpoint_iter(eval_params=eval_params, only_last=only_last)
 
     models_opponent = []
     pure_mcts_opponent = True
@@ -435,8 +401,7 @@ def run_evaluation(eval_params: EvalParams,
         # the model_opponent
         if game_params_opponent is not None and game_params != game_params_opponent:
             raise ValueError(
-                "The game parameters between the model to be tested"
-                "and the opponent model are different"
+                "The game parameters between the model to be tested" "and the opponent model are different"
             )
         # check that game_params are consistent from one epoch to the other
         checkpoint_game_params = checkpoint["game_params"]
@@ -446,9 +411,7 @@ def run_evaluation(eval_params: EvalParams,
 
         if not first_checkpoint:
             print("creating model(s) and device(s)...")
-            devices_eval = [
-                torch.device(device_eval) for device_eval in eval_params.device_eval
-            ]
+            devices_eval = [torch.device(device_eval) for device_eval in eval_params.device_eval]
             models_eval = []
             for device_eval in devices_eval:
                 models_eval.append(
@@ -468,18 +431,15 @@ def run_evaluation(eval_params: EvalParams,
         num_evaluated_games = 0
         rewards = []
 
-        eval_batch_size = eval_params.num_parallel_games_eval if eval_params.num_parallel_games_eval else eval_params.num_game_eval
+        eval_batch_size = (
+            eval_params.num_parallel_games_eval if eval_params.num_parallel_games_eval else eval_params.num_game_eval
+        )
         print("evaluating {} games with batches of size {}".format(eval_params.num_game_eval, eval_batch_size))
         while num_evaluated_games < eval_params.num_game_eval:
             if eval_params.eval_verbosity:
                 print("creating evaluation environment...")
             current_batch_size = min(eval_batch_size, eval_params.num_game_eval - num_evaluated_games)
-            (
-                context,
-                actor_channel_eval,
-                actor_channel_opponent,
-                get_eval_reward,
-            ) = create_evaluation_environment(
+            (context, actor_channel_eval, actor_channel_opponent, get_eval_reward,) = create_evaluation_environment(
                 seed_generator=seed_generator,
                 game_params=game_params,
                 eval_params=eval_params,

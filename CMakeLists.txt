@@ -5,21 +5,20 @@ set(CMAKE_CXX_STANDARD 17)
 
 OPTION(USE_MOLD "Use mold linker if available" OFF)
 if(USE_MOLD)
-  find_program(MOLD_FOUND mold)
-  if(MOLD_FOUND)
-    message(STATUS "Using mold linker: mold")
-    set(LINK_FLAGS "-fuse-ld=mold")
-  else()
-    message(STATUS "mold linker not found, using default linker `ld`")
-    set(LINK_FLAGS "-fuse-ld=lld")
-  endif()
+  message(STATUS "Using mold linker: mold")
+  set(LINK_FLAGS "-fuse-ld=mold")
+else()
+  message(STATUS "mold linker not found, using default linker `ld`")
+  set(LINK_FLAGS "-fuse-ld=lld")
 endif()
 
 
 # Compilation flags
 set(FLAGS_WARNINGS "-Wall -Wextra -Werror -Wno-unused-variable -Wno-unused-value -Wno-deprecated-declarations")
 
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 ${FLAGS_WARNINGS}")
+# In debug use the three simultaneously supported sanitizers, see https://stackoverflow.com/a/47261999
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 ${FLAGS_WARNINGS} -fsanitize=address -fsanitize=undefined -fsanitize=leak")
+set(LINK_FLAGS "${LINK_FLAGS} -mllvm -asan-use-private-alias=1")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O3 -ffast-math ${FLAGS_WARNINGS}")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math ${FLAGS_WARNINGS}")
 
@@ -40,6 +39,11 @@ IF(PYTORCH15)
 ELSEIF(PYTORCH12)
     ADD_DEFINITIONS(-DPYTORCH12)
 ENDIF()
+
+OPTION(POLYGAMES_WITH_CUDA "Compile with CUDA support?" ON)
+if(NOT POLYGAMES_WITH_CUDA)
+  ADD_DEFINITIONS(-DPOLYGAMES_WITHOUT_CUDA)
+endif()
 
 execute_process(
     COMMAND python -c "import torch; import os; print(os.path.dirname(torch.__file__), end='')"

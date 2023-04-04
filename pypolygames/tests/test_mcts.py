@@ -13,9 +13,7 @@ from .. import evaluation
 from .. import utils
 
 
-@pytest.mark.parametrize(
-    "game_name", [game_name for game_name in utils.listings.games()]
-)
+@pytest.mark.parametrize("game_name", [game_name for game_name in utils.listings.games()])
 def test_mcts(game_name) -> None:
     #
     # Important informations in the following block about which games are skipped because they are:
@@ -70,9 +68,7 @@ def test_mcts(game_name) -> None:
     game_params = params.GameParams(game_name=game_name)
     case = random.randint(0, 2)
     rollouts = (2, 40)
-    if (
-        not case
-    ):  # In case 0, 0 wins, else 1  (this makes sure results dependent on rollouts)
+    if not case:  # In case 0, 0 wins, else 1  (this makes sure results dependent on rollouts)
         rollouts = tuple(reversed(rollouts))
     eval_params = params.EvalParams(
         num_game_eval=10,

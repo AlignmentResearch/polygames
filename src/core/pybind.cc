@@ -19,7 +19,7 @@ using namespace core;
 
 PYBIND11_MODULE(polygames, m) {
 
-  m.def("init_threads", &threads::init);
+  m.def("init_threads", &threads::Threads::init);
 
   py::class_<Game, tube::EnvThread, std::shared_ptr<Game>>(m, "Game")
       .def(py::init<std::string, std::vector<std::string>, int, int, bool, bool, bool, bool, bool, int,

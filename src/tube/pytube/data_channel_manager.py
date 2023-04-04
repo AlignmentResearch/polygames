@@ -41,7 +41,8 @@ class DataChannelManager:
         done, pending = concurrent.futures.wait(
             self.futures,
             timeout=max_timeout_s,
-            return_when=concurrent.futures.FIRST_COMPLETED)
+            return_when=concurrent.futures.FIRST_COMPLETED,
+        )
         done = list(done)
         pending = list(pending)
         # utils.assert_eq(len(done) + len(pending), len(self.futures))

@@ -34,21 +34,19 @@ def create_pure_mcts_environment(
     simulation_params: SimulationParams,
     execution_params: ExecutionParams,
     pure_mcts: bool,
-    model
+    model,
 ) -> Tuple[tube.Context, Optional[tube.DataChannel], Callable[[], int]]:
     human_first = execution_params.human_first
     time_ratio = execution_params.time_ratio
     total_time = execution_params.total_time
     context = tube.Context()
-    actor_channel = (
-        None if pure_mcts else tube.DataChannel("act", simulation_params.num_actor, 1)
-    )
+    actor_channel = None if pure_mcts else tube.DataChannel("act", simulation_params.num_actor, 1)
     rnn_state_shape = []
     if model is not None and hasattr(model, "rnn_cells") and model.rnn_cells > 0:
-      rnn_state_shape = [model.rnn_cells, model.rnn_channels]
+        rnn_state_shape = [model.rnn_cells, model.rnn_channels]
     rnn_state_size = 0
     if len(rnn_state_shape) >= 2:
-      rnn_state_size = rnn_state_shape[0] * rnn_state_shape[1]
+        rnn_state_size = rnn_state_shape[0] * rnn_state_shape[1]
     logit_value = getattr(model, "logit_value", False)
     game = create_game(
         game_params,
@@ -165,7 +163,7 @@ def run_pure_mcts_played_game(
         simulation_params=simulation_params,
         execution_params=execution_params,
         pure_mcts=model_params.pure_mcts,
-        model=model
+        model=model,
     )
 
     human_score = play_game(
