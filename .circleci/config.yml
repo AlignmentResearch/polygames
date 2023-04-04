@@ -8,7 +8,7 @@ parameters:
 
   docker_img_version:
     type: string
-    default: "0.8"
+    default: "0.7"
 
 workflows:
   test-jobs:
@@ -84,6 +84,7 @@ jobs:
       - run:
           name: Check formatting
           command: |
+            pip install black
             black --check .
       - build-polygames
       - run:
