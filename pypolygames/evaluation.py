@@ -14,7 +14,7 @@ import torch
 import tube
 from pytube.data_channel_manager import DataChannelManager
 
-from .params import GameParams, EvalParams, ExecutionParams
+from .params import GameParams, EvalParams, ExecutionParams, SimulationParams
 from . import utils
 from .env_creation_helpers import (
     sanitize_game_params,
@@ -101,6 +101,7 @@ def create_evaluation_environment(
     seed_generator: Iterator[int],
     game_params: GameParams,
     eval_params: EvalParams,
+    simulation_params: SimulationParams,
     current_batch_size: int = None,
     pure_mcts_eval: bool = False,
     pure_mcts_opponent: bool = True,
@@ -131,8 +132,7 @@ def create_evaluation_environment(
             pure_mcts=pure_mcts_eval,
             actor_channel=actor_channel_eval,
             model_manager=None,
-            human_mode=False,
-            sample_before_step_idx=8,
+            sample_before_step_idx=simulation_params.sample_before_step_idx,
             randomized_rollouts=False,
             sampling_mcts=False,
         )
@@ -149,8 +149,7 @@ def create_evaluation_environment(
                 pure_mcts=pure_mcts_opponent,
                 actor_channel=actor_channel_opponent,
                 model_manager=None,
-                human_mode=False,
-                sample_before_step_idx=8,
+                sample_before_step_idx=simulation_params.sample_before_step_idx,
                 randomized_rollouts=False,
                 sampling_mcts=False,
             )
@@ -339,7 +338,12 @@ def evaluate_on_checkpoint(
 #######################################################################################
 
 
-def run_evaluation(eval_params: EvalParams, execution_params: ExecutionParams, only_last: bool = False) -> None:
+def run_evaluation(
+    eval_params: EvalParams,
+    execution_params: ExecutionParams,
+    simulation_params: SimulationParams,
+    only_last: bool = False,
+) -> None:
     start_time = time.time()
     logger_dir = eval_params.checkpoint_dir
     if eval_params.checkpoint_dir is None:
@@ -433,15 +437,11 @@ def run_evaluation(eval_params: EvalParams, execution_params: ExecutionParams, o
             if eval_params.eval_verbosity:
                 print("creating evaluation environment...")
             current_batch_size = min(eval_batch_size, eval_params.num_game_eval - num_evaluated_games)
-            (
-                context,
-                actor_channel_eval,
-                actor_channel_opponent,
-                get_eval_reward,
-            ) = create_evaluation_environment(
+            (context, actor_channel_eval, actor_channel_opponent, get_eval_reward,) = create_evaluation_environment(
                 seed_generator=seed_generator,
                 game_params=game_params,
                 eval_params=eval_params,
+                simulation_params=simulation_params,
                 current_batch_size=current_batch_size,
                 pure_mcts_eval=pure_mcts_eval,
                 pure_mcts_opponent=pure_mcts_opponent,

@@ -98,12 +98,12 @@ def create_model(
 def _set_mcts_option(
     num_rollouts: int,
     seed: int,
-    human_mode: bool = False,
     time_ratio: float = 0.7,
     total_time: float = 0,
     sample_before_step_idx: int = 0,
     randomized_rollouts: bool = False,
     sampling_mcts: bool = False,
+    smooth_mcts_sampling: bool = False,
 ) -> mcts.MctsOption:
     # TODO: put hardcoded value in conf file
     mcts_option = mcts.MctsOption()
@@ -116,6 +116,7 @@ def _set_mcts_option(
     mcts_option.time_ratio = time_ratio
     mcts_option.randomized_rollouts = randomized_rollouts
     mcts_option.sampling_mcts = sampling_mcts
+    mcts_option.smooth_mcts_sampling = smooth_mcts_sampling
     return mcts_option
 
 
@@ -199,10 +200,10 @@ def create_player(
     pure_mcts: bool,
     actor_channel: Optional[tube.DataChannel],
     model_manager: Optional[polygames.ModelManager] = None,
-    human_mode: bool = False,
     time_ratio: float = 0.07,
     total_time: float = 0,
     sample_before_step_idx: int = 0,
+    smooth_mcts_sampling: bool = True,
     randomized_rollouts: bool = False,
     sampling_mcts: bool = False,
     rnn_state_shape: List[int] = [],
@@ -213,10 +214,10 @@ def create_player(
         mcts_option = _set_mcts_option(
             num_rollouts=num_rollouts,
             seed=next(seed_generator),
-            human_mode=human_mode,
             time_ratio=time_ratio,
             total_time=total_time,
             sample_before_step_idx=sample_before_step_idx,
+            smooth_mcts_sampling=smooth_mcts_sampling,
             randomized_rollouts=randomized_rollouts,
             sampling_mcts=sampling_mcts,
         )

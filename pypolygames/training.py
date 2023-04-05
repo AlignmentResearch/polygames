@@ -174,7 +174,6 @@ def create_training_environment(
                 pure_mcts=False,
                 actor_channel=actor_channel,
                 model_manager=model_manager,
-                human_mode=False,
                 sample_before_step_idx=simulation_params.sample_before_step_idx,
                 randomized_rollouts=simulation_params.randomized_rollouts,
                 sampling_mcts=simulation_params.sampling_mcts,

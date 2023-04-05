@@ -19,7 +19,7 @@ def generate_random_seeds(seed: int) -> Iterator[int]:
     # generate random seeds
     generator = random.Random(seed)
     while True:
-        yield generator.randint(0, 2**31 - 1)
+        yield generator.randint(0, 2 ** 31 - 1)
 
 
 def to_device(batch, device):

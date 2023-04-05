@@ -198,16 +198,44 @@ to look into this) if the strategy is identical to knuth’s.
       state_ = newState<Amazons::State>(seed);
     } else if (isGameNameMatched({"ChineseCheckers"})) {
       state_ = newState<ChineseCheckers::State>(seed);
+    } else if (isGameNameMatched({"Hex3pie"})) {
+      state_ = newState<Hex::State<3, true>>(seed);
+    } else if (isGameNameMatched({"Hex4pie"})) {
+      state_ = newState<Hex::State<4, true>>(seed);
     } else if (isGameNameMatched({"Hex5pie"})) {
       state_ = newState<Hex::State<5, true>>(seed);
+    } else if (isGameNameMatched({"Hex6pie"})) {
+      state_ = newState<Hex::State<6, true>>(seed);
+    } else if (isGameNameMatched({"Hex7pie"})) {
+      state_ = newState<Hex::State<7, true>>(seed);
+    } else if (isGameNameMatched({"Hex8pie"})) {
+      state_ = newState<Hex::State<8, true>>(seed);
+    } else if (isGameNameMatched({"Hex9pie"})) {
+      state_ = newState<Hex::State<9, true>>(seed);
+    } else if (isGameNameMatched({"Hex10pie"})) {
+      state_ = newState<Hex::State<10, true>>(seed);
     } else if (isGameNameMatched({"Hex11pie"})) {
       state_ = newState<Hex::State<11, true>>(seed);
     } else if (isGameNameMatched({"Hex13pie"})) {
       state_ = newState<Hex::State<13, true>>(seed);
     } else if (isGameNameMatched({"Hex19pie"})) {
       state_ = newState<Hex::State<19, true>>(seed);
+    } else if (isGameNameMatched({"Hex3"})) {
+      state_ = newState<Hex::State<3, false>>(seed);
+    } else if (isGameNameMatched({"Hex4"})) {
+      state_ = newState<Hex::State<4, false>>(seed);
     } else if (isGameNameMatched({"Hex5"})) {
       state_ = newState<Hex::State<5, false>>(seed);
+    } else if (isGameNameMatched({"Hex6"})) {
+      state_ = newState<Hex::State<6, false>>(seed);
+    } else if (isGameNameMatched({"Hex7"})) {
+      state_ = newState<Hex::State<7, false>>(seed);
+    } else if (isGameNameMatched({"Hex8"})) {
+      state_ = newState<Hex::State<8, false>>(seed);
+    } else if (isGameNameMatched({"Hex9"})) {
+      state_ = newState<Hex::State<9, false>>(seed);
+    } else if (isGameNameMatched({"Hex10"})) {
+      state_ = newState<Hex::State<10, false>>(seed);
     } else if (isGameNameMatched({"Hex11"})) {
       state_ = newState<Hex::State<11, false>>(seed);
     } else if (isGameNameMatched({"Hex13"})) {

@@ -61,13 +61,12 @@ def create_human_environment(
     player = create_player(
         seed_generator=seed_generator,
         game=game,
-        player="mcts",
+        player="mcts",  # shouldn't this either be "mcts" or "forward"?
         num_actor=simulation_params.num_actor,
         num_rollouts=simulation_params.num_rollouts,
         pure_mcts=pure_mcts,
         actor_channel=actor_channel,
         model_manager=None,
-        human_mode=True,
         total_time=total_time,
         time_ratio=time_ratio,
         sample_before_step_idx=80,
@@ -124,7 +123,6 @@ def create_tp_environment(
         pure_mcts=pure_mcts,
         actor_channel=actor_channel,
         model_manager=None,
-        human_mode=True,
         total_time=total_time,
         time_ratio=time_ratio,
     )
