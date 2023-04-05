@@ -122,7 +122,7 @@ jobs:
               python -m pypolygames traineval --act_batchsize=2 \
                 --batchsize=2 --replay_capacity=16  --replay_warmup=2 \
                 --num_epoch=1 --num_game=12 --model_name=NanoFCLogitModel \
-                --epoch_len=1 --device_opponent=cpu --game_name=TicTacToe --sync_period=1  --device_eval=cpu \
+                --epoch_len=1 --game_name=TicTacToe --sync_period=1  --device_eval=cpu \
                 --num_actor_eval=2 --num_rollouts_opponent=50 --num_game_eval=4
       - store_test_results:
           path: ./python
