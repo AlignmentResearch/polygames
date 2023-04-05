@@ -13,6 +13,6 @@ ENV ASAN_OPTIONS="detect_odr_violation=0"
 
 RUN cmake .. -DCMAKE_BUILD_TYPE=debug -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF -DUSE_MOLD=ON \
     && make -j \
-    && pip install -e ..
+    && cd .. && python setup.py develop
 
 WORKDIR "/home/circleci/project"

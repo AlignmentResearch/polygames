@@ -10,6 +10,6 @@ ENV CC=/usr/bin/clang
 ENV CXX=/usr/bin/clang++
 RUN cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF -DUSE_MOLD=ON \
     && make -j \
-    && pip install -e ..
+    && cd .. && python setup.py develop
 
 WORKDIR "/home/circleci/project"
