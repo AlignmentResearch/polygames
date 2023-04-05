@@ -17,7 +17,6 @@ RUN pip install -r requirements.txt -r requirements-cpu.txt && rm -rf "${HOME}/.
 COPY --chown=circleci:circleci . .
 # Abort if repo is dirty
 RUN if ! { [ -z "$(git status --porcelain --ignored=traditional)" ] \
-    && [ -z "$(cd src/third_party/pybind11 && git status --porcelain --ignored=traditional)" ] \
     ; }; then exit 1; fi
 
 CMD ["/bin/sh"]

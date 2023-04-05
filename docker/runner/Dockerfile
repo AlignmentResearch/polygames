@@ -31,7 +31,6 @@ RUN pip install -r requirements.txt -r requirements-cuda.txt && rm -rf "${HOME}/
 COPY --chown=root:root . .
 # Abort if repo is dirty
 RUN if ! { [ -z "$(git status --porcelain --ignored=traditional)" ] \
-    && [ -z "$(cd src/third_party/pybind11 && git status --porcelain --ignored=traditional)" ] \
     ; }; then exit 1; fi
 
 # Build in RelWithDebInfo
