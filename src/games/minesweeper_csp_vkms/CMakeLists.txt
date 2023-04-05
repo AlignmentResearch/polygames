@@ -4,10 +4,10 @@ project(csp_vkms)
 set(CMAKE_CXX_STANDARD 17)
 
 if (${Torch_FOUND})
-  include_directories(${TORCH_INCLUDE_DIRS})
+  target_include_directories(benchmark_csp_vkms SYSTEM PUBLIC ${TORCH_INCLUDE_DIRS})
 else()
   find_package(Torch REQUIRED)
-  include_directories(${TORCH_INCLUDE_DIRS})
+  target_include_directories(benchmark_csp_vkms SYSTEM PUBLIC ${TORCH_INCLUDE_DIRS})
 endif()
 
 find_package( PythonInterp 3.7 REQUIRED )

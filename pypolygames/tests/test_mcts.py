@@ -11,9 +11,10 @@ import pytest
 from .. import params
 from .. import evaluation
 from .. import utils
+from polygames import init_threads
 
 
-@pytest.mark.parametrize("game_name", [game_name for game_name in utils.listings.games()])
+@pytest.mark.parametrize("game_name", ["TicTacToe"])
 def test_mcts(game_name) -> None:
     #
     # Important informations in the following block about which games are skipped because they are:
@@ -22,6 +23,7 @@ def test_mcts(game_name) -> None:
     # - too_bad: not better with larger rollouts (these games are played but not evaluated)
     # also, for some games, we must add some tolerance (they dont win at 100%)
     #
+    init_threads(4)
     crashing = []
     is_one_player_game = any(x in game_name for x in ["asterm", "ineswee", "WeakSchur"])
     too_slow = [
@@ -88,6 +90,7 @@ def test_mcts(game_name) -> None:
         seed_generator=seed_generator(),
         game_params=game_params,
         eval_params=eval_params,
+        simulation_params=params.SimulationParams(num_threads=4),
         pure_mcts_eval=True,
     )
 

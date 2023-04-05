@@ -1,36 +1,13 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
-# set(CMAKE_PREFIX_PATH
-#     /private/home/hengyuan/miniconda3/envs/pytorch-c/lib/python3.7/site-packages/torch)
-# find_package(Torch REQUIRED)
-
-execute_process(
-    COMMAND python -c "import torch; import os; print(os.path.dirname(torch.__file__), end='')"
-    OUTPUT_VARIABLE TorchPath
-)
-
-find_package(PythonInterp 3.7 REQUIRED)
-find_package(PythonLibs 3.7 REQUIRED)
-
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(ZeroMQ REQUIRED libzmq>=4.3)
-
-
-# lib for other c++ programs
-add_library(_tube
+add_library(_tube STATIC
   src_cpp/data_channel.cc
+  src_cpp/pybind.cc
 )
-target_include_directories(_tube PUBLIC ${TORCH_INCLUDE_DIRS})
-target_include_directories(_tube PUBLIC ${PYTHON_INCLUDE_DIRS} ${ZEROMQ_INCLUDE_DIRS})
+target_include_directories(_tube SYSTEM PUBLIC ${TORCH_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS} ${ZEROMQ_INCLUDE_DIRS})
 target_link_directories(_tube PUBLIC ${TORCH_INSTALL_PREFIX}/lib)
 target_link_libraries(_tube PUBLIC ${TORCH_LIBRARIES} fmt ${ZEROMQ_LIBRARIES} torch_python)
 
-#target_include_directories(_tube PUBLIC ../third_party ../third_party/zstd/lib ../third_party/zstd/lib/common)
 
-# tests
-#add_executable(test_data_channel src_cpp/test/test_data_channel.cc)
-#target_link_libraries(test_data_channel _tube)
-
-# pybind lib
-pybind11_add_module(tube src_cpp/pybind.cc)
-target_link_libraries(tube PUBLIC libpolygames)
+# We don't add the pybind11 module on purpose -- let `libpolygames` link all of it.
+# pybind11_add_module(tube src_cpp/pybind.cc)

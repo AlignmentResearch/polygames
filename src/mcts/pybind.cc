@@ -5,15 +5,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <pybind11/pybind11.h>
-
-#include "mcts/mcts.h"
+#include "pybind.h"
+#include "mcts.h"
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(mcts, m) {
-  using namespace mcts;
-
+namespace mcts {
+void pybind_submodule(py::module &m) {
   py::class_<MctsPlayer, core::ActorPlayer, std::shared_ptr<MctsPlayer>>(
       m, "MctsPlayer")
       .def(py::init<const MctsOption&>(),
@@ -37,3 +35,5 @@ PYBIND11_MODULE(mcts, m) {
       .def_readwrite(
           "forced_rollouts_multiplier", &MctsOption::forcedRolloutsMultiplier);
 }
+
+} // namespace mcts

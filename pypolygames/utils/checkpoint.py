@@ -16,7 +16,7 @@ from typing import Any, Dict, Iterator, TypedDict, Union
 
 import pypolygames
 import torch
-import tube
+import polygames.tube as tube
 
 from .command_history import CommandHistory
 from ..params import (

@@ -11,7 +11,7 @@ from typing import Iterator, Tuple, List, Callable, Optional, Dict
 
 import torch
 
-import tube
+import polygames.tube as tube
 from pytube.data_channel_manager import DataChannelManager
 
 from .params import GameParams, EvalParams, ExecutionParams, SimulationParams
@@ -437,7 +437,12 @@ def run_evaluation(
             if eval_params.eval_verbosity:
                 print("creating evaluation environment...")
             current_batch_size = min(eval_batch_size, eval_params.num_game_eval - num_evaluated_games)
-            (context, actor_channel_eval, actor_channel_opponent, get_eval_reward,) = create_evaluation_environment(
+            (
+                context,
+                actor_channel_eval,
+                actor_channel_opponent,
+                get_eval_reward,
+            ) = create_evaluation_environment(
                 seed_generator=seed_generator,
                 game_params=game_params,
                 eval_params=eval_params,

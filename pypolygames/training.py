@@ -15,7 +15,7 @@ from concurrent.futures import ThreadPoolExecutor
 import torch
 from torch import nn
 
-import tube
+import polygames.tube as tube
 import polygames
 
 from .params import (
@@ -194,7 +194,6 @@ def create_training_environment(
                     pure_mcts=False,
                     actor_channel=op_actor_channel,
                     model_manager=model_manager_opponent,
-                    human_mode=False,
                     sample_before_step_idx=simulation_params.sample_before_step_idx,
                     randomized_rollouts=simulation_params.randomized_rollouts,
                     sampling_mcts=simulation_params.sampling_mcts,

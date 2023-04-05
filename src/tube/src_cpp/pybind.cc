@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include <pybind11/pybind11.h>
+#include "pybind.h"
 #include <torch/extension.h>
 
 #include "context.h"
@@ -15,9 +15,9 @@
 #include "test/test_producer.h"
 
 namespace py = pybind11;
-using namespace tube;
 
-PYBIND11_MODULE(tube, m) {
+namespace tube {
+void pybind_submodule(py::module &m) {
   py::class_<DataChannel, std::shared_ptr<DataChannel>>(m, "DataChannel")
       .def(py::init<std::string, int, int>())
       .def_readonly("name", &DataChannel::name)
@@ -46,3 +46,5 @@ PYBIND11_MODULE(tube, m) {
       .def(py::init<int, int, std::shared_ptr<DataChannel>,
                     std::shared_ptr<DataChannel>>());
 }
+
+} // namespace tube

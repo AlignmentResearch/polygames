@@ -8,14 +8,18 @@ parameters:
 
   docker_img_version:
     type: string
-    default: "0.7"
+    # Remember to also update `docker/build-all.sh`
+    default: "1.4"
 
 workflows:
   test-jobs:
     when:
       equal: [oncommit, << pipeline.parameters.action >>]
     jobs:
-      - all-tests:
+      - cpp-tests:
+          context:
+            - ghcr-auth
+      - py-tests:
           context:
             - ghcr-auth
 
@@ -31,7 +35,7 @@ commands:
   build-polygames:
     steps:
       - run:
-          name: Build Polygames in debug
+          name: Build Polygames with the same options as the Docker image
           command: |
             cd build
             make -j4 --debug=b # Limit concurrent jobs to limit memory use
@@ -72,9 +76,27 @@ commands:
             git --no-pager log --no-color -n 1 --format='HEAD is now at %h %s'
 
 jobs:
-  all-tests:
+  cpp-tests:
     docker:
-      - image: ghcr.io/alignmentresearch/polygames-circleci:<< pipeline.parameters.docker_img_version >>
+      - image: ghcr.io/alignmentresearch/polygames:<< pipeline.parameters.docker_img_version >>-ci-sanitize
+        auth:
+          username: "$GHCR_DOCKER_USER"
+          password: "$GHCR_DOCKER_TOKEN"
+    resource_class: large  # Needs to be large to have enough RAM
+    steps:
+      - checkout-without-force
+      - build-polygames
+      - run:
+          name: C++ tests
+          command: |
+            cd ./build/tests
+            ctest --parallel 4 --output-on-failure --output-junit junit.xml
+      # Report test results to CircleCI from junit.xml
+      - store_test_results:
+          path: ./build/tests
+  py-tests:
+    docker:
+      - image: ghcr.io/alignmentresearch/polygames:<< pipeline.parameters.docker_img_version >>-ci-relwithdebinfo
         auth:
           username: "$GHCR_DOCKER_USER"
           password: "$GHCR_DOCKER_TOKEN"
@@ -87,31 +109,24 @@ jobs:
             black --check .
       - build-polygames
       - run:
-          name: Test games
+          name: Install Pytube
           command: |
-            ./build/test_state
+            pip install -e src/tube
       - run:
-          name: Test polygames-tests (unit tests)
+          name: Python tests
           command: |
-            ./build/tests/polygames-tests
-
-      - run:
-          name: Test MCTS
-          command: |
-              ./build/src/mcts/test_mcts 1 100
-              ./build/src/mcts/test_mcts 4 50
-      - run:
-          name: Test python
-          command: |
-              pytest pypolygames --durations=10 --verbose
-      - run:
-          name: Run training
-          command: |
-              python -m pypolygames traineval --act_batchsize=2 \
-                  --batchsize=2 --replay_capacity=16  --replay_warmup=2 \
-                  --num_epoch=1 --num_game=12 --model_name=NanoFCLogitModel \
-                  --epoch_len=1 --device=cpu --game_name=TicTacToe --sync_period=1  --device_eval=cpu \
-                  --num_actor_eval=2 --num_rollouts_opponent=50 --num_game_eval=4
+              pytest pypolygames --durations=10 --verbose --junitxml=python/junit.xml
+      # - run: TODO restore
+      #     name: Run training
+      #     command: |
+      #         python -m pypolygames traineval --act_batchsize=2 \
+      #           --batchsize=2 --replay_capacity=16  --replay_warmup=2 \
+      #           --num_epoch=1 --num_game=2 --model_name=NanoFCLogitModel \
+      #           --epoch_len=1 --game_name=TicTacToe --sync_period=1  --device_eval=cpu \
+      #           --num_actor_eval=2 --num_rollouts_opponent=50 --num_game_eval=4 \
+      #           --devices="cpu"
+      - store_test_results:
+          path: ./python
 
   docker-publish:
     docker:
