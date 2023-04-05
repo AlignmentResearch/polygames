@@ -90,6 +90,7 @@ def test_mcts(game_name) -> None:
         seed_generator=seed_generator(),
         game_params=game_params,
         eval_params=eval_params,
+        simulation_params=params.SimulationParams(num_threads=4),
         pure_mcts_eval=True,
     )
 
