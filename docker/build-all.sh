@@ -10,7 +10,7 @@ CI_BASE="ghcr.io/alignmentresearch/polygames:${VERSION}-ci-base"
 CI_SANITIZE="ghcr.io/alignmentresearch/polygames:${VERSION}-ci-sanitize"
 CI_RELWITHDEBINFO="ghcr.io/alignmentresearch/polygames:${VERSION}-ci-relwithdebinfo"
 RUNNER="ghcr.io/alignmentresearch/polygames:${VERSION}-runner"
-DEVBOX="ghcr.io/alignmentresearch/polygames:${VERSION}-devbox"
+DEVBOX="ghcr.io/alignmentresearch/polygames:${VERSION}-devbox-$(whoami)"
 
 docker pull "$CI_BASE" \
     || { docker build \
@@ -42,3 +42,4 @@ docker build \
     --build-arg "SSH_KEY=${SSH_KEY}" \
     --build-arg "POLYGAMES_VERSION=${VERSION}" \
     -t "$DEVBOX" -f docker/devbox/Dockerfile .
+docker push "$DEVBOX"
