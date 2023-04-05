@@ -9,9 +9,8 @@ RUN wget https://github.com/alacritty/alacritty/releases/download/v0.11.0/alacri
     && rm alacritty.info \
     && mkdir /run/sshd
 
-WORKDIR "${HOME}/.ssh"
 ARG SSH_KEY
-RUN echo "${SSH_KEY}" > "${HOME}/.ssh/authorized_keys"
+RUN mkdir "${HOME}/.ssh" && echo "${SSH_KEY}" > "${HOME}/.ssh/authorized_keys"
 
 ## Unison synchronizer
 RUN wget https://github.com/bcpierce00/unison/releases/download/v2.53.2/unison-v2.53.2+ocaml-4.14.1+x86_64.linux.tar.gz \
