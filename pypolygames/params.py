@@ -368,7 +368,8 @@ class SimulationParams:
     rewind: int = 0
     randomized_rollouts: bool = False
     sampling_mcts: bool = False
-    sample_before_step_idx: int = 30
+    sample_before_step_idx: int = 30  # Why 30? Where is the default value used?
+    smooth_mcts_sampling: bool = False
     train_channel_timeout_ms: int = 1000
     train_channel_num_slots: int = 10000
 
@@ -460,6 +461,14 @@ class SimulationParams:
                     type=int,
                     help="Before this many steps in the game, sample over moves instead "
                     " of always selecting the best move",
+                )
+            ),
+            smooth_mcts_sampling=ArgFields(
+                opts=dict(
+                    type=bool,
+                    help="If we sample in MCTS, do we use the (weird) smoothing or not. \
+                         The smoothing appears to flatten the distribution, and makes it \
+                         possible to sample things with zero probability",
                 )
             ),
             train_channel_timeout_ms=ArgFields(
@@ -661,8 +670,11 @@ class EvalParams:
             raise ValueError(
                 "In '--real_time' the evaluation follow the training " "so '--checkpoint' should not be set"
             )
-        if self.checkpoint_dir is None and self.checkpoint is None:
-            raise ValueError("Either a '--checkpoint_dir' or a path to a '--checkpoint' " "must be specified")
+        # if self.checkpoint_dir is None and self.checkpoint is None:
+        #     raise ValueError(
+        #         "Either a '--checkpoint_dir' or a path to a '--checkpoint' "
+        #         "must be specified"
+        #     )
         if self.checkpoint_dir is not None and self.checkpoint is not None:
             raise ValueError(
                 "Either a '--checkpoint_dir' or a path to a '--checkpoint' " "must be specified, but not both"

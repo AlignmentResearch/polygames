@@ -539,10 +539,13 @@ std::vector<MctsResult> MctsPlayer::actMcts(
       }
     }
     if (result[i].bestAction == InvalidAction) {
+      // std::cout << "the best action is still invalid" << std::endl;
       for (auto& v : rootNode->getChildren()) {
         int visits = v.second->getMctsStats().getNumVisit();
         result[i].add(v.first, visits);
       }
+      // std::cout << "now the best action is " << result[i].bestAction << std::endl;
+      // std::cout << "with visit count " << result[i].maxVisits << std::endl;
     }
     result[i].normalize();
   }
@@ -553,12 +556,22 @@ std::vector<MctsResult> MctsPlayer::actMcts(
           "MCTS could not find any valid actions at state " +
           states[i]->history());
     }
+    // This checks whether we're supposed to sample randomly or not
     if (states[i]->getStepIdx() < option_.sampleBeforeStepIdx) {
-      // std::cout << "sample:" << std::endl;
-      result[i].sample();
+      // std::cout << "still below num random moves, so we sample:" << std::endl;
+      // std::cout << "note that this changes the bestAction" << std::endl;
+      // std::cout << "previously the best action was " << result[i].bestAction << std::endl;
+      if (option_.smoothMctsSampling) {
+        result[i].sampleWithSmoothing();
+      } else {
+        result[i].sampleWithoutSmoothing();
+      }
+      
+      // std::cout << "now it is " << result[i].bestAction << std::endl;
     }
   }
 
+  // 
   for (size_t i = 0; i != states.size(); ++i) {
     auto* n = roots[i]->getChild(result[i].bestAction);
     if (n && n->getPiVal().rnnState.defined()) {

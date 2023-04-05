@@ -15,35 +15,12 @@ class HumanPlayer : public Player {
  public:
   HumanPlayer() : Player(true){};
   virtual ~HumanPlayer(){};
-
-
-  _Action act(State& state) {
-    int index = state.humanInputAction();
-    assert(false);
-    auto& legalActions = state.GetLegalActions();
-    assert(index < (int)legalActions.size());
-    std::cout << " applying action... " << std::endl;
-    return legalActions[index];
-    // std::cerr << " applied action... " << std::endl;
-  }
 };
 
 class TPPlayer : public Player {
  public:
   TPPlayer() : Player(true) {isTP_ = true;};
   virtual ~TPPlayer(){};
-
-  _Action act(State& state) {
-    assert(!state.isStochastic());  // TPPlayer is not implemented for
-                                    // stochastic games. Could be done though.
-    assert(false);
-    int index = state.TPInputAction();
-    auto& legalActions = state.GetLegalActions();
-    assert(index < (int)legalActions.size());
-    std::cerr << " applying action... " << std::endl;
-    return legalActions[index];
-    // std::cerr << " applied action... " << std::endl;
-  }
 };
 
 }  // namespace core
