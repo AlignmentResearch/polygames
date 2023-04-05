@@ -12,7 +12,7 @@ from typing import Iterator, Tuple, List, Callable, Optional, Dict
 import torch
 
 import polygames.tube as tube
-import pure_mcts
+from .pure_mcts import play_game as play_pure_mcts_game
 
 from pytube.data_channel_manager import DataChannelManager
 
@@ -24,7 +24,6 @@ from .env_creation_helpers import (
     create_game,
     create_player,
 )
-
 
 
 #######################################################################################
@@ -52,14 +51,19 @@ def create_plotter(eval_params: EvalParams) -> utils.Plotter:
 
 
 def create_checkpoint_iter(eval_params: EvalParams, only_last: bool = False):
-    if eval_params.checkpoint_dir is not None:
+    if eval_params.pure_mcts_eval:
+        print("Pure MCTS player")
+        return [None]
+    elif eval_params.checkpoint_dir is not None:
         return utils.gen_checkpoints(
             checkpoint_dir=eval_params.checkpoint_dir,
             real_time=eval_params.real_time and not only_last,
             only_last=only_last,
         )
-    else:
+    elif eval_params.checkpoint is not None:
         return [utils.load_checkpoint(eval_params.checkpoint)]
+    else:
+        raise ValueError("No checkpoint provided")
 
 
 #######################################################################################
@@ -70,8 +74,10 @@ def create_checkpoint_iter(eval_params: EvalParams, only_last: bool = False):
 def create_models_and_devices_opponent(
     eval_params: EvalParams,
 ) -> Tuple[List[torch.jit.ScriptModule], List[torch.device], GameParams]:
-    devices_opponent = [torch.device(device_opponent) for device_opponent in eval_params.device_opponent]
-    checkpoint_opponent = utils.load_checkpoint(eval_params.checkpoint_opponent)
+    devices_opponent = [torch.device(device_opponent)
+                        for device_opponent in eval_params.device_opponent]
+    checkpoint_opponent = utils.load_checkpoint(
+        eval_params.checkpoint_opponent)
     model_state_dict_opponent = checkpoint_opponent["model_state_dict"]
     game_params_opponent = checkpoint_opponent["game_params"]
     sanitize_game_params(game_params_opponent)
@@ -120,12 +126,15 @@ def create_evaluation_environment(
     games = []
 
     context = tube.Context()
-    actor_channel_eval = None if pure_mcts_eval else tube.DataChannel("act_eval", num_game * num_actor_eval, 1)
+    actor_channel_eval = None if pure_mcts_eval else tube.DataChannel(
+        "act_eval", num_game * num_actor_eval, 1)
     actor_channel_opponent = (
-        None if pure_mcts_opponent else tube.DataChannel("act_opponent", num_game * num_actor_opponent, 1)
+        None if pure_mcts_opponent else tube.DataChannel(
+            "act_opponent", num_game * num_actor_opponent, 1)
     )
     for game_no in range(current_batch_size if current_batch_size else num_game):
-        game = create_game(game_params, num_episode=1, seed=next(seed_generator), eval_mode=True)
+        game = create_game(game_params, num_episode=1,
+                           seed=next(seed_generator), eval_mode=True)
         player = create_player(
             seed_generator=seed_generator,
             game=game,
@@ -216,16 +225,20 @@ def _play_game_neural_mcts_against_pure_mcts_opponent(
         assert len(batch) == 1  # only one channel
 
         # split in as many part as there are devices
-        batches_eval_s = torch.chunk(batch[actor_channel_eval.name]["s"], nb_devices_eval, dim=0)
+        batches_eval_s = torch.chunk(
+            batch[actor_channel_eval.name]["s"], nb_devices_eval, dim=0)
         futures = []
         reply_eval = {"v": None, "pi": None}
         # multithread
         with ThreadPoolExecutor(max_workers=nb_devices_eval) as executor:
             for device, model, batch_s in zip(devices_eval, models_eval, batches_eval_s):
-                futures.append(executor.submit(_forward_pass_on_device, device, model, batch_s))
+                futures.append(executor.submit(
+                    _forward_pass_on_device, device, model, batch_s))
             results = [future.result() for future in futures]
-            reply_eval["v"] = torch.cat([result["v"] for result in results], dim=0)
-            reply_eval["pi"] = torch.cat([result["pi"] for result in results], dim=0)
+            reply_eval["v"] = torch.cat([result["v"]
+                                        for result in results], dim=0)
+            reply_eval["pi"] = torch.cat(
+                [result["pi"] for result in results], dim=0)
         dcm.set_reply(actor_channel_eval.name, reply_eval)
     dcm.terminate()
 
@@ -252,30 +265,38 @@ def _play_game_neural_mcts_against_neural_mcts_opponent(
 
         if actor_channel_eval.name in batch:
             # split in as many part as there are devices
-            batches_eval_s = torch.chunk(batch[actor_channel_eval.name]["s"], nb_devices_eval, dim=0)
+            batches_eval_s = torch.chunk(
+                batch[actor_channel_eval.name]["s"], nb_devices_eval, dim=0)
             futures = []
             reply_eval = {"v": None, "pi": None}
             # multithread
             with ThreadPoolExecutor(max_workers=nb_devices_eval) as executor:
                 for device, model, batch_s in zip(devices_eval, models_eval, batches_eval_s):
-                    futures.append(executor.submit(_forward_pass_on_device, device, model, batch_s))
+                    futures.append(executor.submit(
+                        _forward_pass_on_device, device, model, batch_s))
                 results = [future.result() for future in futures]
-                reply_eval["v"] = torch.cat([result["v"] for result in results], dim=0)
-                reply_eval["pi"] = torch.cat([result["pi"] for result in results], dim=0)
+                reply_eval["v"] = torch.cat(
+                    [result["v"] for result in results], dim=0)
+                reply_eval["pi"] = torch.cat(
+                    [result["pi"] for result in results], dim=0)
             dcm.set_reply(actor_channel_eval.name, reply_eval)
 
         if actor_channel_opponent.name in batch:
             # split in as many part as there are devices
-            batches_opponent_s = torch.chunk(batch[actor_channel_opponent.name]["s"], nb_devices_opponent, dim=0)
+            batches_opponent_s = torch.chunk(
+                batch[actor_channel_opponent.name]["s"], nb_devices_opponent, dim=0)
             futures = []
             reply_opponent = {"v": None, "pi": None}
             # multithread
             with ThreadPoolExecutor(max_workers=nb_devices_opponent) as executor:
                 for device, model, batch_s in zip(devices_opponent, models_opponent, batches_opponent_s):
-                    futures.append(executor.submit(_forward_pass_on_device, device, model, batch_s))
+                    futures.append(executor.submit(
+                        _forward_pass_on_device, device, model, batch_s))
                 results = [future.result() for future in futures]
-                reply_opponent["v"] = torch.cat([result["v"] for result in results], dim=0)
-                reply_opponent["pi"] = torch.cat([result["pi"] for result in results], dim=0)
+                reply_opponent["v"] = torch.cat(
+                    [result["v"] for result in results], dim=0)
+                reply_opponent["pi"] = torch.cat(
+                    [result["pi"] for result in results], dim=0)
             dcm.set_reply(actor_channel_opponent.name, reply_opponent)
     dcm.terminate()
 
@@ -295,7 +316,8 @@ def evaluate_on_checkpoint(
     pure_mcts_opponent: bool,
 ) -> utils.Result:
     if eval_params.eval_verbosity:
-        print(f"Playing {eval_params.num_game_eval} games of {game_params.game_name}:")
+        print(
+            f"Playing {eval_params.num_game_eval} games of {game_params.game_name}:")
         print(
             f"- {'pure MCTS' if pure_mcts_eval else type(models_eval[0]).__name__} "
             f"player uses "
@@ -312,9 +334,10 @@ def evaluate_on_checkpoint(
         )
     if pure_mcts_eval:
         if not pure_mcts_opponent:
-            raise ValueError("Cannot play pure MCTS against neural MCTS -- do it the other way around!")
+            raise ValueError(
+                "Cannot play pure MCTS against neural MCTS -- do it the other way around!")
         else:  # we're doing pure mcts vs pure mcts
-            pure_mcts.play_game(devices=devices_eval,
+            play_pure_mcts_game(devices=devices_eval,
                                 models=models_eval,
                                 context=context,
                                 actor_channel=actor_channel_eval,
@@ -355,11 +378,17 @@ def run_evaluation(
     simulation_params: SimulationParams,
     only_last: bool = False,
 ) -> None:
-    # Check to make sure that if there is a game name specified,
-    # we don't also load a checkpoint
+
     if game_params.game_name is not None and (eval_params.checkpoint is not None or eval_params.checkpoint_dir is not None):
-        raise ValueError("Cannot specify both a game name and a checkpoint/checkpoint_dir.")
-    
+        print("WARNING: You have specified a game name and a checkpoint. The game name will be ignored.")
+
+    if eval_params.pure_mcts_eval is not None and (eval_params.checkpoint is not None or eval_params.checkpoint_dir is not None):
+        print("WARNING: You have specified a pure mcts eval and a checkpoint. The pure checkpoint will be ignored.")
+
+    if eval_params.pure_mcts_eval is not None and eval_params.checkpoint_dir is None:
+        raise ValueError(
+            "You have specified a pure mcts eval but no checkpoint dir. We need somewhere to save the eval.log")
+
     start_time = time.time()
     logger_dir = eval_params.checkpoint_dir
     if eval_params.checkpoint_dir is None:
@@ -375,10 +404,6 @@ def run_evaluation(
     print("the eval parameters are")
     print(eval_params)
 
-    # Unlike before, now we choose whether to do a pure mcts player or not
-    # Note that pure_mcts_opponent is True unless a checkpoint(_dir) is specified
-    pure_mcts_eval = simulation_params.pure_mcts
-
     print("setting-up pseudo-random generator...")
     seed_generator = utils.generate_random_seeds(seed=eval_params.seed_eval)
 
@@ -387,7 +412,8 @@ def run_evaluation(
         plotter = create_plotter(eval_params=eval_params)
 
     print("finding checkpoints...")
-    checkpoint_iter = create_checkpoint_iter(eval_params=eval_params, only_last=only_last)
+    checkpoint_iter = create_checkpoint_iter(
+        eval_params=eval_params, only_last=only_last)
 
     models_opponent = []
     pure_mcts_opponent = True
@@ -404,44 +430,47 @@ def run_evaluation(
 
     results = []
     first_checkpoint = False
-    game_params = None
+
     for checkpoint in checkpoint_iter:
-        epoch = checkpoint.get("epoch", 0)  # 0 when checkpoint_dir is None
-        model_state_dict_eval = checkpoint["model_state_dict"]
-        model_params_eval = checkpoint["model_params"]
-        if game_params is None:
-            game_params = checkpoint["game_params"]
-            sanitize_game_params(game_params)
-        # check that game_params are consistent between the model_eval and
-        # the model_opponent
-        if game_params_opponent is not None and game_params != game_params_opponent:
-            raise ValueError(
-                "The game parameters between the model to be tested" "and the opponent model are different"
-            )
-        # check that game_params are consistent from one epoch to the other
-        checkpoint_game_params = checkpoint["game_params"]
-        sanitize_game_params(checkpoint_game_params)
-        if game_params != checkpoint_game_params:
-            raise ValueError(f"The game parameters have changed at checkpoint #{epoch}")
-
-        if not first_checkpoint:
-            print("creating model(s) and device(s)...")
-            devices_eval = [torch.device(device_eval) for device_eval in eval_params.device_eval]
-            models_eval = []
-            for device_eval in devices_eval:
-                models_eval.append(
-                    create_model(
-                        game_params=game_params,
-                        model_params=model_params_eval,
-                        resume_training=False,
-                    ).to(device_eval)
+        if checkpoint is not None:
+            epoch = checkpoint.get("epoch", 0)  # 0 when checkpoint_dir is None
+            model_state_dict_eval = checkpoint["model_state_dict"]
+            model_params_eval = checkpoint["model_params"]
+            if game_params is None:
+                game_params = checkpoint["game_params"]
+                sanitize_game_params(game_params)
+            # check that game_params are consistent between the model_eval and
+            # the model_opponent
+            if game_params_opponent is not None and game_params != game_params_opponent:
+                raise ValueError(
+                    "The game parameters between the model to be tested" "and the opponent model are different"
                 )
-            first_checkpoint = True
+            # check that game_params are consistent from one epoch to the other
+            checkpoint_game_params = checkpoint["game_params"]
+            sanitize_game_params(checkpoint_game_params)
+            if game_params != checkpoint_game_params:
+                raise ValueError(
+                    f"The game parameters have changed at checkpoint #{epoch}")
 
-        print("updating model(s)...")
-        for model_eval in models_eval:
-            model_eval.load_state_dict(model_state_dict_eval)
-            model_eval.eval()
+            if not first_checkpoint:
+                print("creating model(s) and device(s)...")
+                devices_eval = [torch.device(device_eval)
+                                for device_eval in eval_params.device_eval]
+                models_eval = []
+                for device_eval in devices_eval:
+                    models_eval.append(
+                        create_model(
+                            game_params=game_params,
+                            model_params=model_params_eval,
+                            resume_training=False,
+                        ).to(device_eval)
+                    )
+                first_checkpoint = True
+
+            print("updating model(s)...")
+            for model_eval in models_eval:
+                model_eval.load_state_dict(model_state_dict_eval)
+                model_eval.eval()
 
         num_evaluated_games = 0
         rewards = []
@@ -449,11 +478,13 @@ def run_evaluation(
         eval_batch_size = (
             eval_params.num_parallel_games_eval if eval_params.num_parallel_games_eval else eval_params.num_game_eval
         )
-        print("evaluating {} games with batches of size {}".format(eval_params.num_game_eval, eval_batch_size))
+        print("evaluating {} games with batches of size {}".format(
+            eval_params.num_game_eval, eval_batch_size))
         while num_evaluated_games < eval_params.num_game_eval:
             if eval_params.eval_verbosity:
                 print("creating evaluation environment...")
-            current_batch_size = min(eval_batch_size, eval_params.num_game_eval - num_evaluated_games)
+            current_batch_size = min(
+                eval_batch_size, eval_params.num_game_eval - num_evaluated_games)
             (
                 context,
                 actor_channel_eval,
@@ -465,30 +496,48 @@ def run_evaluation(
                 eval_params=eval_params,
                 simulation_params=simulation_params,
                 current_batch_size=current_batch_size,
-                pure_mcts_eval=pure_mcts_eval,
+                pure_mcts_eval=eval_params.pure_mcts_eval,
                 pure_mcts_opponent=pure_mcts_opponent,
                 num_evaluated_games=num_evaluated_games,
             )
             if eval_params.eval_verbosity:
                 print("evaluating...")
-            partial_result = evaluate_on_checkpoint(
-                game_params=game_params,
-                eval_params=eval_params,
-                context=context,
-                actor_channel_eval=actor_channel_eval,
-                actor_channel_opponent=actor_channel_opponent,
-                get_eval_reward=get_eval_reward,
-                devices_eval=devices_eval,
-                models_eval=models_eval,
-                pure_mcts_eval=pure_mcts_eval,
-                devices_opponent=devices_opponent,
-                models_opponent=models_opponent,
-                pure_mcts_opponent=pure_mcts_opponent,
-            )
+            if eval_params.pure_mcts_eval:
+                partial_result = evaluate_on_checkpoint(
+                    game_params=game_params,
+                    eval_params=eval_params,
+                    context=context,
+                    actor_channel_eval=None,
+                    actor_channel_opponent=None,
+                    get_eval_reward=get_eval_reward,
+                    devices_eval=None,
+                    models_eval=None,
+                    pure_mcts_eval=eval_params.pure_mcts_eval,
+                    devices_opponent=None,
+                    models_opponent=None,
+                    pure_mcts_opponent=pure_mcts_opponent,
+                )
+            else:
+                partial_result = evaluate_on_checkpoint(
+                    game_params=game_params,
+                    eval_params=eval_params,
+                    context=context,
+                    actor_channel_eval=actor_channel_eval,
+                    actor_channel_opponent=actor_channel_opponent,
+                    get_eval_reward=get_eval_reward,
+                    devices_eval=devices_eval,
+                    models_eval=models_eval,
+                    pure_mcts_eval=eval_params.pure_mcts_eval,
+                    devices_opponent=devices_opponent,
+                    models_opponent=models_opponent,
+                    pure_mcts_opponent=pure_mcts_opponent,
+                )
+
             num_evaluated_games += current_batch_size
             rewards += partial_result.reward
             elapsed_time = time.time() - start_time
-            print(f"Evaluated on {num_evaluated_games} games in : {elapsed_time} s")
+            print(
+                f"Evaluated on {num_evaluated_games} games in : {elapsed_time} s")
 
         result = utils.Result(rewards)
         print("@@@eval: %s" % result.log())
