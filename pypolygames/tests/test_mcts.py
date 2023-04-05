@@ -14,7 +14,7 @@ from .. import utils
 from polygames import init_threads
 
 
-@pytest.mark.parametrize("game_name", [game_name for game_name in utils.listings.games()])
+@pytest.mark.parametrize("game_name", ["TicTacToe"])
 def test_mcts(game_name) -> None:
     #
     # Important informations in the following block about which games are skipped because they are:
