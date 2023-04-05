@@ -437,7 +437,12 @@ def run_evaluation(
             if eval_params.eval_verbosity:
                 print("creating evaluation environment...")
             current_batch_size = min(eval_batch_size, eval_params.num_game_eval - num_evaluated_games)
-            (context, actor_channel_eval, actor_channel_opponent, get_eval_reward,) = create_evaluation_environment(
+            (
+                context,
+                actor_channel_eval,
+                actor_channel_opponent,
+                get_eval_reward,
+            ) = create_evaluation_environment(
                 seed_generator=seed_generator,
                 game_params=game_params,
                 eval_params=eval_params,
