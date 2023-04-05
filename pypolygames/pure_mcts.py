@@ -33,7 +33,6 @@ def create_pure_mcts_environment(
     game_params: GameParams,
     simulation_params: SimulationParams,
     execution_params: ExecutionParams,
-    pure_mcts: bool,
     player_1_rollouts: int = 100,
     player_2_rollouts: int = 1000,
     player_1_sample: bool = False,
@@ -106,7 +105,6 @@ def _play_game_against_mcts(context: tube.Context) -> None:
 
 
 def play_game(
-    pure_mcts: bool,
     devices: Optional[List[torch.device]],
     models: Optional[List[torch.jit.ScriptModule]],
     context: tube.Context,
@@ -146,11 +144,9 @@ def run_pure_mcts_played_game(
         game_params=game_params,
         simulation_params=simulation_params,
         execution_params=execution_params,
-        pure_mcts=model_params.pure_mcts,
     )
 
     human_score = play_game(
-        pure_mcts=model_params.pure_mcts,
         devices=devices,
         models=models,
         context=context,
