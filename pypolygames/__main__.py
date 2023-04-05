@@ -28,7 +28,7 @@ from .human import run_human_played_game
 from .human import run_tp_played_game
 from .convert import convert_checkpoint
 from .draw_model import draw_model
-from .pure_mcts import run_pure_mcts_played_game
+from .pure_mcts import run_pure_mcts_game
 
 DOC = """The python package `pypolygames` can be used in either of the following modes:
 
@@ -90,7 +90,7 @@ def parse_args() -> argparse.Namespace:
 
     # PURE MCTS
     parser_mcts = subparsers.add_parser("pure_mcts")
-    parser_mcts.set_defaults(func=run_pure_mcts_played_game_from_args)
+    parser_mcts.set_defaults(func=run_pure_mcts_game_from_args)
 
     # TRAINING
     parser_train = subparsers.add_parser("train")
@@ -405,13 +405,13 @@ def run_human_played_game_from_args(args: argparse.Namespace):
     )
 
 
-def run_pure_mcts_played_game_from_args(args: argparse.Namespace):
+def run_pure_mcts_game_from_args(args: argparse.Namespace):
     game_params = instanciate_params_from_args(GameParams, args)
     model_params = instanciate_params_from_args(ModelParams, args)
     simulation_params = instanciate_params_from_args(SimulationParams, args)
     simulation_params.num_game = 1
     execution_params = instanciate_params_from_args(ExecutionParams, args)
-    run_pure_mcts_played_game(
+    run_pure_mcts_game(
         game_params=game_params,
         model_params=model_params,
         simulation_params=simulation_params,
