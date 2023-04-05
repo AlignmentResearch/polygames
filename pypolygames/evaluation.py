@@ -349,11 +349,17 @@ def evaluate_on_checkpoint(
 
 
 def run_evaluation(
+    game_params: GameParams,
     eval_params: EvalParams,
     execution_params: ExecutionParams,
     simulation_params: SimulationParams,
     only_last: bool = False,
 ) -> None:
+    # Check to make sure that if there is a game name specified,
+    # we don't also load a checkpoint
+    if game_params.game_name is not None and (eval_params.checkpoint is not None or eval_params.checkpoint_dir is not None):
+        raise ValueError("Cannot specify both a game name and a checkpoint/checkpoint_dir.")
+    
     start_time = time.time()
     logger_dir = eval_params.checkpoint_dir
     if eval_params.checkpoint_dir is None:
@@ -369,8 +375,9 @@ def run_evaluation(
     print("the eval parameters are")
     print(eval_params)
 
-    # evaluation is done on a NN-powered MCTS
-    pure_mcts_eval = False
+    # Unlike before, now we choose whether to do a pure mcts player or not
+    # Note that pure_mcts_opponent is True unless a checkpoint(_dir) is specified
+    pure_mcts_eval = simulation_params.pure_mcts
 
     print("setting-up pseudo-random generator...")
     seed_generator = utils.generate_random_seeds(seed=eval_params.seed_eval)

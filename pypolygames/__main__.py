@@ -177,6 +177,10 @@ def parse_args() -> argparse.Namespace:
         "Game parameters",
         "Not to be specified in case of loading a checkpoint or a pretrained model",
     )
+    eval_game_params_group = parser_eval.add_argument_group(
+        "Game parameters",
+        "Not to be specified in case of loading a checkpoint or a pretrained model",
+    )
     game_params_group = parser.add_argument_group(
         "Game parameters",
         "Not to be specified in case of loading a checkpoint or a pretrained model",
@@ -192,6 +196,7 @@ def parse_args() -> argparse.Namespace:
     for arg_name, arg_field in GameParams.arg_fields():
         train_game_params_group.add_argument(arg_field.name, **arg_field.opts)
         traineval_game_params_group.add_argument(arg_field.name, **arg_field.opts)
+        eval_game_params_group.add_argument(arg_field.name, **arg_field.opts)
         game_params_group.add_argument(arg_field.name, **{**arg_field.opts, **dict(help=argparse.SUPPRESS)})
         human_game_params_group.add_argument(arg_field.name, **arg_field.opts)
         mcts_game_params_group.add_argument(arg_field.name, **arg_field.opts)
@@ -348,8 +353,12 @@ def run_training_from_args(args: argparse.Namespace):
 def run_evaluation_from_args(args: argparse.Namespace):
     eval_params = instanciate_params_from_args(EvalParams, args)
     execution_params = instanciate_params_from_args(ExecutionParams, args)
+    game_params = instanciate_params_from_args(GameParams, args)
     simulation_params = instanciate_params_from_args(SimulationParams, args)
-    run_evaluation(eval_params=eval_params, execution_params=execution_params, simulation_params=simulation_params)
+    run_evaluation(eval_params=eval_params,
+                   execution_params=execution_params,
+                   game_params=game_params,
+                   simulation_params=simulation_params)
 
 
 def run_training_and_evaluation_from_args(args: argparse.Namespace):

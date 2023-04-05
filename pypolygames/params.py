@@ -652,6 +652,7 @@ class EvalParams:
     plot_server: str = "http://localhost"
     plot_port: int = 8097
     eval_verbosity: int = 1
+    pure_mcts_eval: bool = False
 
     def __setattr__(self, attr, value):
         if value is None:
@@ -670,11 +671,11 @@ class EvalParams:
             raise ValueError(
                 "In '--real_time' the evaluation follow the training " "so '--checkpoint' should not be set"
             )
-        # if self.checkpoint_dir is None and self.checkpoint is None:
-        #     raise ValueError(
-        #         "Either a '--checkpoint_dir' or a path to a '--checkpoint' "
-        #         "must be specified"
-        #     )
+        if self.checkpoint_dir is None and self.checkpoint is None and not self.pure_mcts_eval:
+            raise ValueError(
+                "Either a '--checkpoint_dir' or a path to a '--checkpoint' "
+                "must be specified, unless you're doing pure_mcts_eval"
+            )
         if self.checkpoint_dir is not None and self.checkpoint is not None:
             raise ValueError(
                 "Either a '--checkpoint_dir' or a path to a '--checkpoint' " "must be specified, but not both"
@@ -783,6 +784,7 @@ class EvalParams:
             plot_server=ArgFields(opts=dict(type=str, help="Visdom server url")),
             plot_port=ArgFields(opts=dict(type=int, help="Visdom server port")),
             eval_verbosity=ArgFields(opts=dict(type=int, help="Verbosity during the evaluation")),
+            pure_mcts_eval=ArgFields(opts=dict(type=bool, help="Evaluate a pure MCTS agent (no neural net)")),
         )
         defaults = cls(checkpoint_dir=Path("blublu"))  # cannot create with both None for checkpoint_dir and checkpoint
         defaults.checkpoint_dir = None  # revert
