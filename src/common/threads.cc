@@ -1,6 +1,6 @@
 #include "threads.h"
 
-#include <sstream>
+#include <iostream>
 #include <stdexcept>
 #include <cassert>
 
@@ -28,10 +28,8 @@ void Threads::init(size_t nThreads) {
         instance = std::make_unique<Threads>(nThreads);
     } else {
         if (instance->numThreads != nThreads) {
-          std::ostringstream oss;
-          oss << "WARNING: Number of threads already set to " << instance->numThreads
+	  std::cerr << "WARNING: Number of threads already set to " << instance->numThreads
               << ", requested: " << nThreads << ". Ignoring request." << std::endl;
-          throw std::logic_error(oss.str());
         }
 
     }

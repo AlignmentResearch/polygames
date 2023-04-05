@@ -9,8 +9,7 @@ from typing import Iterator, Tuple, Callable, Optional, List, Dict
 
 import torch
 
-import tube
-import polygames
+import polygames.tube as tube
 from pytube.data_channel_manager import DataChannelManager
 
 from . import utils

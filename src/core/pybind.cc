@@ -13,14 +13,20 @@
 #include "game.h"
 #include "model_manager.h"
 
+#include "mcts/pybind.h"
+#include "tube/src_cpp/pybind.h"
+
 namespace py = pybind11;
 
 using namespace core;
 
 PYBIND11_MODULE(polygames, m) {
-
   m.def("init_threads", &threads::Threads::init);
 
+  auto m_tube = m.def_submodule("tube", "Store replay buffers and networking");
+  tube::pybind_submodule(m_tube);
+
+  // This references tube::EnvThread so tube module must be defined before
   py::class_<Game, tube::EnvThread, std::shared_ptr<Game>>(m, "Game")
       .def(py::init<std::string, std::vector<std::string>, int, int, bool, bool, bool, bool, bool, int,
                     int, bool, int, int, bool, int>())
@@ -87,4 +93,10 @@ PYBIND11_MODULE(polygames, m) {
       .def("set_find_batch_size_max_bs", &ModelManager::setFindBatchSizeMaxBs);
 
   py::class_<SampleResult>(m, "SampleResult").def("get", &SampleResult::get);
+
+
+  // References core::Actor so must go after this file's main defs
+  auto m_mcts = m.def_submodule("mcts", "the MCTS algorithm");
+  mcts::pybind_submodule(m_mcts);
+
 }

@@ -6,9 +6,10 @@
 from typing import Optional, Iterator, List
 
 import torch  # must be loaded before tube
-import tube
-import mcts
+
 import polygames
+import polygames.tube as tube
+import polygames.mcts as mcts
 
 from . import model_zoo
 from .params import GameParams, ModelParams

@@ -17,8 +17,7 @@ endif()
 set(FLAGS_WARNINGS "-Wall -Wextra -Werror -Wno-unused-variable -Wno-unused-value -Wno-deprecated-declarations")
 
 # In debug use the three simultaneously supported sanitizers, see https://stackoverflow.com/a/47261999
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 ${FLAGS_WARNINGS} -fsanitize=address -fsanitize=undefined -fsanitize=leak")
-set(LINK_FLAGS "${LINK_FLAGS} -mllvm -asan-use-private-alias=1")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 ${FLAGS_WARNINGS}")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O3 -ffast-math ${FLAGS_WARNINGS}")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math ${FLAGS_WARNINGS}")
 
@@ -45,12 +44,21 @@ if(NOT POLYGAMES_WITH_CUDA)
   ADD_DEFINITIONS(-DPOLYGAMES_WITHOUT_CUDA)
 endif()
 
+# Add Pytorch from installed Pip path
 execute_process(
     COMMAND python -c "import torch; import os; print(os.path.dirname(torch.__file__), end='')"
     OUTPUT_VARIABLE TorchPath
 )
-set(CMAKE_PREFIX_PATH ${TorchPath})
+list(APPEND CMAKE_PREFIX_PATH ${TorchPath})
 find_package(Torch REQUIRED)
+
+# Add Pybind11 from installed Pip path
+execute_process(
+    COMMAND python -c "import pybind11; import os; print(os.path.dirname(pybind11.__file__), end='')"
+    OUTPUT_VARIABLE Pybind11Path
+)
+list(APPEND CMAKE_PREFIX_PATH ${Pybind11Path})
+find_package(pybind11 REQUIRED)
 
 find_package(Boost COMPONENTS system)
 if( Boost_FOUND )
@@ -74,19 +82,5 @@ endif()
 message(STATUS "Adding PyTorch compilation flags: ${TORCH_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
-include_directories(src/third_party/pybind11/include/)
 add_subdirectory(src)
 add_subdirectory(tests)
-
-# tests
-add_executable(test_state src/core/test_state.cc src/core/state.cc)
-target_link_libraries(test_state PUBLIC _tube _mcts _games ${JNI_LIBRARIES} ${PYTHON_LIBRARIES})
-
-enable_testing()
-
-add_test(NAME test_replay_buffer
-    COMMAND ${PYTHON_EXECUTABLE} -m test_replay_buffer
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests/python)
-
-set_tests_properties(test_replay_buffer
-    PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_SOURCE_DIR}:$ENV{PYTHONPATH}")

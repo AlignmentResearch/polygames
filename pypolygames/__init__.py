@@ -14,14 +14,3 @@ root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 game = os.path.join(root, "build/src")
 if game not in sys.path:
     sys.path.append(game)
-
-tube = os.path.join(root, "build/src", "tube")
-if tube not in sys.path:
-    sys.path.append(tube)
-pytube = os.path.join(root, "src", "tube")
-if pytube not in sys.path:
-    sys.path.append(pytube)
-
-mcts = os.path.join(root, "build/src", "mcts")
-if mcts not in sys.path:
-    sys.path.append(mcts)

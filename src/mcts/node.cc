@@ -6,9 +6,8 @@
  */
 
 #include <iostream>
-
-#include "mcts/node.h"
-#include "mcts/storage.h"
+#include "node.h"
+#include "storage.h"
 
 namespace mcts {
 

@@ -9,7 +9,7 @@ import tempfile
 from contextlib import contextmanager
 import pypolygames as ppg
 import polygames
-import tube
+import polygames.tube as tube
 
 
 class TrainingEnvironment(object):
