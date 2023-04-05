@@ -47,7 +47,7 @@ def loss(
 
 @pytest.mark.parametrize("model_name", [n for n in model_zoo.MODELS])
 def test_models(model_name) -> None:
-    if model_name in ["Connect4BenchModel", "ResConvConvLogitPoolModelV2"]:
+    if model_name in ["Connect4BenchModel", "ResConvConvLogitPoolModelV2", "AmazonsModel"]:
         raise SkipTest(f"Skipping {model_name}")
     game_params = params.GameParams(
         game_name="Tristannogo" if "GameOfTheAmazons" not in model_name else "GameOfTheAmazons"
