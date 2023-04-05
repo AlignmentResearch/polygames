@@ -12,6 +12,8 @@ from typing import Iterator, Tuple, List, Callable, Optional, Dict
 import torch
 
 import polygames.tube as tube
+import pure_mcts
+
 from pytube.data_channel_manager import DataChannelManager
 
 from .params import GameParams, EvalParams, ExecutionParams, SimulationParams
@@ -22,6 +24,7 @@ from .env_creation_helpers import (
     create_game,
     create_player,
 )
+
 
 
 #######################################################################################
@@ -308,7 +311,14 @@ def evaluate_on_checkpoint(
             f"actor{'s' if eval_params.num_actor_opponent > 1 else ''}"
         )
     if pure_mcts_eval:
-        pass  # not implemented
+        if not pure_mcts_opponent:
+            raise ValueError("Cannot play pure MCTS against neural MCTS -- do it the other way around!")
+        else:  # we're doing pure mcts vs pure mcts
+            pure_mcts.play_game(devices=devices_eval,
+                                models=models_eval,
+                                context=context,
+                                actor_channel=actor_channel_eval,
+                                get_result_for_human_player=get_eval_reward,)
     else:
         if pure_mcts_opponent:
             _play_game_neural_mcts_against_pure_mcts_opponent(
