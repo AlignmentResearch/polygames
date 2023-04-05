@@ -32,14 +32,6 @@ def create_pure_mcts_environment(
     game_params: GameParams,
     simulation_params: SimulationParams,
     execution_params: ExecutionParams,
-    player_1_rollouts: int = 100,
-    player_2_rollouts: int = 1000,
-    player_1_sample: bool = False,
-    player_2_sample: bool = False,
-    player_1_smooth: bool = False,
-    player_2_smooth: bool = False,
-    player_1_sample_before_step_idx: int = 80,
-    player_2_sample_before_step_idx: int = 80,
 ) -> Tuple[tube.Context, Optional[tube.DataChannel], Callable[[], int]]:
     human_first = execution_params.human_first
     actor_channel = None
