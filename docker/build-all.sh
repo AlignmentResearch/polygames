@@ -10,6 +10,7 @@ CI_BASE="ghcr.io/alignmentresearch/polygames:${VERSION}-ci-base"
 CI_SANITIZE="ghcr.io/alignmentresearch/polygames:${VERSION}-ci-sanitize"
 CI_RELWITHDEBINFO="ghcr.io/alignmentresearch/polygames:${VERSION}-ci-relwithdebinfo"
 RUNNER="ghcr.io/alignmentresearch/polygames:${VERSION}-runner"
+DEVBOX="ghcr.io/alignmentresearch/polygames:${VERSION}-devbox"
 
 docker pull "$CI_BASE" \
     || { docker build \
