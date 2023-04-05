@@ -15,7 +15,7 @@ from concurrent.futures import ThreadPoolExecutor
 import torch
 from torch import nn
 
-import tube
+import polygames.tube as tube
 import polygames
 
 from .params import (

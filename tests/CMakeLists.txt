@@ -1,12 +1,3 @@
-include_directories(
-../src
- ../src/games
- ../src/third_party
- ../src/third_party/fmt/include
- ../src/tube/src_cpp
- ../src/third_party/pybind11/include/
- )
-
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -32,9 +23,10 @@ add_executable( polygames-tests
  #ludii-game-tests.cc
  )
 
-target_include_directories(polygames-tests PRIVATE SYSTEM ${TORCH_INCLUDE_DIRS})
+target_include_directories(polygames-tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../src/games ${CMAKE_CURRENT_SOURCE_DIR}/../src)
+
 target_link_libraries(polygames-tests
-    libpolygames
+    _polygames
     ${GTEST_LIBRARIES}
     gtest
     GTest::gtest_main

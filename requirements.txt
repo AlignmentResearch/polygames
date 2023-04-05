@@ -37,3 +37,4 @@ virtualenv-clone==0.5.7
 visdom==0.2.4
 websocket-client==1.5.1
 tensorboardX==2.6
+pybind11==2.10.0
