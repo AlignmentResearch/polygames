@@ -6,14 +6,7 @@ setup(
     description="A collection of games",
     author="The Polygames authors",
     license="MIT",
-    packages=[
-        "pypolygames",
-        "pytube",
-    ],
-    package_dir={
-        "pypolygames": "pypolygames",
-        "pytube": "src/tube/pytube",
-    },
+    packages=["pypolygames"],
     package_data={"pypolygames": ["build/src/polygames*.so"]},
     python_requires=">=3.9",
 )

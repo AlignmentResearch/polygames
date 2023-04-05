@@ -109,6 +109,10 @@ jobs:
             black --check .
       - build-polygames
       - run:
+          name: Install Pytube
+          command: |
+            pip install -e src/tube
+      - run:
           name: Python tests
           command: |
               pytest pypolygames --durations=10 --verbose --junitxml=python/junit.xml
