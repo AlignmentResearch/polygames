@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.source=https://github.com/AlignmentResearch/polyg
 ## Alacritty terminal, ssh keys dir
 RUN wget https://github.com/alacritty/alacritty/releases/download/v0.11.0/alacritty.info \
     && tic -xe alacritty,alacritty-direct alacritty.info \
-    && rm alacritty.info
+    && rm alacritty.info \
     && mkdir /run/sshd
 
 WORKDIR "${HOME}/.ssh"
