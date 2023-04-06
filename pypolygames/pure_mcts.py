@@ -117,7 +117,6 @@ def _play_game_against_mcts(context: tube.Context) -> None:
 
 
 def play_game(
-    pure_mcts: bool,
     devices: Optional[List[torch.device]],
     models: Optional[List[torch.jit.ScriptModule]],
     context: tube.Context,
@@ -158,7 +157,6 @@ def run_pure_mcts_game(
     )
 
     human_score = play_game(
-        pure_mcts=model_params.pure_mcts,
         devices=devices,
         models=models,
         context=context,
