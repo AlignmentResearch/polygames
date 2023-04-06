@@ -1,0 +1,40 @@
+Starting 256threads (automatically configured)
+######################################################################
+#                           PURE-MCTS GAME                           #
+######################################################################
+setting-up pseudo-random generator...
+creating pure mcts environment
+game over
+result for the first player: -1.0
+Starting 256threads (automatically configured)
+######################################################################
+#                           PURE-MCTS GAME                           #
+######################################################################
+setting-up pseudo-random generator...
+creating pure mcts environment
+game over
+result for the first player: -1.0
+Starting 256threads (automatically configured)
+the chosen action is
+1 = (0, 2, 0)
+the policy was
+0 0 0 0 1
+so the move had policy weight 0
+taken over this sumVisits 1
+######################################################################
+#                           PURE-MCTS GAME                           #
+######################################################################
+setting-up pseudo-random generator...
+creating pure mcts environment
+game over
+result for the first player: 1.0
+  Empty=' ' Black='●' White='○'
+      A   B   C
+    ┌───┬───┬───┐
+  3 │ ○ │   │ ● │ 3
+    ├───┼───┼───┤
+  2 │   │   │   │ 2
+    ├───┼───┼───┤
+  1 │   │   │ ● │ 1
+    └───┴───┴───┘
+      A   B   C

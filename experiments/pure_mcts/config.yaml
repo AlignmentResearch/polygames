@@ -1,0 +1,13 @@
+game_name: TicTacToe
+
+num_rollouts: 0
+num_rollouts_2: 0
+
+sampling_mcts: false
+sampling_mcts_2: false
+
+smooth_mcts_sampling: true
+smooth_mcts_sampling_2: true
+
+sample_before_step_idx: 8
+sample_before_step_idx_2: 8

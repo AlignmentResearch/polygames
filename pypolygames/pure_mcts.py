@@ -47,16 +47,6 @@ def create_pure_mcts_environment(
     player_1_sample_before_step_idx = simulation_params.sample_before_step_idx
     player_2_sample_before_step_idx = simulation_params.sample_before_step_idx_2
 
-    print("the important params are the following:")
-    print("player_1_rollouts: ", player_1_rollouts)
-    print("player_2_rollouts: ", player_2_rollouts)
-    print("player_1_sample: ", player_1_sample)
-    print("player_2_sample: ", player_2_sample)
-    print("player_1_smooth: ", player_1_smooth)
-    print("player_2_smooth: ", player_2_smooth)
-    print("player_1_sample_before_step_idx: ", player_1_sample_before_step_idx)
-    print("player_2_sample_before_step_idx: ", player_2_sample_before_step_idx)
-
     game = create_game(
         game_params,
         num_episode=1,
