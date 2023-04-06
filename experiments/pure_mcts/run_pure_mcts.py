@@ -62,6 +62,7 @@ def run_games(num_games: int) -> tuple[list[str], list[str]]:
                 for item in game_command:
                     if not item.startswith("--"):
                         dir_name.append(item)
+                dir_name.append(str(num_games))
                 dir_name = '_'.join(dir_name)
 
                 # Make the directory
