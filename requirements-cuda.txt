@@ -1,4 +1,4 @@
-# Don't forget to update pre_requirements_cpu.txt if you update this
+# Don't forget to update requirements-cpu.txt if you update this
 
 torch==1.13.1
 torchaudio==0.13.1
