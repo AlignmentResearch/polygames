@@ -358,6 +358,7 @@ class SimulationParams:
     num_threads: int = 0
     num_actor: int = 1  # should be 1 at training time
     num_rollouts: int = 1600
+    num_rollouts_2: int = 1600  # only relevant for pure_mcts mode
     replay_capacity: int = 1_000_000
     replay_warmup: int = 10_000
     sync_period: int = 100
@@ -368,8 +369,11 @@ class SimulationParams:
     rewind: int = 0
     randomized_rollouts: bool = False
     sampling_mcts: bool = False
+    sampling_mcts_2: bool = False  # only relevant for pure_mcts mode
     sample_before_step_idx: int = 30  # Why 30? Where is the default value used?
+    sample_before_step_idx_2: int = 30  # only relevant for pure_mcts mode
     smooth_mcts_sampling: bool = False
+    smooth_mcts_sampling_2: bool = False  # only relevant for pure_mcts mode
     train_channel_timeout_ms: int = 1000
     train_channel_num_slots: int = 10000
 
@@ -403,6 +407,7 @@ class SimulationParams:
                     help="Nb of act_batches the replay buffer needs to buffer " "before the training can start",
                 )
             ),
+            num_rollouts_2=ArgFields(opts=dict(type=int, help="Number of rollouts per actor/thread (opponent)")),
             sync_period=ArgFields(
                 opts=dict(
                     type=int,
@@ -456,11 +461,24 @@ class SimulationParams:
                     help="Use sampling MCTS",
                 )
             ),
+            sampling_mcts_2=ArgFields(
+                opts=dict(
+                    type=boolarg,
+                    help="Use sampling MCTS (opponent)",
+                )
+            ),
             sample_before_step_idx=ArgFields(
                 opts=dict(
                     type=int,
                     help="Before this many steps in the game, sample over moves instead "
                     " of always selecting the best move",
+                )
+            ),
+            sample_before_step_idx_2=ArgFields(
+                opts=dict(
+                    type=int,
+                    help="Before this many steps in the game, sample over moves instead "
+                    " of always selecting the best move (opponent)",
                 )
             ),
             smooth_mcts_sampling=ArgFields(
@@ -469,6 +487,14 @@ class SimulationParams:
                     help="If we sample in MCTS, do we use the (weird) smoothing or not. \
                          The smoothing appears to flatten the distribution, and makes it \
                          possible to sample things with zero probability",
+                )
+            ),
+            smooth_mcts_sampling_2=ArgFields(
+                opts=dict(
+                    type=bool,
+                    help="If we sample in MCTS, do we use the (weird) smoothing or not. \
+                         The smoothing appears to flatten the distribution, and makes it \
+                         possible to sample things with zero probability (opponent)",
                 )
             ),
             train_channel_timeout_ms=ArgFields(

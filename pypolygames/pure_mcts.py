@@ -32,17 +32,30 @@ def create_pure_mcts_environment(
     game_params: GameParams,
     simulation_params: SimulationParams,
     execution_params: ExecutionParams,
-    player_1_rollouts: int = 100,
-    player_2_rollouts: int = 1000,
-    player_1_sample: bool = False,
-    player_2_sample: bool = False,
-    player_1_smooth: bool = False,
-    player_2_smooth: bool = False,
 ) -> Tuple[tube.Context, Optional[tube.DataChannel], Callable[[], int]]:
     human_first = execution_params.human_first
     actor_channel = None
 
     context = tube.Context()
+
+    player_1_rollouts = simulation_params.num_rollouts
+    player_2_rollouts = simulation_params.num_rollouts_2
+    player_1_sample = simulation_params.sampling_mcts
+    player_2_sample = simulation_params.sampling_mcts_2
+    player_1_smooth = simulation_params.smooth_mcts_sampling
+    player_2_smooth = simulation_params.smooth_mcts_sampling_2
+    player_1_sample_before_step_idx = simulation_params.sample_before_step_idx
+    player_2_sample_before_step_idx = simulation_params.sample_before_step_idx_2
+
+    print("the important params are the following:")
+    print("player_1_rollouts: ", player_1_rollouts)
+    print("player_2_rollouts: ", player_2_rollouts)
+    print("player_1_sample: ", player_1_sample)
+    print("player_2_sample: ", player_2_sample)
+    print("player_1_smooth: ", player_1_smooth)
+    print("player_2_smooth: ", player_2_smooth)
+    print("player_1_sample_before_step_idx: ", player_1_sample_before_step_idx)
+    print("player_2_sample_before_step_idx: ", player_2_sample_before_step_idx)
 
     game = create_game(
         game_params,
@@ -62,9 +75,9 @@ def create_pure_mcts_environment(
         num_rollouts=player_1_rollouts,
         pure_mcts=True,
         actor_channel=actor_channel,
-        sample_before_step_idx=80,
+        sample_before_step_idx=player_1_sample_before_step_idx,
         smooth_mcts_sampling=player_1_smooth,
-        randomized_rollouts=False,
+        randomized_rollouts=player_1_sample,
         sampling_mcts=simulation_params.sampling_mcts,
     )
     player2 = create_player(
@@ -75,9 +88,9 @@ def create_pure_mcts_environment(
         num_rollouts=player_2_rollouts,
         pure_mcts=True,
         actor_channel=actor_channel,
-        sample_before_step_idx=80,
+        sample_before_step_idx=player_2_sample_before_step_idx,
         smooth_mcts_sampling=player_2_smooth,
-        randomized_rollouts=False,
+        randomized_rollouts=player_2_sample,
         sampling_mcts=simulation_params.sampling_mcts,
     )
     game.add_eval_player(player1)
@@ -120,7 +133,7 @@ def play_game(
 #######################################################################################
 
 
-def run_pure_mcts_played_game(
+def run_pure_mcts_game(
     game_params: GameParams,
     model_params: ModelParams,
     simulation_params: SimulationParams,
@@ -134,8 +147,6 @@ def run_pure_mcts_played_game(
     seed_generator = utils.generate_random_seeds(seed=execution_params.seed)
 
     devices, models = None, None
-
-    model = None
 
     print("creating pure mcts environment")
     context, actor_channel, get_result_for_human_player = create_pure_mcts_environment(
