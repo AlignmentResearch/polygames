@@ -1,7 +1,7 @@
-game_name: TicTacToe
+game_name: [TicTacToe, Hex3pie, Hex4pie, Hex5pie]
 
-num_rollouts: 0
-num_rollouts_2: 0
+num_rollouts: [0, 10, 100, 1000]
+num_rollouts_2: [0, 10, 100, 1000]
 
 sampling_mcts: false
 sampling_mcts_2: false

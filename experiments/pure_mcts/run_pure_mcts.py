@@ -8,7 +8,8 @@ import sys
 import yaml
 
 
-default_number_of_games = 10
+default_number_of_games = 100
+experiments_directory = '/shared/polygames-parent/experiments'
 
 
 def run_games(num_games: int) -> tuple[list[str], list[str]]:
@@ -67,13 +68,13 @@ def run_games(num_games: int) -> tuple[list[str], list[str]]:
                 subprocess.run(["mkdir", dir_name])
 
                 # Save the results and the errors to files
-                with open(f"{dir_name}/results.txt", "w") as f:
+                with open(f"{experiments_directory}/{dir_name}/results.txt", "w") as f:
                     f.writelines(all_results)
-                with open(f"{dir_name}/errors.txt", "w") as f:
+                with open(f"{experiments_directory}/{dir_name}/errors.txt", "w") as f:
                     f.writelines(all_errors)
 
                 # Save the game command
-                with open(f"{dir_name}/game_command.txt", "w") as f:
+                with open(f"{experiments_directory}/{dir_name}/game_command.txt", "w") as f:
                     f.writelines(' '.join(game_command))
 
                 # Make the plot
@@ -156,7 +157,7 @@ def make_plot(all_results: list[str], all_errors: list[str],
 
     # Get the stats
     commands = []
-    i = 4  # don't care about the "python" bit
+    i = 0  # don't care about the "python" bit
     while i < len(game_command) - 2:  # don't care about the seed
         commands.append(' '.join(game_command[i:i+2]))
         i += 2
@@ -173,7 +174,7 @@ def make_plot(all_results: list[str], all_errors: list[str],
     plt.gcf().set_size_inches(4, 2)
 
     # save the plot to a PDF file
-    plt.savefig(f"{dir_name}/contingency_table.pdf", dpi=100, bbox_inches="tight")
+    plt.savefig(f"{experiments_directory}/{dir_name}/contingency_table.pdf", dpi=100, bbox_inches="tight")
 
     # plt.plot(indices, results, 'o', label="results")
     # plt.plot(indices, unlikely_move_occurred, 'o', label="# unlikely moves in this game")
