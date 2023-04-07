@@ -40,8 +40,8 @@ def get_directory_name_from_command(game_command, num_games, hyphenated: bool = 
         dir_name = '_'.join(dir_name)
 
     if shorten:
-        if len(dir_name) > 38:
-            dir_name = dir_name[:30] + '_' + secrets.token_hex(4)[:7]
+        if len(dir_name) > 32:
+            dir_name = dir_name[:24] + '_' + secrets.token_hex(4)[:7]
 
     return dir_name
 
@@ -83,15 +83,14 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
                 # subprocess.run(shlex.split(single_command))
 
                 experiment_name = get_directory_name_from_command(
-                    game_command, num_games, hyphenated=True)
+                    game_command, num_games, hyphenated=True, shorten=True)
                 
                 print("experiment name:", experiment_name, 'length:', len(experiment_name))
-                raise SystemExit
 
-                # docker_command = f'ctl job run --name "nhowe-{experiment_name}" ' \
-                #     f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 4 --gpu 1 ' \
-                #     '--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared ' \
-                #     f'--command "{single_command}"'
+                docker_command = f'ctl job run --name "nhowe-{experiment_name}" ' \
+                    f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 4 --gpu 1 ' \
+                    '--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared ' \
+                    f'--command "{single_command}"'
 
                 # docker_command = f'ctl job run --name "nhowe-{experiment_name}" ' \
                 #     '--shared-host-dir-slow-tolerant --container "$CONTAINER" --cpu 4 --gpu 1 ' \
