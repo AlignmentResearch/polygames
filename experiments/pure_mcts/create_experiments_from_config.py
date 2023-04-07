@@ -21,13 +21,17 @@ def get_directory_name_from_command(game_command, num_games, hyphenated: bool = 
         if not item.startswith("--"):
             dir_name.append(item)
 
+    # Make everything lowercase, and replace True/False with t/f
+    if hyphenated:
+        dir_name = [item.lower() for item in dir_name]
+
     if hyphenated or shorten:
         old_dir_name = dir_name
         dir_name = []
         for item in old_dir_name:
-            if item == False or item == 'False':
+            if item == False or item == 'False' or item == 'false':
                 dir_name.append('f')
-            elif item == True or item == 'True':
+            elif item == True or item == 'True' or item == 'true':
                 dir_name.append('t')
             else:
                 dir_name.append(item)
