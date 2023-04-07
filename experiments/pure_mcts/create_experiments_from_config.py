@@ -1,5 +1,6 @@
 from __future__ import annotations
 import os
+import secrets
 import shlex
 import shutil
 import subprocess
@@ -11,7 +12,7 @@ default_number_of_games = 3
 experiments_directory = '/shared/polygames-parent/experiments/pure_mcts'
 
 
-def get_directory_name_from_command(game_command, num_games, hyphenated: bool = False):
+def get_directory_name_from_command(game_command, num_games, hyphenated: bool = False, shorten: bool = False):
     # Make a directory name unique to these hyperparameters
     game_command = [el for el in game_command if el not in [
         "python", "-m", "pypolygames", "pure_mcts"]]
@@ -19,11 +20,28 @@ def get_directory_name_from_command(game_command, num_games, hyphenated: bool = 
     for item in game_command:
         if not item.startswith("--"):
             dir_name.append(item)
+
+    # Shorten if necessary
+    if shorten:
+        old_dir_name = dir_name
+        dir_name = []
+        for item in old_dir_name:
+            if item == False:
+                dir_name.append('F')
+            elif item == True:
+                dir_name.append('T')
+            else:
+                dir_name.append(item)
+
     dir_name.append(str(num_games))
     if hyphenated:
         dir_name = '-'.join(dir_name)
     else:
         dir_name = '_'.join(dir_name)
+
+    if shorten:
+        if len(dir_name) > 38:
+            dir_name = dir_name[:30] + '_' + secrets.token_hex(4)[:7]
 
     return dir_name
 
