@@ -26,9 +26,9 @@ def get_directory_name_from_command(game_command, num_games, hyphenated: bool = 
         old_dir_name = dir_name
         dir_name = []
         for item in old_dir_name:
-            if item == False:
+            if item == False or item == 'False':
                 dir_name.append('F')
-            elif item == True:
+            elif item == True or item == 'True':
                 dir_name.append('T')
             else:
                 dir_name.append(item)
@@ -41,7 +41,7 @@ def get_directory_name_from_command(game_command, num_games, hyphenated: bool = 
 
     if shorten:
         if len(dir_name) > 32:
-            dir_name = dir_name[:24] + '_' + secrets.token_hex(4)[:7]
+            dir_name = dir_name[:24] + '-' + secrets.token_hex(4)[:7]
 
     return dir_name
 
