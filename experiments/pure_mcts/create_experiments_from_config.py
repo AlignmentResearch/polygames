@@ -7,7 +7,7 @@ import sys
 import yaml
 
 
-default_number_of_games = 100
+default_number_of_games = 3
 experiments_directory = '/shared/polygames-parent/experiments/pure_mcts'
 
 
@@ -26,15 +26,6 @@ def get_directory_name_from_command(game_command, num_games, hyphenated: bool = 
         dir_name = '_'.join(dir_name)
 
     return dir_name
-
-
-def get_experiment_commands(game_command, num_games):
-    all_experiment_commands = []
-
-    for i in range(num_games):
-        all_experiment_commands.append(game_command + ["--seed", str(i)])
-
-    return all_experiment_commands
 
 
 def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[str]]:
@@ -60,39 +51,26 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
 
                 all_results = []
                 all_errors = []
-                experiment_name = get_directory_name_from_command(
-                    game_command, num_games, hyphenated=True)
-
-                all_experiment_commands = get_experiment_commands(game_command, num_games)
+                
                 dir_name = get_directory_name_from_command(game_command, num_games)
-                print("saving yay!")
-
                 directory_path = f"{experiments_directory}/{dir_name}"
-
-                if os.path.exists(directory_path):
-                    print("WARNING: directory already exists. We're going to overwrite it.")
-                    shutil.rmtree(directory_path)
-                os.makedirs(directory_path)
-
-                with open(f"{directory_path}/game_command.txt", "w") as f:
-                    # First, write the number of games
-                    f.write(str(num_games) + '\n')
-
-                    # Then write the specific commands
-                    for experiment_command in all_experiment_commands:
-                        f.write(shlex.join(experiment_command) + '\n')
-
-                print("we just wrote the following file in the following directory")
-                print(f"{directory_path}/game_command.txt")
 
                 container = "http://ghcr.io/alignmentresearch/polygames:1.4.1-runner"
 
-                # os.system(f"python run_given_experiment.py {directory_path}/game_command.txt")
+                single_command = f'python /polygames/experiments/pure_mcts/run_given_experiment.py ' \
+                    f'{shlex.join(game_command)} --SPECIAL_num_games {num_games} ' \
+                    f'--SPECIAL_save_plots {save_plots} --SPECIAL_directory_path {directory_path}'
+
+                # For testing
+                # subprocess.run(shlex.split(single_command))
+
+                experiment_name = get_directory_name_from_command(
+                    game_command, num_games, hyphenated=True)
 
                 docker_command = f'ctl job run --name "nhowe-{experiment_name}" ' \
                     f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 4 --gpu 1 ' \
-                    '--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared '\
-                    f'--command "/polygames/experiments/pure_mcts/run_docker_experiments.py {directory_path}/game_command.txt"'
+                    '--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared ' \
+                    f'--command "{single_command}"'
 
                 # docker_command = f'ctl job run --name "nhowe-{experiment_name}" ' \
                 #     '--shared-host-dir-slow-tolerant --container "$CONTAINER" --cpu 4 --gpu 1 ' \
