@@ -89,21 +89,11 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
                     game_command, num_games, hyphenated=True, shorten=True)
                 
                 print("experiment name:", experiment_name, 'length:', len(experiment_name))
-
-                # docker_command = f'ctl job run --name "nhowe-{experiment_name}" ' \
-                #     f'--shared-host-dir-slow-tolerant --container "nikihowe/devbox:current2" --cpu 4 --gpu 1 ' \
-                #     '--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared ' \
-                #     f'--command "{single_command}"'
                 
-                docker_command = f'ctl job run --name "nhowe-{experiment_name}" ' \
+                docker_command = f'ctl job run --name "nhowe-{experiment_name}" --working-dir /polygames' \
                     f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 4 --gpu 1 ' \
                     '--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared ' \
-                    f'--command "{single_command}"'
-
-                # docker_command = f'ctl job run --name "nhowe-{experiment_name}" ' \
-                #     '--shared-host-dir-slow-tolerant --container "$CONTAINER" --cpu 4 --gpu 1 ' \
-                #     '--login --wandb --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared'\
-                #     f'--command "python run_docker_experiments.py {directory_path}/game_command.txt"'
+                    f'--command "git pull" "git checkout add_experiment_code" "{single_command}"'
 
                 # Run the docker command
                 print("running the following docker command")
