@@ -93,13 +93,8 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
 
                 docker_command = f'ctl job run --name "nhowe-{experiment_name}" ' \
                     f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 4 --gpu 1 ' \
-                    '--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared'\
+                    '--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared '\
                     f'--command "python run_docker_experiments.py {directory_path}/game_command.txt"'
-                
-                print("the docker command is")
-                print(docker_command)
-                
-                raise SystemExit
 
                 # docker_command = f'ctl job run --name "nhowe-{experiment_name}" ' \
                 #     '--shared-host-dir-slow-tolerant --container "$CONTAINER" --cpu 4 --gpu 1 ' \
@@ -109,6 +104,8 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
                 # Run the docker command
                 print("running the following docker command")
                 subprocess.run(shlex.split(docker_command))
+
+                raise SystemExit
 
 
     # TODO: make it so it doesn't just return the most recent thing
