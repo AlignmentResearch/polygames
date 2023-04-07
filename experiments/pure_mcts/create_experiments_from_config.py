@@ -90,6 +90,11 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
                 
                 print("experiment name:", experiment_name, 'length:', len(experiment_name))
 
+                # docker_command = f'ctl job run --name "nhowe-{experiment_name}" ' \
+                #     f'--shared-host-dir-slow-tolerant --container "nikihowe/devbox:current2" --cpu 4 --gpu 1 ' \
+                #     '--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared ' \
+                #     f'--command "{single_command}"'
+                
                 docker_command = f'ctl job run --name "nhowe-{experiment_name}" ' \
                     f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 4 --gpu 1 ' \
                     '--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared ' \
@@ -102,6 +107,7 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
 
                 # Run the docker command
                 print("running the following docker command")
+                print(docker_command)
                 subprocess.run(shlex.split(docker_command))
 
                 raise SystemExit
