@@ -9,6 +9,8 @@ def run_games(num_games, all_commands, directory_path):
     all_results = []
     all_errors = []
 
+    my_command = "blabla{seed}".format(seed=2)
+
     for game_command in all_commands:
         print("the command is: ", game_command)
         continue

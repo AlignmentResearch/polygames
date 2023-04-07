@@ -1,7 +1,5 @@
-import matplotlib.pyplot as plt
+from __future__ import annotations
 import os
-import pandas as pd
-import seaborn as sns
 import shlex
 import shutil
 import subprocess
@@ -94,7 +92,7 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
                 docker_command = f'ctl job run --name "nhowe-{experiment_name}" ' \
                     f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 4 --gpu 1 ' \
                     '--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared '\
-                    f'--command "python run_docker_experiments.py {directory_path}/game_command.txt"'
+                    f'--command "/polygames/experiments/pure_mcts/run_docker_experiments.py {directory_path}/game_command.txt"'
 
                 # docker_command = f'ctl job run --name "nhowe-{experiment_name}" ' \
                 #     '--shared-host-dir-slow-tolerant --container "$CONTAINER" --cpu 4 --gpu 1 ' \
@@ -141,4 +139,4 @@ if __name__ == "__main__":
     # Now make the plot
     print("Making plot...")
     print("the game command was", game_command)
-    make_plot(all_results, all_errors, game_command, dir_name)
+    # make_plot(all_results, all_errors, game_command, dir_name)
