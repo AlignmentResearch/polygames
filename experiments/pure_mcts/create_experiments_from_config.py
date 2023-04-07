@@ -76,7 +76,7 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
                 dir_name = get_directory_name_from_command(game_command, num_games)
                 directory_path = f"{experiments_directory}/{dir_name}"
 
-                container = "http://ghcr.io/alignmentresearch/polygames:1.4.1-runner"
+                container = "ghcr.io/alignmentresearch/polygames:1.4.1-runner"
 
                 single_command = f'python /polygames/experiments/pure_mcts/run_given_experiment.py ' \
                     f'{shlex.join(game_command)} --SPECIAL_num_games {num_games} ' \
