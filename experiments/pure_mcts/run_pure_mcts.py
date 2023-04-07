@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import os
 import pandas as pd
 import seaborn as sns
+import shlex
 import subprocess
 import sys
 import yaml
@@ -11,16 +12,42 @@ default_number_of_games = 100
 experiments_directory = '/shared/polygames-parent/experiments'
 
 
-def run_games(num_games: int) -> tuple[list[str], list[str]]:
+def get_directory_name_from_command(game_command, num_games, hyphenated: bool = False):
+    # Make a directory name unique to these hyperparameters
+    game_command = [el for el in game_command if el not in [
+        "python", "-m", "pypolygames", "pure_mcts"]]
+    dir_name = []
+    for item in game_command:
+        if not item.startswith("--"):
+            dir_name.append(item)
+    dir_name.append(str(num_games))
+    if hyphenated:
+        dir_name = '-'.join(dir_name)
+    else:
+        dir_name = '_'.join(dir_name)
+
+    return dir_name
+
+
+def get_experiment_commands(game_command, num_games):
+    all_experiment_commands = []
+
+    for i in range(num_games):
+        all_experiment_commands.append(game_command + ["--seed", str(i)])
+
+    return all_experiment_commands
+
+
+def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[str]]:
 
     with open('config.yaml', 'r') as f:
         hyperparameters = yaml.load(f, Loader=yaml.FullLoader)
-        
+
     for game_name in hyperparameters['game_name']:
         for num_rollouts in hyperparameters['num_rollouts']:
             for num_rollouts_2 in hyperparameters['num_rollouts_2']:
-                # Set all the hyperparameters, fixing the values of the ones
-                # we've already set
+             # Set all the hyperparameters, fixing the values of the ones
+             # we've already set
                 game_command = ["python", "-m", "pypolygames", "pure_mcts"]
                 for key, value in hyperparameters.items():
                     if key == 'game_name':
@@ -34,57 +61,29 @@ def run_games(num_games: int) -> tuple[list[str], list[str]]:
 
                 all_results = []
                 all_errors = []
-                print("game command (minus seed): ", game_command)
-                for i in range(num_games):
-                    print("seed", i)
-                    game_command += ["--seed", str(i)]
+                experiment_name = get_directory_name_from_command(
+                    game_command, num_games, hyphenated=True)
 
-                    result = subprocess.run(
-                        game_command,
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE,
-                        text=True,
-                    )
-
-                    # Remove the seed bit from the game command
-                    game_command = game_command[:-2]
-
-                    result_string = result.stdout
-                    error_string = result.stderr
-
-                    all_results.append(result_string)
-                    all_errors.append(error_string)
-
-                # Make a directory unique to these hyperparameters
-                game_command = [el for el in game_command if el not in ["python", "-m", "pypolygames", "pure_mcts"]]
-                dir_name = []
-                for item in game_command:
-                    if not item.startswith("--"):
-                        dir_name.append(item)
-                dir_name.append(str(num_games))
-                dir_name = '_'.join(dir_name)
-
-                # Make the directory
-                subprocess.run(["mkdir", dir_name])
-
-                # Save the results and the errors to files
-                with open(f"{experiments_directory}/{dir_name}/results.txt", "w") as f:
-                    f.writelines(all_results)
-                with open(f"{experiments_directory}/{dir_name}/errors.txt", "w") as f:
-                    f.writelines(all_errors)
-
-                # Save the game command
+                all_experiment_commands = get_experiment_commands(game_command, num_games, save_plots)
+                dir_name = get_directory_name_from_command(game_command, num_games)
+                print("saving yay!")
                 with open(f"{experiments_directory}/{dir_name}/game_command.txt", "w") as f:
-                    f.writelines(' '.join(game_command))
+                    f.writelines(str(all_experiment_commands))
 
-                # Make the plot
-                make_plot(all_results, all_errors, game_command, dir_name)
+                raise SystemExit
+
+                # docker_command = f'ctl job run --name "nhowe-{experiment_name}" ' \
+                #     '--shared-host-dir-slow-tolerant --container "$CONTAINER" --cpu 4 --gpu 1 ' \
+                #     '--login --wandb --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared'\
+                #     '--command "${CMD}"'
+
+                # --cpu 128 --gpu 4 --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared --command
 
     # TODO: make it so it doesn't just return the most recent thing
     return all_results, all_errors, game_command, dir_name
 
 
-def make_plot(all_results: list[str], all_errors: list[str], 
+def make_plot(all_results: list[str], all_errors: list[str],
               game_command: list[str], dir_name: str) -> None:
     indices = []
     results = []
@@ -174,7 +173,8 @@ def make_plot(all_results: list[str], all_errors: list[str],
     plt.gcf().set_size_inches(4, 2)
 
     # save the plot to a PDF file
-    plt.savefig(f"{experiments_directory}/{dir_name}/contingency_table.pdf", dpi=100, bbox_inches="tight")
+    plt.savefig(f"{experiments_directory}/{dir_name}/contingency_table.pdf",
+                dpi=100, bbox_inches="tight")
 
     # plt.plot(indices, results, 'o', label="results")
     # plt.plot(indices, unlikely_move_occurred, 'o', label="# unlikely moves in this game")
@@ -182,6 +182,7 @@ def make_plot(all_results: list[str], all_errors: list[str],
     # plt.legend()
     # plt.grid()
     # plt.savefig("results.png")
+
 
 def get_results_from_directory(directory_name):
     all_results_file = f"{directory_name}/results.txt"
@@ -204,13 +205,17 @@ if __name__ == "__main__":
         if os.path.isdir(sys.argv[1]):
             print("Trying to load games from files...")
             dir_name = sys.argv[1]
-            all_results, all_errors, game_command= get_results_from_directory(dir_name)
+            all_results, all_errors, game_command = get_results_from_directory(
+                dir_name)
         elif sys.argv[1].isdigit():
             print(f"Running {sys.argv[1]} games...")
-            all_results, all_errors, game_command, dir_name = run_games(sys.argv[1])
+            all_results, all_errors, game_command, dir_name = run_games(
+                sys.argv[1])
     else:
-        print(f"Running default number of games ({default_number_of_games})...")
-        all_results, all_errors, game_command, dir_name = run_games(default_number_of_games)
+        print(
+            f"Running default number of games ({default_number_of_games})...")
+        all_results, all_errors, game_command, dir_name = run_games(
+            default_number_of_games)
 
     print("all the results and errors are")
     print(all_results)
@@ -223,4 +228,3 @@ if __name__ == "__main__":
     print("Making plot...")
     print("the game command was", game_command)
     make_plot(all_results, all_errors, game_command, dir_name)
-
