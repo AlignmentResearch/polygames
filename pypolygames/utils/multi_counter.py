@@ -8,6 +8,9 @@ from pathlib import Path
 from collections import defaultdict, Counter
 from datetime import datetime
 from tensorboardX import SummaryWriter
+import wandb
+
+wandb.init(project='polygames', sync_tensorboard=True)
 
 
 class ValueStats:
