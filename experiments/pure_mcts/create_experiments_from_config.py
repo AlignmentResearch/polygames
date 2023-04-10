@@ -107,7 +107,7 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
                 commands = []
                 commands.append('git pull')
                 commands.append('git checkout add_experiment_code')
-                commands.append('pip install matploblib seaborn pandas')
+                commands.append('pip install matplotlib seaborn pandas')
                 commands.append(single_command)
                 with open(f"{directory_path}/run.sh", "w") as f:
                     f.write('#!/bin/bash \n')
