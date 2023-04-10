@@ -109,6 +109,11 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
                 commands.append(single_command)
                 with open(f"{directory_path}/run.sh", "w") as f:
                     f.write('#!/bin/bash \n')
+                    
+                    # Just echo a hello to make sure it's running
+                    f.write('echo "hello" \n')
+
+                    # Now put all the commands in
                     for command in commands:
                         f.write(command + '\n')
                 
