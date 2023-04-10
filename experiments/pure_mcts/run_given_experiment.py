@@ -10,12 +10,15 @@ def run_games(num_games, seedless_command, directory_path):
     all_results = []
     all_errors = []
 
+    prepend = ['python', '-m', 'pypolygames', 'pure_mcts']
+
     # my_command = "blabla{seed}".format(seed=2)
     # ^ another option
 
     for i in range(num_games):
-        new_run_command = seedless_command + ["--seed", str(i)]
+        new_run_command = prepend + seedless_command + ["--seed", str(i)]
         print("running", new_run_command)
+        raise SystemExit
         result = subprocess.run(
             new_run_command,
             stdout=subprocess.PIPE,

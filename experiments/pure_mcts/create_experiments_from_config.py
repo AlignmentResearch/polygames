@@ -63,7 +63,7 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
             for num_rollouts_2 in hyperparameters['num_rollouts_2']:
              # Set all the hyperparameters, fixing the values of the ones
              # we've already set
-                game_command = ["python", "-m", "pypolygames", "pure_mcts"]
+                game_command = []
                 for key, value in hyperparameters.items():
                     if key == 'game_name':
                         game_command += ["--" + key, game_name]
@@ -82,8 +82,7 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
 
                 container = "ghcr.io/alignmentresearch/polygames:1.4.1-runner"
 
-                single_command = f'python /polygames/experiments/pure_mcts/run_given_experiment.py ' \
-                    f'{shlex.join(game_command)} --SPECIAL_num_games {num_games} ' \
+                single_command = f'{shlex.join(game_command)} --SPECIAL_num_games {num_games} ' \
                     f'--SPECIAL_save_plots {save_plots} --SPECIAL_directory_path {directory_path}'
 
                 # For testing
@@ -93,20 +92,35 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
                     game_command, num_games, hyphenated=True, shorten=True)
 
                 print("experiment name:", experiment_name, 'length:', len(experiment_name))
-
+                
                 docker_command = f'ctl job run --name "nhowe-{experiment_name}" --working-dir /polygames ' \
                     f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 4 --gpu 1 ' \
                     '--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared ' \
-                    f'--command "git pull && git checkout add_experiment_code && {single_command}"'
-
-                # Run the docker command
+                    f'--command /bin/bash {directory_path}/run.sh'
+                
+                # If the directory doesn't exist yet, create it
+                if not os.path.exists(directory_path):
+                    os.makedirs(directory_path)
+                
+                # Also write these commands to a bash script that can be run
+                commands = []
+                commands.append('git pull')
+                commands.append('git checkout add_experiment_code')
+                commands.append(single_command)
+                with open(f"{directory_path}/run.sh", "w") as f:
+                    f.write('#!/bin/bash \n')
+                    for command in commands:
+                        f.write(command + '\n')
+                
+                # Make the file executable
+                os.chmod(f"{directory_path}/run.sh", 0o755)
+                
+                # Print the command
                 print("running the following docker command")
                 print(docker_command)
 
                 # Save the command to a file in the desired directory
-                # If the directory doesn't exist yet, create it
-                if not os.path.exists(directory_path):
-                    os.makedirs(directory_path)
+                
                 with open(f"{directory_path}/docker_command.txt", "w") as f:
                     f.write(docker_command)
 
