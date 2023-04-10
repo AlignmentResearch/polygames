@@ -31,6 +31,8 @@ def run_games(num_games, seedless_command, directory_path):
 
     # If the directory path doesn't exist already, make it
     if not os.path.exists(directory_path):
+        # This should never happen, so raise an error
+        raise ValueError(f"Directory path {directory_path} should have already been created based on how we're currently doing things")
         os.mkdir(directory_path)
 
     # Save the results and the errors to files
@@ -47,9 +49,7 @@ def run_games(num_games, seedless_command, directory_path):
     make_plot(all_results, all_errors, shlex.join(seedless_command), directory_path)
 
 
-if __name__ == "__main__":
-
-    split_command = sys.argv[1:]  # don't want the command itself
+def run_from_command_line_inputs(split_command):
     print("the game command is: ", split_command)
 
     specials = {}
@@ -65,7 +65,13 @@ if __name__ == "__main__":
     split_command = split_command[:first_special_index]
 
     num_games = int(specials['--SPECIAL_num_games'])
-    save_plots = bool(specials['--SPECIAL_save_plots'])
+    save_plots = bool(specials['--SPECIAL_save_plots'])  # TODO: make this used
     directory_path = specials['--SPECIAL_directory_path']
 
     run_games(num_games, split_command, directory_path)
+
+
+if __name__ == "__main__":
+    split_command = sys.argv[1:]  # don't want the command itself
+    run_from_command_line_inputs(split_command)
+    

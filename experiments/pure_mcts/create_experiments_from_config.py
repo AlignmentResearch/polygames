@@ -51,7 +51,11 @@ def get_directory_name_from_command(game_command, num_games, hyphenated: bool = 
 
 def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[str]]:
 
-    with open('config.yaml', 'r') as f:
+    # Get the directory containing the yaml file
+    current_file = os.path.abspath(__file__)
+    current_dir = os.path.dirname(current_file)
+
+    with open(f'{current_dir}/config.yaml', 'r') as f:
         hyperparameters = yaml.load(f, Loader=yaml.FullLoader)
 
     for game_name in hyperparameters['game_name']:
@@ -78,7 +82,7 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
 
                 container = "ghcr.io/alignmentresearch/polygames:1.4.1-runner"
 
-                single_command = f'echo "running command" && python /polygames/experiments/pure_mcts/run_given_experiment.py ' \
+                single_command = f'python /polygames/experiments/pure_mcts/run_given_experiment.py ' \
                     f'{shlex.join(game_command)} --SPECIAL_num_games {num_games} ' \
                     f'--SPECIAL_save_plots {save_plots} --SPECIAL_directory_path {directory_path}'
 
@@ -98,10 +102,15 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
                 # Run the docker command
                 print("running the following docker command")
                 print(docker_command)
-                subprocess.run(shlex.split(docker_command))
 
-                raise SystemExit
+                # Save the command to a file in the desired directory
+                # If the directory doesn't exist yet, create it
+                if not os.path.exists(directory_path):
+                    os.makedirs(directory_path)
+                with open(f"{directory_path}/docker_command.txt", "w") as f:
+                    f.write(docker_command)
 
+                # subprocess.run(shlex.split(docker_command))
 
     # TODO: make it so it doesn't just return the most recent thing
     return all_results, all_errors, game_command, dir_name
