@@ -19,7 +19,6 @@ def get_docker_commands_from_directories(root_directory):
                 docker_command = f.readlines()[0].strip()
             print(f"Running {docker_command}...")
             subprocess.run(shlex.split(docker_command))
-            break  ## TODO: remove this
         else:
             print(f"Skipping {directory_path} because it doesn't have a docker_command.txt file")
 
