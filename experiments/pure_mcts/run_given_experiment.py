@@ -17,8 +17,7 @@ def run_games(num_games, seedless_command, directory_path):
 
     for i in range(num_games):
         new_run_command = prepend + seedless_command + ["--seed", str(i)]
-        print("running", new_run_command)
-        raise SystemExit
+        print("Running a game! This is the command", new_run_command)
         result = subprocess.run(
             new_run_command,
             stdout=subprocess.PIPE,
@@ -76,5 +75,6 @@ def run_from_command_line_inputs(split_command):
 
 if __name__ == "__main__":
     split_command = sys.argv[1:]  # don't want the command itself
+    print("run_given_experiment got the following", split_command)
     run_from_command_line_inputs(split_command)
     
