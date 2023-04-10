@@ -48,7 +48,7 @@ def run_games(num_games, seedless_command, directory_path):
         f.writelines(shlex.join(seedless_command))
 
     # Make the plot
-    make_plot(all_results, all_errors, shlex.join(seedless_command), directory_path)
+    make_plot(all_results, all_errors, seedless_command, directory_path)
 
 
 def run_from_command_line_inputs(split_command):

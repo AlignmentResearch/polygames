@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import shlex
 
 
 def make_plot(all_results: list[str], all_errors: list[str],
