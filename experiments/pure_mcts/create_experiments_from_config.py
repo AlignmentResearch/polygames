@@ -72,7 +72,7 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
 
                 all_results = []
                 all_errors = []
-                
+
                 dir_name = get_directory_name_from_command(game_command, num_games)
                 directory_path = f"{experiments_directory}/{dir_name}"
 
@@ -87,13 +87,13 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
 
                 experiment_name = get_directory_name_from_command(
                     game_command, num_games, hyphenated=True, shorten=True)
-                
+
                 print("experiment name:", experiment_name, 'length:', len(experiment_name))
-                
+
                 docker_command = f'ctl job run --name "nhowe-{experiment_name}" --working-dir /polygames ' \
                     f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 4 --gpu 1 ' \
                     '--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared ' \
-                    f'--command \'"git pull" "git checkout add_experiment_code" "{single_command}"\''
+                    f'--command "git pull" "git checkout add_experiment_code" "{single_command}"'
 
                 # Run the docker command
                 print("running the following docker command")
