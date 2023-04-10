@@ -10,7 +10,8 @@ def get_docker_commands_from_directories(root_directory):
     # There will be a number of directories which have a file called "docker_command.txt" in them,
     # off of the root directory. For each of those files, run "run_from_command_line_inputs" on the
     # command in the file.
-    for directory in os.listdir(root_directory):
+
+    for directory in sorted(os.listdir(root_directory)):
         directory_path = os.path.join(root_directory, directory)
         docker_command_file = os.path.join(directory_path, "docker_command.txt")
         if os.path.isfile(docker_command_file):

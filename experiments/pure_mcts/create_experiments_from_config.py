@@ -8,7 +8,7 @@ import sys
 import yaml
 
 
-default_number_of_games = 3
+default_number_of_games = 100
 experiments_directory = '/shared/polygames-parent/experiments/pure_mcts'
 
 
