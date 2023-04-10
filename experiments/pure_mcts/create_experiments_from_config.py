@@ -82,7 +82,7 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
 
                 container = "ghcr.io/alignmentresearch/polygames:1.4.1-runner"
 
-                single_command = f'python /pypolygames/experiments/pure_mcts/run_given_experiment.py ' \
+                single_command = f'python /polygames/experiments/pure_mcts/run_given_experiment.py ' \
                     f'{shlex.join(game_command)} --SPECIAL_num_games {num_games} ' \
                     f'--SPECIAL_save_plots {save_plots} --SPECIAL_directory_path {directory_path}'
 
@@ -97,7 +97,7 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
                 docker_command = f'ctl job run --name "nhowe-{experiment_name}" --working-dir /polygames ' \
                     f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 4 --gpu 1 ' \
                     '--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared ' \
-                    f'--command /bin/bash {directory_path}/run.sh'
+                    f'--command "/bin/bash {directory_path}/run.sh"'
                 
                 # If the directory doesn't exist yet, create it
                 if not os.path.exists(directory_path):
