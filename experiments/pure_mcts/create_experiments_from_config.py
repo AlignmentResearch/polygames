@@ -78,7 +78,7 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
 
                 container = "ghcr.io/alignmentresearch/polygames:1.4.1-runner"
 
-                single_command = f'python /polygames/experiments/pure_mcts/run_given_experiment.py ' \
+                single_command = f'echo "running command" && python /polygames/experiments/pure_mcts/run_given_experiment.py ' \
                     f'{shlex.join(game_command)} --SPECIAL_num_games {num_games} ' \
                     f'--SPECIAL_save_plots {save_plots} --SPECIAL_directory_path {directory_path}'
 
