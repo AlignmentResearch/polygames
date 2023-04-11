@@ -3,7 +3,8 @@ import pathlib
 import subprocess
 import sys
 
-mcts_rollouts = [0, 32, 64, 128, 256, 512, 1024, 2048]
+# mcts_rollouts = [0, 32, 64, 128, 256, 512, 1024, 2048]
+mcts_rollouts = [256, 512, 1024, 2048]
 
 
 def run_against_several_MCTS_opponents(model_dir, save_dir):

@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import os
 import sys
 
@@ -26,11 +25,22 @@ def make_many_plots(the_args):
         out_file = os.path.join(experiment_folder, out_filename)
         model_file = os.path.join(experiment_folder, model_filename)
 
+        # Check to make sure these files exist
+        if not os.path.isfile(out_file):
+            print(f"Skipping {experiment_folder} because it doesn't have an {out_filename} file")
+            continue
+        if not os.path.isfile(model_file):
+            print(f"Skipping {experiment_folder} because it doesn't have a {model_filename} file")
+            continue
+
         # Make a title for the plot that we make
         plot_title = experiment_folder.split("/")[-1]
 
+        # Make a save file for the plot
+        save_file = os.path.join(experiment_folder, f"{plot_title}.png")
+
         # Make the plot
-        make_the_plot(out_file, model_file, plot_title)
+        make_the_plot(out_file, model_file, save_file, plot_title)
 
 
 if __name__ == "__main__":

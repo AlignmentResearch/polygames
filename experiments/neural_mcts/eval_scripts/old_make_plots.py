@@ -48,8 +48,7 @@ def get_win_tie_loss_rates(full_output_string):
     return model_scores
 
 
-def make_the_plot(the_args):
-    _, eval_output_file, model_names_file, plot_save_file, plot_title = the_args
+def make_the_plot(eval_output_file, model_names_file, plot_save_file, plot_title):
 
     with open(eval_output_file, "r") as afile:
         output = afile.read()
@@ -109,6 +108,7 @@ def make_the_plot(the_args):
     plt.grid()
     plt.legend()
     plt.savefig(plot_save_file)
+    plt.close()
 
 
 if __name__ == "__main__":
@@ -116,4 +116,4 @@ if __name__ == "__main__":
         print("Usage: python make_plots.py out.txt model_names.txt save_file.png plot_title")
         sys.exit()
 
-    make_the_plot(sys.argv)
+    make_the_plot(*sys.argv[1:])
