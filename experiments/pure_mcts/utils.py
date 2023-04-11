@@ -4,7 +4,7 @@ import seaborn as sns
 import shlex
 
 
-def make_plot(all_results: list[str], all_errors: list[str], game_command: list[str], save_directory: str) -> None:
+def parse_in_results_strings(all_results: list[str]) -> tuple[list[str], list[str]]:
     indices = []
     results = []
     unlikely_move_occurred = []
@@ -21,7 +21,11 @@ def make_plot(all_results: list[str], all_errors: list[str], game_command: list[
 
             if "Black" in line:
                 unlikely_move_occurred[i - 1] += 1  # indexing here is hacky
+    return indices, results, unlikely_move_occurred
 
+
+def make_plot(all_results: list[str], all_errors: list[str], game_command: list[str], save_directory: str) -> None:
+    indices, results, unlikely_move_occurred = parse_in_results_strings(all_results)
     print("the indices are", indices)
     print("the results are", results)
     print("the unlikely move occurred are", unlikely_move_occurred)
