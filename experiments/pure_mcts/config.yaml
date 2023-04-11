@@ -1,0 +1,14 @@
+#game_name: [Hex3, Hex4, Hex5, Hex6, Hex7, Hex8, Hex9]
+game_name: [Hex3]
+
+num_rollouts: [0, 10, 50, 100, 500, 1000, 5000, 10000]
+num_rollouts_2: [0, 10, 50, 100, 500, 1000, 5000, 10000]
+
+sampling_mcts: false
+sampling_mcts_2: false
+
+smooth_mcts_sampling: false
+smooth_mcts_sampling_2: false
+
+sample_before_step_idx: 8
+sample_before_step_idx_2: 8
