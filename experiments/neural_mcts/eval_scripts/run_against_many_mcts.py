@@ -30,11 +30,6 @@ def make_command(model_path, num_pure_mcts_opponent_rollouts, save_dir):
 
 
 def generate_scores(the_args):
-
-    if not len(the_args) == 3:
-        print("Usage: python generate_scores.py checkpoint_path save_dir")
-        sys.exit()
-
     _, checkpoint_dir, opponent_path, save_dir = the_args
 
     if checkpoint_dir[-1] == "/":
@@ -60,11 +55,14 @@ def generate_scores(the_args):
     for model in models:
         model_path = pathlib.Path(f"{checkpoint_dir}/{model}")
         command = str(make_command(model_path, opponent_path, save_dir))
-        
+
         os.system(f"echo {model} >> {save_dir}/model_names.txt")
         os.system(f"echo 'running the following: \n {command}'")
         os.system(command)
 
 
 if __name__ == "__main__":
+    if not len(sys.argv) == 3:
+        print("Usage: python generate_scores.py checkpoint_path save_dir")
+        sys.exit()
     _, model_path, save_dir = sys.argv

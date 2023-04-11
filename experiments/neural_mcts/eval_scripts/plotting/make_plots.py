@@ -8,7 +8,7 @@ from utils import get_model_and_epoch, get_opponent_model_and_epoch, get_win_tie
 assert len(sys.argv) == 3, "Usage: python make_plots.py eval_output_file plot_save_file"
 _, eval_output_file, plot_save_file = sys.argv
 
-with open(eval_output_file, 'r') as afile:
+with open(eval_output_file, "r") as afile:
     output = afile.read()
 
 
@@ -40,12 +40,13 @@ for model_type in unique_model_types:
             all_data[model_type]["losses"].append(losses[i])
     # Now sort those data
     sorted_data = {
-        k: [v for _, v in sorted(zip(all_data[model_type]['epoch'], all_data[model_type][k]))] for k in all_data[model_type].keys()
+        k: [v for _, v in sorted(zip(all_data[model_type]["epoch"], all_data[model_type][k]))]
+        for k in all_data[model_type].keys()
     }
     all_data[model_type] = sorted_data
 
-linestyles = [':', '--', '-.', '-', 1, 2, 3, 4, 5]
-markerstyles = ['<', '>', 'v', '^', 1, 2, 3, 4, 5]
+linestyles = [":", "--", "-.", "-", 1, 2, 3, 4, 5]
+markerstyles = ["<", ">", "v", "^", 1, 2, 3, 4, 5]
 print("all data", all_data)
 
 for i, (model_type, data) in enumerate(all_data.items()):
@@ -53,9 +54,9 @@ for i, (model_type, data) in enumerate(all_data.items()):
     wins = data["wins"]
     ties = data["ties"]
     losses = data["losses"]
-    plt.plot(epochs, wins, markerstyles[i], color='g', linestyle=linestyles[i], label=f'{model_type}_win')
-    plt.plot(epochs, ties, markerstyles[i], color='b', linestyle=linestyles[i], label=f'{model_type}_tie')
-    plt.plot(epochs, losses, markerstyles[i], color='r', linestyle=linestyles[i], label=f'{model_type}_loss')
+    plt.plot(epochs, wins, markerstyles[i], color="g", linestyle=linestyles[i], label=f"{model_type}_win")
+    plt.plot(epochs, ties, markerstyles[i], color="b", linestyle=linestyles[i], label=f"{model_type}_tie")
+    plt.plot(epochs, losses, markerstyles[i], color="r", linestyle=linestyles[i], label=f"{model_type}_loss")
 
 plt.title(f"Everyone against {opponent}")
 plt.ylim(0, 100)

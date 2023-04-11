@@ -9,16 +9,16 @@ if not len(sys.argv) == 5:
 
 _, eval_output_file, model_names_file, plot_save_file, plot_title = sys.argv
 
-with open(eval_output_file, 'r') as afile:
+with open(eval_output_file, "r") as afile:
     output = afile.read()
 
-with open(model_names_file, 'r') as afile:
-    model_names = afile.read().strip().split('\n')
+with open(model_names_file, "r") as afile:
+    model_names = afile.read().strip().split("\n")
 
 
 def get_model_and_epoch(model_line):
     # 'Hex5pie_85_2019-09-27_ResConvConvLogitModel_epoch10246_job18105640_51_8faf6f73.pt.gz'
-    parts = model_line.split('_')
+    parts = model_line.split("_")
     if len(parts) == 1:
         return "checkpoint", 0
     if len(parts) == 2:
@@ -40,16 +40,16 @@ def get_win_tie_loss_rates(full_output_string):
     # blablabla
     # @@@eval: win: 94.00, tie: 0.00, loss: 6.00, avg: 94.00 blablabla
     # blablabla
-    
+
     # First, need to divide into separate models. If a model failed, then we want to record "-1 -1 -1" for that model
     model_chunks = full_output_string.split("EVALUATION")[1:]  # we only care what's after the first "EVALUATION"
-    split_chunks = [minichunk.split('\n') for minichunk in model_chunks]
+    split_chunks = [minichunk.split("\n") for minichunk in model_chunks]
 
     model_scores = []
     for chunk in split_chunks:
         for line in chunk:
             if "@@@eval" in line:
-                parts = line.split(' ')
+                parts = line.split(" ")
                 win = float(parts[2][:-1])
                 tie = float(parts[4][:-1])
                 loss = float(parts[6][:-1])
@@ -57,7 +57,7 @@ def get_win_tie_loss_rates(full_output_string):
                 break
         else:
             model_scores.append((-1, -1, -1))
-    
+
     return model_scores
 
 
@@ -90,12 +90,13 @@ for model_type in unique_model_types:
             all_data[model_type]["losses"].append(losses[i])
     # Now sort those data
     sorted_data = {
-        k: [v for _, v in sorted(zip(all_data[model_type]['epoch'], all_data[model_type][k]))] for k in all_data[model_type].keys()
+        k: [v for _, v in sorted(zip(all_data[model_type]["epoch"], all_data[model_type][k]))]
+        for k in all_data[model_type].keys()
     }
     all_data[model_type] = sorted_data
 
-linestyles = [':', '--', '-.', '-']
-markerstyles = ['<', '>', 'v', '^']
+linestyles = [":", "--", "-.", "-"]
+markerstyles = ["<", ">", "v", "^"]
 print("all data", all_data)
 
 for i, (model_type, data) in enumerate(all_data.items()):
@@ -103,9 +104,9 @@ for i, (model_type, data) in enumerate(all_data.items()):
     wins = data["wins"]
     ties = data["ties"]
     losses = data["losses"]
-    plt.plot(epochs, wins, markerstyles[i], color='g', linestyle=linestyles[i], label=f'{model_type}_win')
-    plt.plot(epochs, ties, markerstyles[i], color='b', linestyle=linestyles[i], label=f'{model_type}_tie')
-    plt.plot(epochs, losses, markerstyles[i], color='r', linestyle=linestyles[i], label=f'{model_type}_loss')
+    plt.plot(epochs, wins, markerstyles[i], color="g", linestyle=linestyles[i], label=f"{model_type}_win")
+    plt.plot(epochs, ties, markerstyles[i], color="b", linestyle=linestyles[i], label=f"{model_type}_tie")
+    plt.plot(epochs, losses, markerstyles[i], color="r", linestyle=linestyles[i], label=f"{model_type}_loss")
 
 plt.title(plot_title)
 plt.ylim(0, 100)

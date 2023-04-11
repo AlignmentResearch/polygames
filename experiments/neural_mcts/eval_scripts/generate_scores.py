@@ -11,7 +11,7 @@ def make_command(model_path, opponent_path, save_dir):
     command_list.append(f"--num_rollouts_eval 1")
     command_list.append(f"--sample_before_step_idx 0")
     if mcts_opponent:
-        num_rollouts = opponent_path.split('=')[1]
+        num_rollouts = opponent_path.split("=")[1]
         command_list.append(f"--num_rollouts_opponent {num_rollouts}")
     if not mcts_opponent:
         command_list.append(f"--checkpoint_opponent {opponent_path}")
@@ -36,7 +36,7 @@ if save_dir[-1] == "/":
     save_dir = save_dir[:-1]
 
 if "MCTS" in opponent_path or "mcts" in opponent_path:
-    assert("=" in opponent_path)
+    assert "=" in opponent_path
     mcts_opponent = True
 else:
     mcts_opponent = False
