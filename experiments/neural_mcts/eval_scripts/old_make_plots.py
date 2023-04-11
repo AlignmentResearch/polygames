@@ -49,7 +49,6 @@ def get_win_tie_loss_rates(full_output_string):
 
 
 def make_the_plot(eval_output_file, model_names_file, plot_save_file, plot_title):
-
     with open(eval_output_file, "r") as afile:
         output = afile.read()
 
