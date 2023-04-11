@@ -49,8 +49,8 @@ their_model_path = pathlib.Path(their_model_path_string)
 their_model = utils.load_checkpoint(their_model_path)
 
 # Load in the model and copy over their parameters
-param_group_names = ['game_params', 'model_params', 'optim_params', 'simulation_params', 'execution_params']
-not_used_for_training = ['time_ratio', 'total_time']
+param_group_names = ["game_params", "model_params", "optim_params", "simulation_params", "execution_params"]
+not_used_for_training = ["time_ratio", "total_time"]
 our_params = {}
 
 # Parse in the (key, value) pairs from the model
@@ -77,27 +77,31 @@ for param_group_name in param_group_names:
             del our_params[param_group_name][key]
 
 # If act_batchsize is nonzero and per_thread_batchsize is zero, remove per_thread_batchsize
-if our_params['simulation_params']['act_batchsize'] != 0 and our_params['simulation_params']['per_thread_batchsize'] == 0:
+if (
+    our_params["simulation_params"]["act_batchsize"] != 0
+    and our_params["simulation_params"]["per_thread_batchsize"] == 0
+):
     print("Deleting per_thread_batchsize=0 because act_batchsize is nonzero")
-    del our_params['simulation_params']['per_thread_batchsize']
+    del our_params["simulation_params"]["per_thread_batchsize"]
 
 # If act_batchsize is larger than num_game, set it to num_game
-if int(our_params['simulation_params']['act_batchsize']) > int(our_params['simulation_params']['num_game']):
+if int(our_params["simulation_params"]["act_batchsize"]) > int(our_params["simulation_params"]["num_game"]):
     print("Setting act_batchsize to num_game because act_batchsize is larger than num_game")
-    our_params['simulation_params']['act_batchsize'] = our_params['simulation_params']['num_game']
+    our_params["simulation_params"]["act_batchsize"] = our_params["simulation_params"]["num_game"]
 
 # Make the devices list into a CLI list
-if 'devices' in our_params['execution_params']:
+if "devices" in our_params["execution_params"]:
     # device_list = ast.literal_eval(our_params['execution_params']['devices']
-    device_list = our_params['execution_params']['devices']
-    print("the deice list is: ", our_params['execution_params']['devices'])
-    our_params['execution_params']['device'] = ", ".join(device_list)
-    print("now the device list is: ", our_params['execution_params']['device'])
+    device_list = our_params["execution_params"]["devices"]
+    print("the deice list is: ", our_params["execution_params"]["devices"])
+    our_params["execution_params"]["device"] = ", ".join(device_list)
+    print("now the device list is: ", our_params["execution_params"]["device"])
 
 # Sanity check: do we have the things we need (TODO: make this more thorough)
-if 'nnks' not in our_params['model_params']:
+if "nnks" not in our_params["model_params"]:
     print("hmm, no nnks in these model params, we should investigate")
     raise KeyError
+
 
 def try_training():
     command_list = ["python", "-m", "pypolygames", "train"]
@@ -111,12 +115,9 @@ def try_training():
             elif value is not None and value is not False:
                 command_list.append(f"--{key} {value}")
 
-
-
     command_list.append(f"--checkpoint_dir {save_dir_string}")
     command_list.append(f"> {save_dir_string}/stdout.txt")
     command_list.append(f"2> {save_dir_string}/stderr.txt")
-
 
     command = " ".join(command_list)
 
