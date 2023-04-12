@@ -95,6 +95,7 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
 
                 print("experiment name:", experiment_name, "length:", len(experiment_name))
 
+                # The docker command runs `run.sh`, which we create from the `commands` variable below.
                 docker_command = (
                     f'ctl job run --name "nhowe-{experiment_name}" --working-dir /polygames '
                     f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 4 --gpu 1 '
