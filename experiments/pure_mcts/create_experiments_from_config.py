@@ -134,6 +134,10 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
                 with open(f"{directory_path}/docker_command.txt", "w") as f:
                     f.write(docker_command)
 
+                # Ideally, we would like to just do the following, instead of writing the 
+                # command and then calling it from loki. Unfortunately, I haven't been 
+                # able to get that to work properly, so the two-step process
+                # is a workaround for now.
                 # subprocess.run(shlex.split(docker_command))
 
     # TODO: make it so it doesn't just return the most recent thing
