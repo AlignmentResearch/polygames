@@ -45,11 +45,15 @@ docker pull "$RUNNER" \
     -t "$RUNNER" -f docker/runner/Dockerfile . \
     && docker push "$RUNNER"; }
 
-# Get the SSH agent's current keys
-SSH_KEY="$(ssh-add -L)"
-echo "Building the devbox for version $VERSION and SSH key $SSH_KEY"
-docker build \
-    --build-arg "SSH_KEY=${SSH_KEY}" \
-    --build-arg "POLYGAMES_VERSION=${VERSION}" \
-    -t "$DEVBOX" -f docker/devbox/Dockerfile .
-docker push "$DEVBOX"
+if [ ! "${CI}" = "true" ]; then
+    echo "Running in CI, not building devbox"
+else
+    # Get the SSH agent's current keys
+    SSH_KEY="$(ssh-add -L)"
+    echo "Building the devbox for version $VERSION and SSH key $SSH_KEY"
+    docker build \
+        --build-arg "SSH_KEY=${SSH_KEY}" \
+        --build-arg "POLYGAMES_VERSION=${VERSION}" \
+        -t "$DEVBOX" -f docker/devbox/Dockerfile .
+    docker push "$DEVBOX"
+fi

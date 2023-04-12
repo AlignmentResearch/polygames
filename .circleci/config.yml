@@ -139,12 +139,10 @@ jobs:
       - image: cimg/python:3.10.6
     resource_class: small
     steps:
-      - checkout
+      - checkout-without-force
       - setup_remote_docker:
-          version: 20.10.14
+          version: 20.10.18
           docker_layer_caching: true
       - run: |
-          TAG="ghcr.io/alignmentresearch/polygames-circleci:<< pipeline.parameters.docker_img_version >>"
-          docker build -f .circleci/Dockerfile -t "$TAG" .
           echo "$GHCR_DOCKER_TOKEN" | docker login -u "$GHCR_DOCKER_USER" --password-stdin
-          docker push "$TAG"
+          sh docker/build-all.sh
