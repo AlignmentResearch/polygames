@@ -10,7 +10,12 @@ from datetime import datetime
 from tensorboardX import SummaryWriter
 import wandb
 
-wandb.init(project="polygames", sync_tensorboard=True)
+wandb.init(
+    project="polygames",
+    sync_tensorboard=True,
+    save_code=True,
+    settings=wandb.Settings(code_dir=str(Path(__file__).parent.parent.parent)),
+)
 
 
 class ValueStats:
