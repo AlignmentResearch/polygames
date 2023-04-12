@@ -5,6 +5,7 @@
 
 import copy
 import dataclasses
+import datetime
 import glob
 import gzip
 import zipfile
@@ -85,9 +86,9 @@ def save_checkpoint(
 ) -> None:
     checkpoint_dir = execution_params.checkpoint_dir
     save_uncompressed = execution_params.save_uncompressed
-    now = datetime.now()
+    now = datetime.datetime.now()
     formatted_date = now.strftime("%Y-%m-%d")
-    checkpoint_name = f"{game_params['game_name']}_{formatted_date}_{model_params['model_name']}_epoch{epoch}"
+    checkpoint_name = f"{game_params.game_name}_{formatted_date}_{model_params.model_name}_epoch{epoch}"
     checkpoint = {
         "command_history": command_history,
         "epoch": epoch,

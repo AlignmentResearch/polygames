@@ -37,7 +37,7 @@ RUN if ! { [ -z "$(git status --porcelain --ignored=traditional)" ] \
 WORKDIR "/polygames/build"
 ENV CC=/usr/bin/clang
 ENV CXX=/usr/bin/clang++
-RUN cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=OFF -DUSE_MOLD=ON \
+RUN cmake .. -DCMAKE_BUILD_TYPE=relwithdebinfo -DPYTORCH15=ON -DWITH_LUDII=OFF -DPOLYGAMES_WITH_CUDA=ON -DUSE_MOLD=ON \
     && make -j \
     && cd .. \
     && python setup.py develop \
