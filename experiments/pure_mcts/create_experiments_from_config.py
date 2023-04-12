@@ -2,10 +2,10 @@ from __future__ import annotations
 import os
 import secrets
 import shlex
-import shutil
-import subprocess
 import sys
 import yaml
+
+from utils import get_results_from_directory
 
 
 default_number_of_games = 100
@@ -48,7 +48,7 @@ def get_directory_name_from_command(game_command, num_games, hyphenated: bool = 
     return dir_name
 
 
-def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[str]]:
+def run_games(num_games: int, save_plots: bool = True) -> None:
     # Get the directory containing the yaml file
     current_file = os.path.abspath(__file__)
     current_dir = os.path.dirname(current_file)
@@ -72,9 +72,6 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
                     else:
                         game_command += ["--" + key, str(value)]
 
-                all_results = []
-                all_errors = []
-
                 dir_name = get_directory_name_from_command(game_command, num_games)
                 directory_path = f"{experiments_directory}/{dir_name}"
 
@@ -95,6 +92,7 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
 
                 print("experiment name:", experiment_name, "length:", len(experiment_name))
 
+                # The docker command runs `run.sh`, which we create from the `commands` variable below.
                 docker_command = (
                     f'ctl job run --name "nhowe-{experiment_name}" --working-dir /polygames '
                     f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 4 --gpu 1 '
@@ -110,7 +108,6 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
                 commands = []
                 commands.append("git pull")
                 commands.append("git checkout add_experiment_code")
-                commands.append("pip install matplotlib seaborn pandas")
                 commands.append(single_command)
                 with open(f"{directory_path}/run.sh", "w") as f:
                     f.write("#!/bin/bash \n")
@@ -134,36 +131,13 @@ def run_games(num_games: int, save_plots: bool = True) -> tuple[list[str], list[
                 with open(f"{directory_path}/docker_command.txt", "w") as f:
                     f.write(docker_command)
 
+                # Ideally, we would like to just do the following, instead of writing the
+                # command and then calling it from loki. Unfortunately, I haven't been
+                # able to get that to work properly, so the two-step process
+                # is a workaround for now.
                 # subprocess.run(shlex.split(docker_command))
-
-    # TODO: make it so it doesn't just return the most recent thing
-    return all_results, all_errors, game_command, dir_name
 
 
 if __name__ == "__main__":
-    # If filenames are passed in as arguments, use those. Otherwise, generate.
-    if len(sys.argv) == 2:
-        print("Checking if it's a path or a number of games...")
-        if os.path.isdir(sys.argv[1]):
-            print("not currently supported")
-            # print("Trying to load games from files...")
-        #     dir_name = sys.argv[1]
-        #     all_results, all_errors, game_command = get_results_from_directory(dir_name)
-        elif sys.argv[1].isdigit():
-            print(f"Running {sys.argv[1]} games...")
-            all_results, all_errors, game_command, dir_name = run_games(sys.argv[1])
-    else:
-        print(f"Running default number of games ({default_number_of_games})...")
-        all_results, all_errors, game_command, dir_name = run_games(default_number_of_games)
-
-    print("all the results and errors are")
-    print(all_results)
-    print(all_errors)
-
-    print("the game command is")
-    print(game_command)
-
-    # Now make the plot
-    print("Making plot...")
-    print("the game command was", game_command)
-    # make_plot(all_results, all_errors, game_command, dir_name)
+    print(f"Running default number of games ({default_number_of_games})...")
+    run_games(default_number_of_games)
