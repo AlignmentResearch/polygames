@@ -7,6 +7,16 @@ echo "This script should be run from the repository root"
 VERSION="1.4.1"
 echo "Building version $VERSION. If you update it, remember to also update docker_img_version in .circleci/config.yml"
 
+if [ -n "${CIRCLECI_DOCKER_IMG_VERSION}" ]; then
+    if [ "${CIRCLECI_DOCKER_IMG_VERSION}" = "${VERSION}" ]; then
+        echo "CircleCI docker image version is up to date"
+        exit 0
+    else
+        echo "CircleCI docker image version is NOT up to date!"
+        exit 1
+    fi
+fi
+
 CI_BASE="ghcr.io/alignmentresearch/polygames:${VERSION}-ci-base"
 CI_SANITIZE="ghcr.io/alignmentresearch/polygames:${VERSION}-ci-sanitize"
 CI_RELWITHDEBINFO="ghcr.io/alignmentresearch/polygames:${VERSION}-ci-relwithdebinfo"
