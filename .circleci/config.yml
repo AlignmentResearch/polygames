@@ -145,5 +145,5 @@ jobs:
           docker_layer_caching: true
       - run: |
           git clean -fdx
-          echo "$GHCR_DOCKER_TOKEN" | docker login -u "$GHCR_DOCKER_USER" --password-stdin
+          echo "$GHCR_DOCKER_TOKEN" | docker login -u "$GHCR_DOCKER_USER" --password-stdin ghcr.io
           sh docker/build-all.sh
