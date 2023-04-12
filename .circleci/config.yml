@@ -136,13 +136,14 @@ jobs:
 
   docker-publish:
     docker:
-      - image: cimg/python:3.10.6
+      - image: cimg/base:2023.04-22.04
     resource_class: small
     steps:
-      - checkout-without-force
+      - checkout
       - setup_remote_docker:
           version: 20.10.18
           docker_layer_caching: true
       - run: |
+          git clean -fdx
           echo "$GHCR_DOCKER_TOKEN" | docker login -u "$GHCR_DOCKER_USER" --password-stdin
           sh docker/build-all.sh
