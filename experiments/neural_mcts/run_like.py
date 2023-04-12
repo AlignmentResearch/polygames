@@ -124,8 +124,7 @@ def try_training():
     print(f"running command: {command}")
 
     process = subprocess.Popen(command, shell=True)
-    while process.poll() is None:
-        time.sleep(1)
+    process.wait()
 
     print("---   done   ---")
     time.sleep(1)
