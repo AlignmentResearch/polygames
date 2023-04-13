@@ -9,7 +9,7 @@ parameters:
   docker_img_version:
     type: string
     # Remember to also update `docker/build-all.sh`
-    default: "1.4"
+    default: "1.4.3"
 
 workflows:
   test-jobs:
@@ -115,7 +115,7 @@ jobs:
       - run:
           name: Python tests
           command: |
-              pytest pypolygames --durations=10 --verbose --junitxml=python/junit.xml
+              WANDB_MODE=offline pytest pypolygames --durations=10 --verbose --junitxml=python/junit.xml
       # - run: TODO restore
       #     name: Run training
       #     command: |
@@ -127,18 +127,23 @@ jobs:
       #           --devices="cpu"
       - store_test_results:
           path: ./python
+      - run:
+          name: Check Docker container version
+          command: |
+            export CIRCLECI_DOCKER_IMG_VERSION="<< pipeline.parameters.docker_img_version >>"
+            ./docker/build-all.sh
+
 
   docker-publish:
     docker:
-      - image: cimg/python:3.10.6
+      - image: cimg/base:2023.04-22.04
     resource_class: small
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.14
+          version: 20.10.18
           docker_layer_caching: true
       - run: |
-          TAG="ghcr.io/alignmentresearch/polygames-circleci:<< pipeline.parameters.docker_img_version >>"
-          docker build -f .circleci/Dockerfile -t "$TAG" .
-          echo "$GHCR_DOCKER_TOKEN" | docker login -u "$GHCR_DOCKER_USER" --password-stdin
-          docker push "$TAG"
+          git clean -fdx
+          echo "$GHCR_DOCKER_TOKEN" | docker login -u "$GHCR_DOCKER_USER" --password-stdin ghcr.io
+          ./docker/build-all.sh
