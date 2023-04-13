@@ -45,7 +45,7 @@ docker pull "$RUNNER" \
     -t "$RUNNER" -f docker/runner/Dockerfile . \
     && docker push "$RUNNER"; }
 
-if [ ! "${CI}" = "true" ]; then
+if [ "${CI}" = "true" ]; then
     echo "Running in CI, not building devbox"
 else
     # Get the SSH agent's current keys
