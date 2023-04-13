@@ -115,7 +115,7 @@ jobs:
       - run:
           name: Python tests
           command: |
-              pytest pypolygames --durations=10 --verbose --junitxml=python/junit.xml
+              WANDB_MODE=offline pytest pypolygames --durations=10 --verbose --junitxml=python/junit.xml
       # - run: TODO restore
       #     name: Run training
       #     command: |
