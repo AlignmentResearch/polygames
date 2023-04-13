@@ -123,7 +123,7 @@ def run_games(num_games: int, save_plots: bool = True) -> None:
                 os.chmod(f"{directory_path}/run.sh", 0o755)
 
                 # Print the command
-                print("about to write this command to disk (but not running it yet):")
+                print("about to write this command to disk (but not running it)")
                 print(docker_command)
                 print("it will be saved to", f"{directory_path}/docker_command.txt")
 
@@ -131,7 +131,7 @@ def run_games(num_games: int, save_plots: bool = True) -> None:
                 with open(f"{directory_path}/docker_command.txt", "w") as f:
                     f.write(docker_command)
 
-                print("wrote the command to disk")
+                print("wrote the command to disk \n")
 
                 # Ideally, we would like to just do the following, instead of writing the
                 # command and then calling it from loki. Unfortunately, I haven't been
