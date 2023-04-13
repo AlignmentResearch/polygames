@@ -21,7 +21,7 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
             # Get the innermost director of the save dir path
             save_dir_name = pathlib.Path(save_dir).name
 
-            docker_command += ["--name", f"{save_dir_name}-vs-MCTS-{num_pure_mcts_opponent_rollouts}"]
+            docker_command += ["--name", f"{save_dir_name}-vs-mcts-{num_pure_mcts_opponent_rollouts}"]
             docker_command += ["--working-dir", "/polygames"]
             docker_command += ["--shared-host-dir-slow-tolerant"]
             docker_command += ["--container", '"ghcr.io/alignmentresearch/polygames:1.4.4-runner"']
