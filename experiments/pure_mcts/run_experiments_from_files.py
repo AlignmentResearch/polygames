@@ -3,8 +3,6 @@ import shlex
 import subprocess
 import sys
 
-from run_given_experiment import run_from_command_line_inputs
-
 
 def get_docker_commands_from_directories(root_directory):
     # There will be a number of directories which have a file called "docker_command.txt" in them,
