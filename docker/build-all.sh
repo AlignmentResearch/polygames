@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 set -eo pipefail
 
 echo "This script should be run from the repository root"
