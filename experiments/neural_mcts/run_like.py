@@ -3,6 +3,9 @@ import time
 import subprocess
 import sys
 
+import pypolygames
+import tube  # for replay buffer stuff
+
 import pypolygames.utils as utils
 
 """
@@ -39,6 +42,10 @@ if save_dir.exists() and len(list(save_dir.iterdir())) > 0:
 # If the save_dir doesn't exist, create it
 if not save_dir.exists():
     save_dir.mkdir(parents=True)
+
+# For some reason it seems to be necessary to set the replay
+# buffer here (already doing it in utils/checkpoint.py)
+tube.ReplayBuffer = utils.checkpoint.DummyReplayBuffer
 
 their_model_path = pathlib.Path(their_model_path_string)
 their_model = utils.load_checkpoint(their_model_path)
