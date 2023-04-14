@@ -7,7 +7,6 @@ from utils import make_command
 
 
 def generate_scores(model_dir, num_pure_mcts_opponent_rollouts, save_dir):
-
     # Get us to the correct git repo
     subprocess.run("cd /polygames", shell=True)
     subprocess.run("git checkout run_pure_mcts_experiments", shell=True)
@@ -52,7 +51,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     _, model_dir, num_pure_mcts_opponent_rollouts, save_dir = sys.argv
-    
+
     # Check whether the model dir and save dir exist
     if not os.path.isdir(model_dir):
         print(f"model_dir {model_dir} does not exist")
