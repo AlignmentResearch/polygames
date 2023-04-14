@@ -7,6 +7,12 @@ from utils import make_command
 
 
 def generate_scores(model_dir, num_pure_mcts_opponent_rollouts, save_dir):
+
+    # Get us to the correct git repo
+    subprocess.run("cd /polygames", shell=True)
+    subprocess.run("git checkout run_pure_mcts_experiments", shell=True)
+    subprocess.run("git pull", shell=True)
+
     if model_dir[-1] == "/":
         model_dir = model_dir[:-1]
 
