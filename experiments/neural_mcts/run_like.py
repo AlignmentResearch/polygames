@@ -46,6 +46,7 @@ if not save_dir.exists():
 # For some reason it seems to be necessary to set the replay
 # buffer here (already doing it in utils/checkpoint.py)
 tube.ReplayBuffer = utils.checkpoint.DummyReplayBuffer
+print("we have set the replay buffer")
 
 their_model_path = pathlib.Path(their_model_path_string)
 their_model = utils.load_checkpoint(their_model_path)
