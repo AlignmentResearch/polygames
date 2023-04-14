@@ -1,4 +1,5 @@
 import pathlib
+import time
 import subprocess
 import sys
 
@@ -41,6 +42,8 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
 
             # Now run the job
             subprocess.run(docker_command)
+
+            time.sleep(1)
 
 
 if __name__ == "__main__":
