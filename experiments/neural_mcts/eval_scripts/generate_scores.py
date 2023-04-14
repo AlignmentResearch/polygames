@@ -52,4 +52,13 @@ if __name__ == "__main__":
         sys.exit(1)
 
     _, model_dir, num_pure_mcts_opponent_rollouts, save_dir = sys.argv
+    
+    # Check whether the model dir and save dir exist
+    if not os.path.isdir(model_dir):
+        print(f"model_dir {model_dir} does not exist")
+        sys.exit(1)
+    if not os.path.isdir(save_dir):
+        print(f"save_dir {save_dir} does not exist, so we'll make it")
+        os.mkdir(save_dir)
+
     generate_scores(model_dir, num_pure_mcts_opponent_rollouts, save_dir)
