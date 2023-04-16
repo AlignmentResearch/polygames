@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import secrets
 
 
 def parse_in_results_strings(all_results: list[str]) -> tuple[list[str], list[str]]:
