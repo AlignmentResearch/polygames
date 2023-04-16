@@ -7,14 +7,13 @@ from utils import make_command
 
 
 def generate_scores(model_dir, num_pure_mcts_opponent_rollouts, save_dir):
-
     if model_dir[-1] == "/":
         model_dir = model_dir[:-1]
 
     if save_dir[-1] == "/":
         save_dir = save_dir[:-1]
 
-    # Get all the models we want to evaluate    
+    # Get all the models we want to evaluate
     models = sorted(os.listdir(model_dir))
     models = filter(lambda x: ".pt" in x, models)
 

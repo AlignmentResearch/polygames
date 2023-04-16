@@ -15,7 +15,7 @@ run (from a devbox) to actually do the evaluation.
 mcts_rollouts = [0, 32, 64, 128, 256, 512, 1024, 2048]
 # mcts_rollouts = [256, 512, 1024, 2048]
 
-container = 'ghcr.io/alignmentresearch/polygames:1.4.5-runner'
+container = "ghcr.io/alignmentresearch/polygames:1.4.5-runner"
 
 
 def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
@@ -44,15 +44,12 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
             on_loki_command += ["--shared-host-dir-mount", "/shared"]
             on_loki_command += ["--command", f"/bin/bash {save_dir}/run.sh"]
 
-            single_command = shlex.join([
-                f"python /polygames/experiments/neural_mcts/eval_scripts/generate_scores.py {model_dir} {num_pure_mcts_opponent_rollouts} {save_dir}",
-            ])
+            single_command = shlex.join(
+                [
+                    f"python /polygames/experiments/neural_mcts/eval_scripts/generate_scores.py {model_dir} {num_pure_mcts_opponent_rollouts} {save_dir}",
+                ]
+            )
 
-            on_devbox_command = []
-            on_devbox_command.append("cd /polygames")
-            on_devbox_command.append("git checkout run_pure_mcts_experiments")
-            on_devbox_command.append("git pull")
-            on_devbox_command.append(single_command)
             with open(f"{save_dir}/run.sh", "w") as f:
                 f.write("#!/bin/bash \n")
 
@@ -60,9 +57,14 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
                 f.write('echo "found the script, now running it!" \n')
 
                 # Now put all the commands in the file
+                on_devbox_command = []
+                on_devbox_command.append("cd /polygames")
+                on_devbox_command.append("git checkout run_pure_mcts_experiments")
+                on_devbox_command.append("git pull")
+                on_devbox_command.append(single_command)
                 for command in on_devbox_command:
                     f.write(command + "\n")
-            
+
             # Now run the job
             # subprocess.run(on_loki_command)
             # time.sleep(1)
