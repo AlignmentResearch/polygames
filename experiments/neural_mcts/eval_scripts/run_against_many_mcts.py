@@ -35,7 +35,7 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
             docker_command += ["--shared-host-dir-mount", "/shared"]
             docker_command += [
                 "--command",
-                f'"/bin/bash -c python /polygames/experiments/neural_mcts/eval_scripts/generate_scores.py \
+                f'"/bin/bash -c cd /polygames && git checkout run_pure_mcts_experiments && git pull && python /polygames/experiments/neural_mcts/eval_scripts/generate_scores.py \
                 {model_dir} {num_pure_mcts_opponent_rollouts} {save_dir}"',
             ]
 

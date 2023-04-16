@@ -14,10 +14,10 @@ This file is used to run a model with exactly the same hyperparameters as a give
 
 
 # Temporarily, change to the correct github branch
-subprocess.run("cd /polygames", shell=True)
-subprocess.run("git checkout run_pure_mcts_experiments", shell=True)
-subprocess.run("git pull", shell=True)
-print("got to the repo")
+# subprocess.run("cd /polygames", shell=True)
+# subprocess.run("git checkout run_pure_mcts_experiments", shell=True)
+# subprocess.run("git pull", shell=True)
+# print("got to the repo")
 
 # Check to make sure we have exactly two arguments
 if len(sys.argv) < 2:
