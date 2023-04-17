@@ -112,3 +112,39 @@ def get_results_from_directory(directory_name):
         game_command = f.readlines()[0].split(" ")
 
     return all_results, all_errors, game_command
+
+
+def get_directory_name_from_command(game_command, num_games, hyphenated: bool = False, shorten: bool = False):
+    # Make a directory name unique to these hyperparameters
+    game_command = [el for el in game_command if el not in ["python", "-m", "pypolygames", "pure_mcts"]]
+    dir_name = []
+    for item in game_command:
+        if not item.startswith("--"):
+            dir_name.append(item)
+
+    # Make everything lowercase, and replace True/False with t/f
+    if hyphenated:
+        dir_name = [item.lower() for item in dir_name]
+
+    if hyphenated or shorten:
+        old_dir_name = dir_name
+        dir_name = []
+        for item in old_dir_name:
+            if item == False or item == "False" or item == "false":
+                dir_name.append("f")
+            elif item == True or item == "True" or item == "true":
+                dir_name.append("t")
+            else:
+                dir_name.append(item)
+
+    dir_name.append(str(num_games))
+    if hyphenated:
+        dir_name = "-".join(dir_name)
+    else:
+        dir_name = "_".join(dir_name)
+
+    if shorten:
+        if len(dir_name) > 32:
+            dir_name = dir_name[:24] + "-" + secrets.token_hex(4)[:7]
+
+    return dir_name
