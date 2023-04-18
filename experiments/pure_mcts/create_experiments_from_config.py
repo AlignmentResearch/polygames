@@ -12,8 +12,9 @@ EXPERIMENTS_DIRECTORY = "/shared/polygames-parent/experiments/pure_mcts"
 CURRENT_BRANCH = "run_pure_mcts_experiments"
 
 
-def setup_game_and_save_command(game_name: str, num_rollouts: int, num_rollouts_2: int,
-                                num_games: int, hparams: dict, save_plots: bool = True) -> None:
+def setup_game_and_save_command(
+    game_name: str, num_rollouts: int, num_rollouts_2: int, num_games: int, hparams: dict, save_plots: bool = True
+) -> None:
     game_command = []
     for key, value in hparams.items():
         if key == "game_name":
@@ -39,9 +40,7 @@ def setup_game_and_save_command(game_name: str, num_rollouts: int, num_rollouts_
     # For testing
     # subprocess.run(shlex.split(single_command))
 
-    experiment_name = make_directory_name_from_command(
-        game_command, num_games, hyphenated=True, shorten=True
-    )
+    experiment_name = make_directory_name_from_command(game_command, num_games, hyphenated=True, shorten=True)
 
     print("experiment name:", experiment_name, "length:", len(experiment_name))
 
