@@ -15,7 +15,7 @@ run (from a devbox) to actually do the evaluation.
 mcts_rollouts = [0, 32, 64, 128, 256, 512, 1024, 2048]
 # mcts_rollouts = [256, 512, 1024, 2048]
 
-container = "ghcr.io/alignmentresearch/polygames:1.4.5-runner"
+container = "ghcr.io/alignmentresearch/polygames:1.4.6-runner"
 
 
 def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
