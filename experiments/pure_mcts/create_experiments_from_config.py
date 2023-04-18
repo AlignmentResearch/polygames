@@ -59,11 +59,13 @@ def setup_game_and_save_command(
     # Also write these commands to a bash script that can be run
     commands = []
     commands.append('echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf')  # for internet access
+    commands.append("cd /polygames")
     commands.append("git remote set-url origin https://github.com/AlignmentResearch/polygames.git")
     commands.append("git branch --set-upstream-to=origin/run_pure_mcts_experiments run_pure_mcts_experiments")
     commands.append("git pull")
     commands.append(f"git checkout {CURRENT_BRANCH}")
     commands.append(single_command)
+    
     with open(f"{directory_path}/run.sh", "w") as f:
         f.write("#!/bin/bash \n")
 
