@@ -44,11 +44,7 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
             on_loki_command += ["--shared-host-dir-mount", "/shared"]
             on_loki_command += ["--command", f"/bin/bash {save_dir}/run.sh"]
 
-            single_command = shlex.join(
-                [
-                    f"python /polygames/experiments/neural_mcts/eval_scripts/generate_scores.py {model_dir} {num_pure_mcts_opponent_rollouts} {save_dir}",
-                ]
-            )
+            single_command = f"python /polygames/experiments/neural_mcts/eval_scripts/generate_scores.py {model_dir} {num_pure_mcts_opponent_rollouts} {save_dir}"
 
             with open(f"{save_dir}/run.sh", "w") as f:
                 f.write("#!/bin/bash \n")
