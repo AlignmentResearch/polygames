@@ -58,6 +58,7 @@ def setup_game_and_save_command(
 
     # Also write these commands to a bash script that can be run
     commands = []
+    commands.append('echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf')  # for internet access
     commands.append("git pull")
     commands.append(f"git checkout {CURRENT_BRANCH}")
     commands.append(single_command)
