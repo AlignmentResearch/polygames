@@ -4,7 +4,7 @@ import shlex
 import subprocess
 import sys
 
-from utils import get_directory_name_from_command, make_plot
+from utils import make_plot
 
 
 def run_games(num_games, seedless_command, directory_path):
