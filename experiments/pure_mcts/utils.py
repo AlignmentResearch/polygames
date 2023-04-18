@@ -114,7 +114,7 @@ def get_results_from_directory(directory_name):
     return all_results, all_errors, game_command
 
 
-def get_directory_name_from_command(game_command, num_games, hyphenated: bool = False, shorten: bool = False):
+def make_directory_name_from_command(game_command, num_games, hyphenated: bool = False, shorten: bool = False):
     # Make a directory name unique to these hyperparameters
     game_command = [el for el in game_command if el not in ["python", "-m", "pypolygames", "pure_mcts"]]
     dir_name = []
