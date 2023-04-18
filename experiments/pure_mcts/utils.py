@@ -74,8 +74,7 @@ def make_plot(all_results: list[str], all_errors: list[str], game_command: list[
 
     # Get the stats
     commands = []
-    i = 0  # don't care about the "python" bit
-    while i < len(game_command) - 2:  # don't care about the seed
+    while i < len(game_command):
         commands.append(" ".join(game_command[i : i + 2]))
         i += 2
 
