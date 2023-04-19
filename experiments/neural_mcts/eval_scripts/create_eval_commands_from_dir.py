@@ -12,7 +12,7 @@ new directories in the save_dir, each of which contains a command to
 run (from a devbox) to actually do the evaluation.
 """
 
-CONTAINER = "ghcr.io/alignmentresearch/polygames:1.4.6-runner"
+CONTAINER = "ghcr.io/alignmentresearch/polygames:1.4.7-runner"
 CURRENT_BRANCH = "run_many_like"
 MCTS_ROLLOUTS = [0, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
 
@@ -66,10 +66,10 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
                 on_devbox_command.append('echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf')  # for internet access
                 on_devbox_command.append("cd /polygames")
                 on_devbox_command.append("git remote set-url origin https://github.com/AlignmentResearch/polygames.git")
-                on_devbox_command.append("git branch --set-upstream-to=origin/run_many_like run_many_like")
-                on_devbox_command.append("git checkout run_pure_mcts_experiments")
                 on_devbox_command.append("git pull")
                 on_devbox_command.append(f"git checkout {CURRENT_BRANCH}")
+                on_devbox_command.append(f"git branch --set-upstream-to=origin/{CURRENT_BRANCH} {CURRENT_BRANCH}")
+                on_devbox_command.append("git pull")
                 on_devbox_command.append(single_command)
                 for command in on_devbox_command:
                     f.write(command + "\n")
