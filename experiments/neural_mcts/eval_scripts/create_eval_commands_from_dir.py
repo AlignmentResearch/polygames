@@ -43,7 +43,7 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
             on_loki_command += ["--shared-host-dir-mount", "/shared"]
             on_loki_command += ["--command", f"/bin/bash {save_dir}/run.sh"]
 
-            single_command = f"python /polygames/experiments/neural_mcts/eval_scripts/generate_scores.py {model_dir} {num_pure_mcts_opponent_rollouts} {save_dir}"
+            single_command = f"python /polygames/experiments/neural_mcts/eval_scripts/run_eval_commands_from_files.py {model_dir} {num_pure_mcts_opponent_rollouts} {save_dir}"
 
             # Make a directory for this specific number of MCTS rollouts
             # Put it inside the save dir
