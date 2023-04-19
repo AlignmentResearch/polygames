@@ -47,7 +47,7 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
 
             # Make a directory for this specific number of MCTS rollouts
             # Put it inside the save dir
-            specific_save_dir = save_dir + f"_vs_MCTS_{num_pure_mcts_opponent_rollouts}"
+            specific_save_dir = save_dir + f"model_vs_MCTS_{num_pure_mcts_opponent_rollouts}"
             pathlib.Path(specific_save_dir).mkdir(parents=True, exist_ok=True)
 
             with open(f"{specific_save_dir}/run.sh", "w") as f:
