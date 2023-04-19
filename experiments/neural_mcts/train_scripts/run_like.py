@@ -20,6 +20,7 @@ This file is used to run a model with exactly the same hyperparameters as a give
 # subprocess.run("git pull", shell=True)
 # print("got to the repo")
 
+
 def try_training():
     command_list = ["python", "-m", "pypolygames", "train"]
     for param_group_name in param_group_names:
