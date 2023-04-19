@@ -4,9 +4,10 @@ import subprocess
 import sys
 
 import pypolygames
-import tube  # for replay buffer stuff
+import tube
 
-import pypolygames.utils as utils
+tube.ReplayBuffer = pypolygames.utils.checkpoint.DummyReplayBuffer
+
 
 """
 This file is used to run a model with exactly the same hyperparameters as a given model.
@@ -18,6 +19,33 @@ This file is used to run a model with exactly the same hyperparameters as a give
 # subprocess.run("git checkout run_pure_mcts_experiments", shell=True)
 # subprocess.run("git pull", shell=True)
 # print("got to the repo")
+
+def try_training():
+    command_list = ["python", "-m", "pypolygames", "train"]
+    for param_group_name in param_group_names:
+        # Add the key, value pairs to the command list.
+        # If the value is True, then we just add the key.
+        # If the value is None, then we don't add the key or value.
+        for key, value in our_params[param_group_name].items():
+            if value is True:
+                command_list.append(f"--{key}")
+            elif value is not None and value is not False:
+                command_list.append(f"--{key} {value}")
+
+    command_list.append(f"--checkpoint_dir {save_dir_string}")
+    command_list.append(f"> {save_dir_string}/stdout.txt")
+    command_list.append(f"2> {save_dir_string}/stderr.txt")
+
+    command = " ".join(command_list)
+
+    print(f"running command: {command}")
+
+    process = subprocess.Popen(command, shell=True)
+    process.wait()
+
+    print("---   done   ---")
+    time.sleep(1)
+
 
 # Check to make sure we have exactly two arguments
 if len(sys.argv) < 2:
@@ -51,11 +79,11 @@ if not save_dir.exists():
 
 # For some reason it seems to be necessary to set the replay
 # buffer here (already doing it in utils/checkpoint.py)
-tube.ReplayBuffer = utils.checkpoint.DummyReplayBuffer
-print("we have set the replay buffer")
+# tube.ReplayBuffer = utils.checkpoint.DummyReplayBuffer
+# print("we have set the replay buffer")
 
 their_model_path = pathlib.Path(their_model_path_string)
-their_model = utils.load_checkpoint(their_model_path)
+their_model = pypolygames.utils.checkpoint.load_checkpoint(their_model_path)
 
 # Load in the model and copy over their parameters
 param_group_names = ["game_params", "model_params", "optim_params", "simulation_params", "execution_params"]
@@ -110,33 +138,5 @@ if "devices" in our_params["execution_params"]:
 if "nnks" not in our_params["model_params"]:
     print("hmm, no nnks in these model params, we should investigate")
     raise KeyError
-
-
-def try_training():
-    command_list = ["python", "-m", "pypolygames", "train"]
-    for param_group_name in param_group_names:
-        # Add the key, value pairs to the command list.
-        # If the value is True, then we just add the key.
-        # If the value is None, then we don't add the key or value.
-        for key, value in our_params[param_group_name].items():
-            if value is True:
-                command_list.append(f"--{key}")
-            elif value is not None and value is not False:
-                command_list.append(f"--{key} {value}")
-
-    command_list.append(f"--checkpoint_dir {save_dir_string}")
-    command_list.append(f"> {save_dir_string}/stdout.txt")
-    command_list.append(f"2> {save_dir_string}/stderr.txt")
-
-    command = " ".join(command_list)
-
-    print(f"running command: {command}")
-
-    process = subprocess.Popen(command, shell=True)
-    process.wait()
-
-    print("---   done   ---")
-    time.sleep(1)
-
 
 try_training()

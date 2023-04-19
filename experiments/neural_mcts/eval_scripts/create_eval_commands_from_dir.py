@@ -2,7 +2,7 @@ import pathlib
 import shlex
 import sys
 
-from run_eval_commands_from_files import generate_scores
+from generate_scores import generate_scores
 
 """
 This script is used to generate the commands to run the evals for the

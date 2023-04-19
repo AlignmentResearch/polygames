@@ -11,13 +11,13 @@ import gzip
 import zipfile
 import re
 import time
+import torch
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any, Dict, Iterator, TypedDict, Union
 
 import pypolygames
-import torch
-import polygames.tube as tube
+import tube
 
 from .command_history import CommandHistory
 from ..params import (
