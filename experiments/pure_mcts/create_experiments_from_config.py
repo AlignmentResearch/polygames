@@ -65,7 +65,7 @@ def setup_game_and_save_command(
     commands.append("git pull")
     commands.append(f"git checkout {CURRENT_BRANCH}")
     commands.append(single_command)
-    
+
     with open(f"{directory_path}/run.sh", "w") as f:
         f.write("#!/bin/bash \n")
 
