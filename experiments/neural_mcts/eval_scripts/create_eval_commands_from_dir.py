@@ -30,6 +30,11 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
             # Get the innermost director of the save dir path
             save_dir_name = pathlib.Path(save_dir).name
 
+            # Make a directory for this specific number of MCTS rollouts
+            # Put it inside the save dir
+            specific_save_dir = save_dir + f"model_vs_MCTS_{num_pure_mcts_opponent_rollouts}"
+            pathlib.Path(specific_save_dir).mkdir(parents=True, exist_ok=True)
+
             on_loki_command += ["--name", f"{save_dir_name}-vs-mcts-{num_pure_mcts_opponent_rollouts}"]
             on_loki_command += ["--working-dir", "/polygames"]
             on_loki_command += ["--shared-host-dir-slow-tolerant"]
@@ -41,15 +46,15 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
             on_loki_command += ["--never-restart"]
             on_loki_command += ["--shared-host-dir", "/nas/ucb/k8"]
             on_loki_command += ["--shared-host-dir-mount", "/shared"]
-            on_loki_command += ["--command", f"/bin/bash {save_dir}/run.sh"]
+            on_loki_command += ["--command", f"/bin/bash {specific_save_dir}/run.sh"]
 
-            single_command = f"python /polygames/experiments/neural_mcts/eval_scripts/run_eval_commands_from_files.py {model_dir} {num_pure_mcts_opponent_rollouts} {save_dir}"
+            single_command = f"python /polygames/experiments/neural_mcts/eval_scripts/run_eval_commands_from_files.py {model_dir} {num_pure_mcts_opponent_rollouts} {specific_save_dir}"
 
-            # Make a directory for this specific number of MCTS rollouts
-            # Put it inside the save dir
-            specific_save_dir = save_dir + f"model_vs_MCTS_{num_pure_mcts_opponent_rollouts}"
-            pathlib.Path(specific_save_dir).mkdir(parents=True, exist_ok=True)
+            # Save the command to run the container itself
+            with open(f"{specific_save_dir}/docker_command.txt", "w") as f:
+                f.write(shlex.join(on_loki_command))
 
+            # Save the command to run from within the container
             with open(f"{specific_save_dir}/run.sh", "w") as f:
                 f.write("#!/bin/bash \n")
 
