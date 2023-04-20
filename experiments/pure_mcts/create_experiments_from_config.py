@@ -9,7 +9,7 @@ from utils import make_directory_name_from_command
 
 DEFAULT_NUMBER_OF_GAMES = 100
 EXPERIMENTS_DIRECTORY = "/shared/polygames-parent/experiments/pure_mcts"
-CURRENT_BRANCH = "fix_checkpoint_loading_again_now"
+CURRENT_BRANCH = "run_neural_evals"
 
 
 def setup_game_and_save_command(
@@ -47,7 +47,7 @@ def setup_game_and_save_command(
     # The docker command runs `run.sh`, which we create from the `commands` variable below.
     docker_command = (
         f'ctl job run --name "nhowe-{experiment_name}" --working-dir /polygames '
-        f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 16 --gpu 1 '
+        f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 32 --gpu 2 '
         "--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared "
         f'--command "/bin/bash {directory_path}/run.sh"'
     )
