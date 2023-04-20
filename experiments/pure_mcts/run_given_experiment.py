@@ -16,6 +16,17 @@ def run_games(num_games, seedless_command, directory_path):
     # my_command = "blabla{seed}".format(seed=2)
     # ^ another option
 
+    # If the directory path doesn't exist already, make it
+    if not os.path.exists(directory_path):
+        # This should never happen, so raise an error
+        raise ValueError(
+            f"Directory path {directory_path} should have already been created based on how we're currently doing things"
+        )
+
+    # Save the game command
+    with open(f"{directory_path}/game_command.txt", "w") as f:
+        f.writelines(shlex.join(seedless_command))
+
     for i in range(num_games):
         new_run_command = prepend + seedless_command + ["--seed", str(i)]
         print("Running a game! This is the command", new_run_command)
@@ -32,23 +43,18 @@ def run_games(num_games, seedless_command, directory_path):
         all_results.append(result_string)
         all_errors.append(error_string)
 
-    # If the directory path doesn't exist already, make it
-    if not os.path.exists(directory_path):
-        # This should never happen, so raise an error
-        raise ValueError(
-            f"Directory path {directory_path} should have already been created based on how we're currently doing things"
-        )
-        os.mkdir(directory_path)
+        # Save the results and the errors every 10 games
+        if i % 10 == 0:
+            with open(f"{directory_path}/results.txt", "w") as f:
+                f.writelines(all_results)
+            with open(f"{directory_path}/errors.txt", "w") as f:
+                f.writelines(all_errors)
 
-    # Save the results and the errors to files
+    # Save the results and the errors one last time
     with open(f"{directory_path}/results.txt", "w") as f:
         f.writelines(all_results)
     with open(f"{directory_path}/errors.txt", "w") as f:
         f.writelines(all_errors)
-
-    # Save the game command
-    with open(f"{directory_path}/game_command.txt", "w") as f:
-        f.writelines(shlex.join(seedless_command))
 
     # Make the plot
     make_plot(all_results, all_errors, seedless_command, directory_path)
