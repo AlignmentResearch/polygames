@@ -60,9 +60,10 @@ def setup_game_and_save_command(
     commands = []
     commands.append('echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf')  # for internet access
     commands.append("cd /polygames")
+    commands.append("git fetch")
     commands.append(f"git checkout {CURRENT_BRANCH}")
-    commands.append("git remote set-url origin https://github.com/AlignmentResearch/polygames.git")
-    commands.append(f"git branch --set-upstream-to=origin/{CURRENT_BRANCH} {CURRENT_BRANCH}")
+    # commands.append("git remote set-url origin https://github.com/AlignmentResearch/polygames.git")
+    # commands.append(f"git branch --set-upstream-to=origin/{CURRENT_BRANCH} {CURRENT_BRANCH}")
     commands.append("git pull")
     commands.append(single_command)
 

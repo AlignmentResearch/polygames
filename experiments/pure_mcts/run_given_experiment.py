@@ -45,6 +45,7 @@ def run_games(num_games, seedless_command, directory_path):
 
         # Save the results and the errors every 10 games
         if i % 10 == 0:
+            print("Saving the results and errors")
             with open(f"{directory_path}/results.txt", "w") as f:
                 f.writelines(all_results)
             with open(f"{directory_path}/errors.txt", "w") as f:
