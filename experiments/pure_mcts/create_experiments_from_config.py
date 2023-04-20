@@ -47,7 +47,7 @@ def setup_game_and_save_command(
     # The docker command runs `run.sh`, which we create from the `commands` variable below.
     docker_command = (
         f'ctl job run --name "nhowe-{experiment_name}" --working-dir /polygames '
-        f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 4 --gpu 1 '
+        f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 16 --gpu 1 '
         "--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared "
         f'--command "/bin/bash {directory_path}/run.sh"'
     )
