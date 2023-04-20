@@ -63,7 +63,7 @@ def setup_game_and_save_command(
     commands.append("git remote set-url origin https://github.com/AlignmentResearch/polygames.git")
     commands.append("git fetch")
     commands.append(f"git checkout {CURRENT_BRANCH}")
-    # commands.append(f"git branch --set-upstream-to=origin/{CURRENT_BRANCH} {CURRENT_BRANCH}")
+    commands.append(f"git branch --set-upstream-to=origin/{CURRENT_BRANCH} {CURRENT_BRANCH}")
     commands.append("git pull")
     commands.append(single_command)
 
