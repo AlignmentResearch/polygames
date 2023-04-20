@@ -17,10 +17,10 @@ void Threads::init(size_t nThreads) {
         throw std::runtime_error("Could not automatically determine the "
                                   "number of hardware threads :(");
       }
-      std::cout << "Starting " << nThreads << " threads (automatically configured)" << std::endl;
-    } else {
-      std::cout << "Starting " << nThreads << " threads" << std::endl;
-    }
+      // std::cout << "Starting " << nThreads << " threads (automatically configured)" << std::endl;
+    } //else {
+      // std::cout << "Starting " << nThreads << " threads" << std::endl;
+    // }
 
     std::unique_lock lock(instanceMutex);
     if (!instance) {
