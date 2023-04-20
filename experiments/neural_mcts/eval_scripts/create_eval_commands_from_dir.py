@@ -12,7 +12,7 @@ new directories in the save_dir, each of which contains a command to
 run (from a devbox) to actually do the evaluation.
 """
 
-CONTAINER = "ghcr.io/alignmentresearch/polygames:1.4.7-runner"
+CONTAINER = "ghcr.io/alignmentresearch/polygames:1.4.8-runner"
 CURRENT_BRANCH = "run_neural_evals"
 MCTS_ROLLOUTS = [0, 4, 16, 64, 256, 1024, 4096, 8192, 10000]
 
