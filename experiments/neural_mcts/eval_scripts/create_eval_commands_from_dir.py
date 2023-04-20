@@ -53,6 +53,7 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
             # Save the command to run the container itself
             with open(f"{specific_save_dir}/docker_command.txt", "w") as f:
                 f.write(shlex.join(on_loki_command))
+            print("just wrote to the following file: ", f"{specific_save_dir}/docker_command.txt")
 
             # Save the command to run from within the container
             with open(f"{specific_save_dir}/run.sh", "w") as f:
@@ -73,6 +74,8 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
                 on_devbox_command.append(single_command)
                 for command in on_devbox_command:
                     f.write(command + "\n")
+
+            print("just wrote to the following file: ", f"{specific_save_dir}/run.sh")
 
             # Now run the job
             # subprocess.run(on_loki_command)
