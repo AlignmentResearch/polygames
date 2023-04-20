@@ -29,7 +29,7 @@ def setup_game_and_save_command(
     dir_name = make_directory_name_from_command(game_command, num_games)
     directory_path = f"{EXPERIMENTS_DIRECTORY}/{dir_name}"
 
-    container = "ghcr.io/alignmentresearch/polygames:1.4.6-runner"
+    container = "ghcr.io/alignmentresearch/polygames:1.4.7-runner"
 
     single_command = (
         f"python /polygames/experiments/pure_mcts/run_given_experiment.py "
@@ -48,7 +48,7 @@ def setup_game_and_save_command(
     docker_command = (
         f'ctl job run --name "nhowe-{experiment_name}" --working-dir /polygames '
         f'--shared-host-dir-slow-tolerant --container "{container}" --cpu 4 --gpu 1 '
-        "--login --wandb --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared "
+        "--login --never-restart --shared-host-dir /nas/ucb/k8 --shared-host-dir-mount /shared "
         f'--command "/bin/bash {directory_path}/run.sh"'
     )
 
