@@ -46,9 +46,9 @@ def run_games(num_games, seedless_command, directory_path):
         # Save the results and the errors every 10 games
         if i % 10 == 0:
             print("Saving the results and errors")
-            with open(f"{directory_path}/results.txt", "w") as f:
+            with open(f"{directory_path}/running_results.txt", "w") as f:
                 f.writelines(all_results)
-            with open(f"{directory_path}/errors.txt", "w") as f:
+            with open(f"{directory_path}/running_errors.txt", "w") as f:
                 f.writelines(all_errors)
 
     # Save the results and the errors one last time
@@ -58,7 +58,7 @@ def run_games(num_games, seedless_command, directory_path):
         f.writelines(all_errors)
 
     # Make the plot
-    make_plot(all_results, all_errors, seedless_command, directory_path)
+    # make_plot(all_results, all_errors, seedless_command, directory_path)
 
 
 def run_from_command_line_inputs(split_command):

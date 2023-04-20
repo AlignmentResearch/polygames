@@ -74,6 +74,7 @@ def make_plot(all_results: list[str], all_errors: list[str], game_command: list[
 
     # Get the stats
     commands = []
+    i = 0
     while i < len(game_command):
         commands.append(" ".join(game_command[i : i + 2]))
         i += 2
