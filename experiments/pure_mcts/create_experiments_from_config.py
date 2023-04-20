@@ -87,7 +87,7 @@ def setup_game_and_save_command(
 
     # Save the command to a file in the desired directory
     with open(f"{directory_path}/docker_command.txt", "w") as f:
-        f.write(docker_command)
+        f.write(docker_command + '\n')
 
     print("wrote the command to disk \n")
 
