@@ -14,7 +14,7 @@ run (from a devbox) to actually do the evaluation.
 
 CONTAINER = "ghcr.io/alignmentresearch/polygames:1.4.7-runner"
 CURRENT_BRANCH = "run_many_like"
-MCTS_ROLLOUTS = [0, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
+MCTS_ROLLOUTS = [0, 4, 16, 64, 256, 1024, 4096, 8192, 10000]
 
 
 def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
@@ -42,7 +42,7 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
             on_loki_command += ["--cpu", "4"]
             on_loki_command += ["--gpu", "1"]
             on_loki_command += ["--login"]
-            on_loki_command += ["--wandb"]
+            # on_loki_command += ["--wandb"]
             on_loki_command += ["--never-restart"]
             on_loki_command += ["--shared-host-dir", "/nas/ucb/k8"]
             on_loki_command += ["--shared-host-dir-mount", "/shared"]
@@ -66,7 +66,7 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
                 on_devbox_command.append('echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf')  # for internet access
                 on_devbox_command.append("cd /polygames")
                 on_devbox_command.append("git remote set-url origin https://github.com/AlignmentResearch/polygames.git")
-                on_devbox_command.append("git pull")
+                on_devbox_command.append("git fetch")
                 on_devbox_command.append(f"git checkout {CURRENT_BRANCH}")
                 on_devbox_command.append(f"git branch --set-upstream-to=origin/{CURRENT_BRANCH} {CURRENT_BRANCH}")
                 on_devbox_command.append("git pull")
