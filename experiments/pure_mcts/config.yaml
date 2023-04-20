@@ -1,5 +1,5 @@
-# game_name: [Hex4]
-game_name: [Hex4, Hex5, Hex6, Hex7, Hex8, Hex9]
+game_name: [Hex4]
+# game_name: [Hex4, Hex5, Hex6, Hex7, Hex8, Hex9]
 # game_name: [Hex3]
 
 num_rollouts: [0, 4, 16, 64, 256, 1024, 4096, 8192, 10000]

@@ -9,7 +9,7 @@ from utils import make_directory_name_from_command
 
 DEFAULT_NUMBER_OF_GAMES = 100
 EXPERIMENTS_DIRECTORY = "/shared/polygames-parent/experiments/pure_mcts"
-CURRENT_BRANCH = "run_pure_mcts_experiments"
+CURRENT_BRANCH = "fix_checkpoint_loading_again_now"
 
 
 def setup_game_and_save_command(
