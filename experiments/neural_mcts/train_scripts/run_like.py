@@ -34,8 +34,8 @@ def try_training():
                 command_list.append(f"--{key} {value}")
 
     command_list.append(f"--checkpoint_dir {save_dir_string}")
-    command_list.append(f"> {save_dir_string}/stdout.txt")
-    command_list.append(f"2> {save_dir_string}/stderr.txt")
+    command_list.append(f">> {save_dir_string}/stdout.txt")
+    command_list.append(f"2>> {save_dir_string}/stderr.txt")
 
     command = " ".join(command_list)
 
