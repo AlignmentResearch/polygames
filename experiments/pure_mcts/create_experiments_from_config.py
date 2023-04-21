@@ -27,7 +27,7 @@ def setup_game_and_save_command(
             game_command += ["--" + key, str(value)]
 
     dir_name = make_directory_name_from_command(game_command, num_games)
-    directory_path = f"{EXPERIMENTS_DIRECTORY}/{dir_name}"
+    directory_path = f"{EXPERIMENTS_DIRECTORY}/{game_name}/{dir_name}"
 
     container = "ghcr.io/alignmentresearch/polygames:1.4.8-runner"
 
