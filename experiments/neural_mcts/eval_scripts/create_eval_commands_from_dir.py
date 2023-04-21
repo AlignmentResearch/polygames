@@ -14,7 +14,7 @@ run (from a devbox) to actually do the evaluation.
 
 CONTAINER = "ghcr.io/alignmentresearch/polygames:1.4.8-runner"
 CURRENT_BRANCH = "run_neural_evals"
-MCTS_ROLLOUTS = [0, 4, 16, 64, 256, 1024, 4096, 8192, 10000]
+MCTS_ROLLOUTS = [256, 1024, 4096, 8192]
 
 
 def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
@@ -39,7 +39,7 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
             on_loki_command += ["--working-dir", "/polygames"]
             on_loki_command += ["--shared-host-dir-slow-tolerant"]
             on_loki_command += ["--container", f"{CONTAINER}"]
-            on_loki_command += ["--cpu", "4"]
+            on_loki_command += ["--cpu", "16"]
             on_loki_command += ["--gpu", "1"]
             on_loki_command += ["--login"]
             # on_loki_command += ["--wandb"]
