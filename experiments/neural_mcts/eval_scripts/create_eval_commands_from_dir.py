@@ -71,7 +71,7 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
                 on_devbox_command.append(f"git checkout {CURRENT_BRANCH}")
                 on_devbox_command.append(f"git branch --set-upstream-to=origin/{CURRENT_BRANCH} {CURRENT_BRANCH}")
                 on_devbox_command.append("git pull")
-                on_devbox_command.append(single_command)
+                on_devbox_command.append(f"(time {single_command}) > {specific_save_dir}/time.log")
                 for command in on_devbox_command:
                     f.write(command + "\n")
 
