@@ -1,8 +1,8 @@
-game_name: [Hex9]
+game_name: [Hex8]
 # game_name: [Hex4, Hex5, Hex6, Hex7, Hex8, Hex9]
 
-num_rollouts: [16, 64, 256, 1024, 4096, 8192, 16384]
-num_rollouts_2: [16, 64, 256, 1024, 4096, 8192, 16384]
+num_rollouts: [256, 1024, 4096, 8192, 16384]
+num_rollouts_2: [256, 1024, 4096, 8192, 16384]
 
 sampling_mcts: false
 sampling_mcts_2: false
