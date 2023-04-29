@@ -48,7 +48,7 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
             on_loki_command += ["--shared-host-dir-mount", "/shared"]
             on_loki_command += ["--command", f"/bin/bash {specific_save_dir}/run.sh"]
 
-            single_command = f'python /polygames/experiments/neural_mcts/eval_scripts/generate_scores.py "{model_dir} {num_pure_mcts_opponent_rollouts} {specific_save_dir}"'
+            single_command = f'python /polygames/experiments/neural_mcts/eval_scripts/generate_scores.py {model_dir} {num_pure_mcts_opponent_rollouts} {specific_save_dir}'
 
             # Save the command to run the container itself
             with open(f"{specific_save_dir}/docker_command.txt", "w") as f:
@@ -84,7 +84,7 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
 
 if __name__ == "__main__":
     if not len(sys.argv) == 3:
-        print("Usage: python generate_scores.py checkpoint_path save_dir")
+        print("Usage: python create_eval_commands_from_dir.py model_dir save_dir")
         sys.exit(1)
     _, model_dir, save_dir = sys.argv
     run_against_several_MCTS_opponents(model_dir, save_dir)
