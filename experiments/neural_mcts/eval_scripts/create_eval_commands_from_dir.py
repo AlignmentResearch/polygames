@@ -48,7 +48,7 @@ def run_against_several_MCTS_opponents(model_dir, save_dir, with_docker=True):
             on_loki_command += ["--shared-host-dir-mount", "/shared"]
             on_loki_command += ["--command", f"/bin/bash {specific_save_dir}/run.sh"]
 
-            single_command = f"python /polygames/experiments/neural_mcts/eval_scripts/generate_scores.py {model_dir} {num_pure_mcts_opponent_rollouts} {specific_save_dir}"
+            single_command = f'python /polygames/experiments/neural_mcts/eval_scripts/generate_scores.py "{model_dir} {num_pure_mcts_opponent_rollouts} {specific_save_dir}"'
 
             # Save the command to run the container itself
             with open(f"{specific_save_dir}/docker_command.txt", "w") as f:
