@@ -66,7 +66,7 @@ def setup_game_and_save_command(
     commands.append(f"git branch --set-upstream-to=origin/{CURRENT_BRANCH} {CURRENT_BRANCH}")
     commands.append("git pull")
     commands.append(f'/bin/bash /polygames/experiments/memory_tracking.sh {directory_path} &')
-    commands.append(f"(time {single_command}) > {directory_path}/time.log")
+    commands.append(f"(time {single_command}) 2> {directory_path}/time.log")
 
     with open(f"{directory_path}/run.sh", "w") as f:
         f.write("#!/bin/bash \n")
