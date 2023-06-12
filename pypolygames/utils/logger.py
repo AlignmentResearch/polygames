@@ -3,6 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import datetime
 import os
 import sys
 
@@ -19,8 +20,11 @@ class Logger:
             self.log = open(path, "a")
 
     def write(self, message):
-        self.terminal.write(message)
-        self.log.write(message)
+        timestamp = datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S] ")
+        message_with_timestamp = timestamp + message
+
+        self.terminal.write(message_with_timestamp)
+        self.log.write(message_with_timestamp)
         self.log.flush()
 
     def flush(self):

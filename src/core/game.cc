@@ -11,7 +11,16 @@
 #include "forward_player.h"
 #include "utils.h"
 
+#include <chrono>
 #include <fmt/printf.h>
+
+std::string getTimestampString() {
+    auto now = std::chrono::system_clock::now();
+    auto timestamp = std::chrono::system_clock::to_time_t(now);
+    char timestampStr[20];
+    std::strftime(timestampStr, sizeof(timestampStr), "[%Y-%m-%d %H:%M:%S] ", std::localtime(&timestamp));
+    return std::string(timestampStr);
+}
 
 namespace core {
 
@@ -132,8 +141,8 @@ struct BatchExecutor {
           }
         }
       }
-      // fmt::printf("Did %d random moves: '%s'\n", gst.state->getStepIdx(),
-      // gst.state->history());
+      std::string timeStampString = getTimestampString();
+      fmt::printf("%sDid %d random moves: '%s'\n", timeStampString, gst.state->getStepIdx(), gst.state->history());
     }
     gst.startMoves = std::move(moves);
   };
@@ -206,8 +215,8 @@ struct BatchExecutor {
 
   bool rewind(GameState* s, int player, bool rewindToNegativeValue) const {
     if (s->history.size() <= 2) {
-      // fmt::printf("refusing to rewind with history size %d\n",
-      // s->history.size());
+      std::string timeStampString = getTimestampString();
+      fmt::printf("%srefusing to rewind with history size %d\n", timeStampString, s->history.size());
       return false;
     }
     float flip = rewindToNegativeValue ? -1 : 1;
@@ -220,7 +229,8 @@ struct BatchExecutor {
       }
     }
     if (index <= 2) {
-      // fmt::printf("refusing to rewind to index %d\n", index);
+      std::string timeStampString = getTimestampString();
+      fmt::printf("%srefusing to rewind to index %d\n", timeStampString, index);
       return false;
     }
     if (!s->rnnStates.empty() || !s->rnnState.empty() ||
@@ -232,11 +242,13 @@ struct BatchExecutor {
         }
       }
       if (rnn) {
-        fmt::printf("Cannot currently rewind with rnn states, sorry :(\n");
+        std::string timeStampString = getTimestampString();
+        fmt::printf("%sCannot currently rewind with rnn states, sorry :(\n", timeStampString);
         return false;
       }
     }
-    fmt::printf("rewinding from %d to index %d\n", s->history.size(), index);
+    std::string timeStampString = getTimestampString();
+    fmt::printf("%srewinding from %d to index %d\n", timeStampString, s->history.size(), index);
     s->justRewound = true;
     s->justRewoundToNegativeValue = rewindToNegativeValue;
 
@@ -460,8 +472,9 @@ struct BatchExecutor {
                          .count();
     gameState->prevMoveTime = now;
 
-    // fmt::printf("Thread %d: move took %gs\n", common::getThreadId(),
-    // elapsed);
+    std::string timeStampString = getTimestampString();
+    fmt::printf("%sThread %d: move took %gs\n", timeStampString, common::getThreadId(),
+    elapsed);
 
     {
       std::unique_lock<std::mutex> lkStats(game->mutexStats_);
@@ -474,14 +487,16 @@ struct BatchExecutor {
     if (gameState->justRewound) {
       float flip = gameState->justRewoundToNegativeValue ? -1.0f : 1.0f;
       if (h.value * flip < 0.0f) {
-        // fmt::printf("rewound turned negative, rewinding more!\n");
+        std::string timeStampString = getTimestampString();
+        fmt::printf("%srewound turned negative, rewinding more!\n", timeStampString);
         rewind(gameState, slot, gameState->justRewoundToNegativeValue);
       } else {
         gameState->justRewound = false;
       }
     }
 
-    // fmt::printf("game in progress: %s\n", state->history());
+    std::string timeStampString = getTimestampString();
+    fmt::printf("%sgame in progress: %s\n", timeStampString, state->history());
   }
 
   std::vector<stateCallback> stateCallbacks;
@@ -597,10 +612,10 @@ struct BatchExecutor {
               if (std::uniform_real_distribution<float>(0, 1.0f)(rng) < x) {
                 mctsResult.at(offset + i).bestAction =
                     randint(state->GetLegalActions().size());
-                // fmt::printf("at state '%s' - performing random move %s\n",
-                // state->history(),
-                // state->actionDescription(state->GetLegalActions().at(mctsResult.at(offset
-                // + i).bestAction)));
+                std::string timeStampString = getTimestampString();
+                fmt::printf("%sat state '%s' - performing random move %s\n", timeStampString, state->history(),
+                state->actionDescription(state->GetLegalActions().at(mctsResult.at(offset
+                + i).bestAction)));
                 gameState->validTournamentGame = false;
               }
             }
@@ -743,7 +758,8 @@ struct BatchExecutor {
         }
       }
       if (n) {
-        fmt::printf("Using batch size of %d\n", bs);
+        std::string timeStampString = getTimestampString();
+        fmt::printf("%sUsing batch size of %d\n", timeStampString, bs);
         ngames = bs;
       }
     }
@@ -823,9 +839,10 @@ struct BatchExecutor {
             for (size_t idx = 0; idx != players_.size(); ++idx) {
               result_.at(i->players.at(idx)) = int(idx) == i->resigned ? -1 : 1;
             }
-            // fmt::printf("player %d (%s) resigned : %s\n", i->resigned,
-            //            players_.at(i->players.at(i->resigned))->getName(),
-            //            state->history());
+            std::string timeStampString = getTimestampString();
+            fmt::printf("%splayer %d (%s) resigned : %s\n", timeStampString, i->resigned,
+                       players_.at(i->players.at(i->resigned))->getName(),
+                       state->history());
           } else {
             for (size_t idx = 0; idx != players_.size(); ++idx) {
               result_.at(i->players.at(idx)) = state->getReward(idx);
@@ -833,8 +850,9 @@ struct BatchExecutor {
             // fmt::printf("game ended normally: %s\n",
             // state->history().c_str());
             if (randint(256) == 0) {
+              std::string timeStampString = getTimestampString();
               fmt::printf(
-                  "game ended normally: %s\n", state->history().c_str());
+                  "%sgame ended normally: %s\n", timeStampString, state->history().c_str());
             }
           }
 
@@ -856,8 +874,8 @@ struct BatchExecutor {
 
             if (completed) {
 #ifdef OPENBW_UI
-              fmt::printf("Result for %s: %g\n", players_[dstp]->getName(),
-                          result_[dstp]);
+              std::string timeStampString = getTimestampString();
+              fmt::printf("%sResult for %s: %g\n", timeStampString, players_[dstp]->getName(), result_[dstp]);
 #endif
             } else {
               if (i->pi[slot].size() < seqlen * 16 + 1 ||
@@ -1034,8 +1052,8 @@ struct BatchExecutor {
                 }
               }
 
-              // fmt::printf("result[%d] (%s) is %g\n", p,
-              // players_[p]->getName(), result_[p]);
+              std::string timeStampString = getTimestampString();
+              fmt::printf("%sresult[%d] (%s) is %g\n", timeStampString, p, players_[p]->getName(), result_[p]);
 
               if (seqlen) {
                 addseq(rewards, seq.v, game->v_[dstp]);
@@ -1160,7 +1178,8 @@ void Game::mainLoop() {
     for (auto& v : players_) {
       auto mctsPlayer = std::dynamic_pointer_cast<mcts::MctsPlayer>(v);
       if (mctsPlayer && mctsPlayer->option().totalTime) {
-        std::cout << "Warming up model.\n";
+        std::string timeStampString = getTimestampString();
+        std::cout << timeStampString << "Warming up model.\n";
         auto opt = mctsPlayer->option();
         mctsPlayer->option().totalTime = 0;
         mctsPlayer->option().numRolloutPerThread = 20;  // Why is this hardcoded in all of a sudden?
