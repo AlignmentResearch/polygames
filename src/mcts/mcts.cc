@@ -580,7 +580,7 @@ std::vector<MctsResult> MctsPlayer::actMcts(
     roots[i]->freeTree();
   }
 
-  // bool verbose = false;
+  bool verbose = true;
 
   if (verbose) {
     uint64_t n = rolloutCount - beginRolloutCount;
