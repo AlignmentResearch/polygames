@@ -65,7 +65,7 @@ def setup_game_and_save_command(
     commands.append(f"git checkout {CURRENT_BRANCH}")
     commands.append(f"git branch --set-upstream-to=origin/{CURRENT_BRANCH} {CURRENT_BRANCH}")
     commands.append("git pull")
-    commands.append(f'/bin/bash /polygames/experiments/memory_tracking.sh {directory_path} &')
+    commands.append(f"/bin/bash /polygames/experiments/memory_tracking.sh {directory_path} &")
     commands.append(f"(time {single_command}) 2> {directory_path}/time.log")
 
     with open(f"{directory_path}/run.sh", "w") as f:
@@ -88,7 +88,7 @@ def setup_game_and_save_command(
 
     # Save the command to a file in the desired directory
     with open(f"{directory_path}/docker_command.txt", "w") as f:
-        f.write(docker_command + '\n')
+        f.write(docker_command + "\n")
 
     print("wrote the command to disk \n")
 
