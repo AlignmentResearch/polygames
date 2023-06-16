@@ -18,10 +18,12 @@
 std::string getTimestampString() {
     auto now = std::chrono::system_clock::now();
     auto timestamp = std::chrono::system_clock::to_time_t(now);
-    char timestampStr[20];
+    char timestampStr[25];
     std::strftime(timestampStr, sizeof(timestampStr), "[%Y-%m-%d %H:%M:%S] ", std::localtime(&timestamp));
     return std::string(timestampStr);
 }
+
+std::string timeStampString;
 
 namespace core {
 
@@ -112,7 +114,6 @@ struct BatchExecutor {
   const mcts::MctsOption* mctsOption = nullptr;
   std::vector<mcts::MctsResult> mctsResult;
   mutable std::mutex recordMoveMutex;
-  std::string timeStampString;
 
   int randint(int n) {
     return std::uniform_int_distribution<int>(0, n - 1)(rng);
