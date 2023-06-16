@@ -111,6 +111,7 @@ struct BatchExecutor {
   const mcts::MctsOption* mctsOption = nullptr;
   std::vector<mcts::MctsResult> mctsResult;
   mutable std::mutex recordMoveMutex;
+  std::string timeStampString;
 
   int randint(int n) {
     return std::uniform_int_distribution<int>(0, n - 1)(rng);
@@ -141,7 +142,7 @@ struct BatchExecutor {
           }
         }
       }
-      std::string timeStampString = getTimestampString();
+      timeStampString = getTimestampString();
       fmt::printf("%sDid %d random moves: '%s'\n", timeStampString, gst.state->getStepIdx(), gst.state->history());
     }
     gst.startMoves = std::move(moves);
@@ -215,7 +216,7 @@ struct BatchExecutor {
 
   bool rewind(GameState* s, int player, bool rewindToNegativeValue) const {
     if (s->history.size() <= 2) {
-      std::string timeStampString = getTimestampString();
+      timeStampString = getTimestampString();
       fmt::printf("%srefusing to rewind with history size %d\n", timeStampString, s->history.size());
       return false;
     }
@@ -229,7 +230,7 @@ struct BatchExecutor {
       }
     }
     if (index <= 2) {
-      std::string timeStampString = getTimestampString();
+      timeStampString = getTimestampString();
       fmt::printf("%srefusing to rewind to index %d\n", timeStampString, index);
       return false;
     }
@@ -242,12 +243,12 @@ struct BatchExecutor {
         }
       }
       if (rnn) {
-        std::string timeStampString = getTimestampString();
+        timeStampString = getTimestampString();
         fmt::printf("%sCannot currently rewind with rnn states, sorry :(\n", timeStampString);
         return false;
       }
     }
-    std::string timeStampString = getTimestampString();
+    timeStampString = getTimestampString();
     fmt::printf("%srewinding from %d to index %d\n", timeStampString, s->history.size(), index);
     s->justRewound = true;
     s->justRewoundToNegativeValue = rewindToNegativeValue;
@@ -472,7 +473,7 @@ struct BatchExecutor {
                          .count();
     gameState->prevMoveTime = now;
 
-    std::string timeStampString = getTimestampString();
+    timeStampString = getTimestampString();
     fmt::printf("%sThread %d: move took %gs\n", timeStampString, common::getThreadId(),
     elapsed);
 
@@ -487,7 +488,7 @@ struct BatchExecutor {
     if (gameState->justRewound) {
       float flip = gameState->justRewoundToNegativeValue ? -1.0f : 1.0f;
       if (h.value * flip < 0.0f) {
-        std::string timeStampString = getTimestampString();
+        timeStampString = getTimestampString();
         fmt::printf("%srewound turned negative, rewinding more!\n", timeStampString);
         rewind(gameState, slot, gameState->justRewoundToNegativeValue);
       } else {
@@ -495,7 +496,7 @@ struct BatchExecutor {
       }
     }
 
-    std::string timeStampString = getTimestampString();
+    timeStampString = getTimestampString();
     fmt::printf("%sgame in progress: %s\n", timeStampString, state->history());
   }
 
@@ -612,7 +613,7 @@ struct BatchExecutor {
               if (std::uniform_real_distribution<float>(0, 1.0f)(rng) < x) {
                 mctsResult.at(offset + i).bestAction =
                     randint(state->GetLegalActions().size());
-                std::string timeStampString = getTimestampString();
+                timeStampString = getTimestampString();
                 fmt::printf("%sat state '%s' - performing random move %s\n", timeStampString, state->history(),
                 state->actionDescription(state->GetLegalActions().at(mctsResult.at(offset
                 + i).bestAction)));
@@ -758,7 +759,7 @@ struct BatchExecutor {
         }
       }
       if (n) {
-        std::string timeStampString = getTimestampString();
+        timeStampString = getTimestampString();
         fmt::printf("%sUsing batch size of %d\n", timeStampString, bs);
         ngames = bs;
       }
@@ -839,7 +840,7 @@ struct BatchExecutor {
             for (size_t idx = 0; idx != players_.size(); ++idx) {
               result_.at(i->players.at(idx)) = int(idx) == i->resigned ? -1 : 1;
             }
-            std::string timeStampString = getTimestampString();
+            timeStampString = getTimestampString();
             fmt::printf("%splayer %d (%s) resigned : %s\n", timeStampString, i->resigned,
                        players_.at(i->players.at(i->resigned))->getName(),
                        state->history());
@@ -850,7 +851,7 @@ struct BatchExecutor {
             // fmt::printf("game ended normally: %s\n",
             // state->history().c_str());
             if (randint(256) == 0) {
-              std::string timeStampString = getTimestampString();
+              timeStampString = getTimestampString();
               fmt::printf(
                   "%sgame ended normally: %s\n", timeStampString, state->history().c_str());
             }
@@ -874,7 +875,7 @@ struct BatchExecutor {
 
             if (completed) {
 #ifdef OPENBW_UI
-              std::string timeStampString = getTimestampString();
+              timeStampString = getTimestampString();
               fmt::printf("%sResult for %s: %g\n", timeStampString, players_[dstp]->getName(), result_[dstp]);
 #endif
             } else {
@@ -1052,7 +1053,7 @@ struct BatchExecutor {
                 }
               }
 
-              std::string timeStampString = getTimestampString();
+              timeStampString = getTimestampString();
               fmt::printf("%sresult[%d] (%s) is %g\n", timeStampString, p, players_[p]->getName(), result_[p]);
 
               if (seqlen) {
@@ -1178,7 +1179,7 @@ void Game::mainLoop() {
     for (auto& v : players_) {
       auto mctsPlayer = std::dynamic_pointer_cast<mcts::MctsPlayer>(v);
       if (mctsPlayer && mctsPlayer->option().totalTime) {
-        std::string timeStampString = getTimestampString();
+        timeStampString = getTimestampString();
         std::cout << timeStampString << "Warming up model.\n";
         auto opt = mctsPlayer->option();
         mctsPlayer->option().totalTime = 0;
