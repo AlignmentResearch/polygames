@@ -12,6 +12,7 @@
 #include "utils.h"
 
 #include <chrono>
+#include <string>
 #include <fmt/printf.h>
 
 std::string getTimestampString() {
