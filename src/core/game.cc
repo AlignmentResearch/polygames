@@ -1056,7 +1056,7 @@ struct BatchExecutor {
               }
 
               timeStampString = getTimestampString();
-              fmt::printf("%sresult[%d] (%s) is %g\n", timeStampString, p, players_[p]->getName(), result_[p]);
+              fmt::printf("%sresult[%d] (%s) is %g\n", timeStampString, dstp, players_[dstp]->getName(), result_[dstp]);
 
               if (seqlen) {
                 addseq(rewards, seq.v, game->v_[dstp]);
