@@ -3,7 +3,7 @@ set -eo pipefail
 
 echo "This script should be run from the repository root"
 
-VERSION="1.4.10"
+VERSION="1.4.11"
 echo "Building version $VERSION. If you update it, remember to also update docker_img_version in .circleci/config.yml"
 
 if [ -n "${CIRCLECI_DOCKER_IMG_VERSION}" ]; then
