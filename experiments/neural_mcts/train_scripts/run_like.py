@@ -88,7 +88,7 @@ their_model = pypolygames.utils.checkpoint.load_checkpoint(their_model_path)
 
 # Load in the model and copy over their parameters
 param_group_names = ["game_params", "model_params", "optim_params", "simulation_params", "execution_params"]
-not_used_for_training = ["time_ratio", "total_time"]
+not_used_for_training = ["time_ratio", "total_time", "ddp", "server_listen_endpoint", "tcp://0.0.0.0:5611", "server_connect_hostname"]
 our_params = {}
 
 # Parse in the (key, value) pairs from the model
