@@ -152,7 +152,7 @@ if "act_batchsize" in our_params["simulation_params"] and int(our_params["simula
     our_params["simulation_params"]["act_batchsize"] = our_params["simulation_params"]["num_game"]
 
 # If per_thread_batchsize is larger than num_game, set it to num_game.
-if ["per_thread_batchsize"] in our_params["simulation_params"] and int(
+if "per_thread_batchsize" in our_params["simulation_params"] and int(
     our_params["simulation_params"]["per_thread_batchsize"]
 ) > int(our_params["simulation_params"]["num_game"]):
     print("Setting per_thread_batchsize to num_game because per_thread_batchsize is larger than num_game")
