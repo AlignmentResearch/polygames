@@ -117,7 +117,9 @@ for param_group_name in param_group_names:
     for key in delete_these_params:  # We do it backwards so that the iterated dict doesn't change size
         if key in our_params[param_group_name]:
             del our_params[param_group_name][key]
-        print("removed", key)
+            print("removed", key)
+
+print("after removals and overrides, but before consistency checks, our params are", our_params)
 
 # If act_batchsize is nonzero and per_thread_batchsize is zero, remove per_thread_batchsize
 if (
