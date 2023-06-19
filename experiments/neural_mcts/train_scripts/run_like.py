@@ -106,6 +106,8 @@ for param_name in param_group_names:
         our_params[param_name][key] = value
         print(f"added {param_name}.{key}: {value}")
 
+print("all out params are", our_params)
+
 # If there are any override args left, raise an error
 if len(override_args_dict) > 0:
     raise ValueError(f"override args {override_args_dict} were not used. Exiting...")
