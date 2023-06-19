@@ -118,7 +118,6 @@ for param_group_name in param_group_names:
         if key in our_params[param_group_name]:
             del our_params[param_group_name][key]
         print("removed", key)
-        print("now the params are: ", our_params[param_group_name])
 
 # If act_batchsize is nonzero and per_thread_batchsize is zero, remove per_thread_batchsize
 if (
