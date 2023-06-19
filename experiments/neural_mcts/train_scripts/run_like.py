@@ -112,8 +112,8 @@ if len(override_args_dict) > 0:
 
 # Remove the commands that should not be used in training
 for param_group_name in param_group_names:
-    for key in our_params[param_group_name]:
-        if key in not_used_for_training:
+    for key in not_used_for_training:  # We do it backwards so that the iterated dict doesn't change size
+        if key in our_params[param_group_name]:
             del our_params[param_group_name][key]
         print("removed", key)
         print("now the params are: ", our_params[param_group_name])
