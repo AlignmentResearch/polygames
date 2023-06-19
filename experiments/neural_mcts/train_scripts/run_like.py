@@ -4,9 +4,10 @@ import subprocess
 import sys
 
 import pypolygames
+import pypolygames.utils.checkpoint
 import tube
 
-# tube.ReplayBuffer = pypolygames.utils.checkpoint.DummyReplayBuffer
+tube.ReplayBuffer = pypolygames.utils.checkpoint.DummyReplayBuffer
 
 
 """
