@@ -6,7 +6,7 @@ import sys
 import pypolygames
 import tube
 
-tube.ReplayBuffer = pypolygames.utils.checkpoint.DummyReplayBuffer
+# tube.ReplayBuffer = pypolygames.utils.checkpoint.DummyReplayBuffer
 
 
 """
