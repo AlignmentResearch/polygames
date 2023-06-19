@@ -128,6 +128,14 @@ if (
     print("Deleting per_thread_batchsize=0 because act_batchsize is nonzero")
     del our_params["simulation_params"]["per_thread_batchsize"]
 
+# If act_batchsize is nonzero and per_thread_batchsize is nonzero, remove act_batchsize
+if (
+    our_params["simulation_params"]["act_batchsize"] != 0
+    and our_params["simulation_params"]["per_thread_batchsize"] != 0
+):
+    print("Deleting act_batchsize because per_thread_batchsize is nonzero")
+    del our_params["simulation_params"]["act_batchsize"]
+
 # If act_batchsize is larger than num_game, set it to num_game
 if int(our_params["simulation_params"]["act_batchsize"]) > int(our_params["simulation_params"]["num_game"]):
     print("Setting act_batchsize to num_game because act_batchsize is larger than num_game")
