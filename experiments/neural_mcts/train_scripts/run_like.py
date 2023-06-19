@@ -14,7 +14,14 @@ tube.ReplayBuffer = pypolygames.utils.checkpoint.DummyReplayBuffer
 This file is used to run a model with exactly the same hyperparameters as a given model.
 """
 
-delete_these_params = ["time_ratio", "total_time", "checkpoint_dir", "ddp", "server_listen_endpoint", "server_connect_hostname"]
+delete_these_params = [
+    "time_ratio",
+    "total_time",
+    "checkpoint_dir",
+    "ddp",
+    "server_listen_endpoint",
+    "server_connect_hostname",
+]
 
 # Temporarily, change to the correct github branch
 # subprocess.run("cd /polygames", shell=True)
@@ -137,10 +144,19 @@ if (
     print("Deleting act_batchsize because per_thread_batchsize is nonzero")
     del our_params["simulation_params"]["act_batchsize"]
 
-# If act_batchsize is larger than num_game, set it to num_game
-if int(our_params["simulation_params"]["act_batchsize"]) > int(our_params["simulation_params"]["num_game"]):
+# If act_batchsize is larger than num_game, set it to num_game.
+if our_params["simulation_params"]["act_batchsize"] and int(our_params["simulation_params"]["act_batchsize"]) > int(
+    our_params["simulation_params"]["num_game"]
+):
     print("Setting act_batchsize to num_game because act_batchsize is larger than num_game")
     our_params["simulation_params"]["act_batchsize"] = our_params["simulation_params"]["num_game"]
+
+# If per_thread_batchsize is larger than num_game, set it to num_game.
+if our_params["simulation_params"]["per_thread_batchsize"] and int(
+    our_params["simulation_params"]["per_thread_batchsize"]
+) > int(our_params["simulation_params"]["num_game"]):
+    print("Setting per_thread_batchsize to num_game because per_thread_batchsize is larger than num_game")
+    our_params["simulation_params"]["per_thread_batchsize"] = our_params["simulation_params"]["num_game"]
 
 # Make the devices list into a CLI list
 if "devices" in our_params["execution_params"]:
