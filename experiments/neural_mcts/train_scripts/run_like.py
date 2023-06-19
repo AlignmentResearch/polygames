@@ -108,6 +108,9 @@ for param_name in param_group_names:
 if len(override_args_dict) > 0:
     raise ValueError(f"override args {override_args_dict} were not used. Exiting...")
 
+print("now we remove the commands that should not be used in training")
+print("the params gorup names are: ", param_group_names)
+
 # Remove the commands that should not be used in training
 for param_group_name in param_group_names:
     print("the param group name is: ", param_group_name, "and the param group is: ", our_params[param_group_name])
