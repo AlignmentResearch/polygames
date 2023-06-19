@@ -14,6 +14,8 @@ tube.ReplayBuffer = pypolygames.utils.checkpoint.DummyReplayBuffer
 This file is used to run a model with exactly the same hyperparameters as a given model.
 """
 
+not_used_for_training = ["time_ratio", "total_time"]
+do_not_load_if_substring = ["checkpoint_dir", "ddp", "server_listen_endpoint", "server_connect_hostname"]
 
 # Temporarily, change to the correct github branch
 # subprocess.run("cd /polygames", shell=True)
@@ -89,7 +91,6 @@ their_model = pypolygames.utils.checkpoint.load_checkpoint(their_model_path)
 
 # Load in the model and copy over their parameters
 param_group_names = ["game_params", "model_params", "optim_params", "simulation_params", "execution_params"]
-not_used_for_training = ["time_ratio", "total_time", "ddp", "server_listen_endpoint", "tcp://0.0.0.0:5611", "server_connect_hostname"]
 our_params = {}
 
 # Parse in the (key, value) pairs from the model
@@ -109,15 +110,13 @@ for param_name in param_group_names:
 if len(override_args_dict) > 0:
     raise ValueError(f"override args {override_args_dict} were not used. Exiting...")
 
-print("now we remove the commands that should not be used in training")
-print("the params gorup names are: ", param_group_names)
-
 # Remove the commands that should not be used in training
 for param_group_name in param_group_names:
-    print("the param group name is: ", param_group_name, "and the param group is: ", our_params[param_group_name])
-    for key in not_used_for_training:
-        if key in our_params[param_group_name]:
+    for key in our_params[param_group_name]:
+        if key in not_used_for_training:
             del our_params[param_group_name][key]
+        print("removed", key)
+        print("now the params are: ", our_params[param_group_name])
 
 # If act_batchsize is nonzero and per_thread_batchsize is zero, remove per_thread_batchsize
 if (
