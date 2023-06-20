@@ -1,8 +1,8 @@
 #!/bin/bash
 
-folder="$1"             # Folder to store the log file
+folder="$1"                 # Folder to store the log file
 log_file="$folder/gpu_log.txt"  # File to store the GPU usage log
-interval=10              # Interval in seconds between each log entry
+interval=5                  # Interval in seconds between each log entry
 
 # Check if nvidia-smi is installed
 if ! command -v nvidia-smi &> /dev/null; then
@@ -16,27 +16,8 @@ if [ ! -d "$folder" ]; then
     mkdir -p "$folder"
 fi
 
-# Check if log file exists, if not, create it with a header
-if [ ! -f "$log_file" ]; then
-    echo "Timestamp, GPU Utilization (%), Memory Usage (MiB)" > "$log_file"
-fi
-
-# Function to get current timestamp
-get_timestamp() {
-    date +"%Y-%m-%d %H:%M:%S"
-}
-
-# Function to log GPU usage
-log_gpu_usage() {
-    timestamp=$(get_timestamp)
-    gpu_utilization=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits)
-    memory_usage=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits)
-    echo "$timestamp, $gpu_utilization, $memory_usage" >> "$log_file"
-}
-
-# Continuously log GPU usage
+# Continuously append GPU usage to log file
 while true; do
-    log_gpu_usage
+    nvidia-smi >> "$log_file"
     sleep "$interval"
 done
-
