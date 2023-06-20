@@ -15,13 +15,12 @@
 #include <string>
 #include <fmt/printf.h>
 
-const char* getTimestampString() {
+std::string getTimestampString() {
     auto now = std::chrono::system_clock::now();
     auto timestamp = std::chrono::system_clock::to_time_t(now);
-    auto localTime = std::localtime(&timestamp);
-    static char timestampStr[25];
-    std::strftime(timestampStr, sizeof(timestampStr), "[%Y-%m-%d %H:%M:%S] ", localTime);
-    return timestampStr;
+    char timestampStr[25];
+    std::strftime(timestampStr, sizeof(timestampStr), "[%Y-%m-%d %H:%M:%S] ", std::localtime(&timestamp));
+    return std::string(timestampStr);
 }
 
 namespace core {
@@ -469,8 +468,7 @@ struct BatchExecutor {
                          .count();
     gameState->prevMoveTime = now;
 
-    fmt::printf("%sThread %d: move took %gs\n", getTimestampString(), common::getThreadId(),
-    elapsed);
+    // fmt::printf("%sThread %d: move took %gs\n", getTimestampString(), common::getThreadId(), elapsed);
 
     {
       std::unique_lock<std::mutex> lkStats(game->mutexStats_);
@@ -483,14 +481,14 @@ struct BatchExecutor {
     if (gameState->justRewound) {
       float flip = gameState->justRewoundToNegativeValue ? -1.0f : 1.0f;
       if (h.value * flip < 0.0f) {
-        fmt::printf("%srewound turned negative, rewinding more!\n", getTimestampString());
+        // fmt::printf("%srewound turned negative, rewinding more!\n", getTimestampString());
         rewind(gameState, slot, gameState->justRewoundToNegativeValue);
       } else {
         gameState->justRewound = false;
       }
     }
 
-    fmt::printf("%sgame in progress: %s\n", getTimestampString(), state->history());
+    // fmt::printf("%sgame in progress: %s\n", getTimestampString(), state->history());
   }
 
   std::vector<stateCallback> stateCallbacks;
@@ -606,9 +604,9 @@ struct BatchExecutor {
               if (std::uniform_real_distribution<float>(0, 1.0f)(rng) < x) {
                 mctsResult.at(offset + i).bestAction =
                     randint(state->GetLegalActions().size());
-                fmt::printf("%sat state '%s' - performing random move %s\n", getTimestampString(), state->history(),
-                state->actionDescription(state->GetLegalActions().at(mctsResult.at(offset
-                + i).bestAction)));
+                // fmt::printf("%sat state '%s' - performing random move %s\n", getTimestampString(), state->history(),
+                // state->actionDescription(state->GetLegalActions().at(mctsResult.at(offset
+                // + i).bestAction)));
                 gameState->validTournamentGame = false;
               }
             }
@@ -831,15 +829,14 @@ struct BatchExecutor {
             for (size_t idx = 0; idx != players_.size(); ++idx) {
               result_.at(i->players.at(idx)) = int(idx) == i->resigned ? -1 : 1;
             }
-            fmt::printf("%splayer %d (%s) resigned : %s\n", getTimestampString(), i->resigned,
-                       players_.at(i->players.at(i->resigned))->getName(),
-                       state->history());
+            // fmt::printf("%splayer %d (%s) resigned : %s\n", getTimestampString(), i->resigned,
+            //            players_.at(i->players.at(i->resigned))->getName(),
+            //            state->history());
           } else {
             for (size_t idx = 0; idx != players_.size(); ++idx) {
               result_.at(i->players.at(idx)) = state->getReward(idx);
             }
-            // fmt::printf("game ended normally: %s\n",
-            // state->history().c_str());
+            // fmt::printf("game ended normally: %s\n", state->history().c_str());
             if (randint(256) == 0) {
               fmt::printf("%sgame ended normally: %s\n", getTimestampString(), state->history().c_str());
             }
@@ -1040,7 +1037,7 @@ struct BatchExecutor {
                 }
               }
 
-              fmt::printf("%sresult[%d] (%s) is %g\n", getTimestampString(), dstp, players_[dstp]->getName(), result_[dstp]);
+              // fmt::printf("%sresult[%d] (%s) is %g\n", getTimestampString(), dstp, players_[dstp]->getName(), result_[dstp]);
 
               if (seqlen) {
                 addseq(rewards, seq.v, game->v_[dstp]);
