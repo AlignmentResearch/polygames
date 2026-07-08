@@ -18,7 +18,7 @@ mypy-extensions==1.0.0
 packaging==23.0
 pandas==2.0.0
 pathspec==0.11.1
-Pillow==9.4.0
+Pillow==12.2.0
 pipenv==2023.2.4
 platformdirs==3.2.0
 pluggy==1.0.0
