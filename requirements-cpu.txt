@@ -1,6 +1,6 @@
 # Don't forget to update requirements-cuda.txt if you update this
 
 -f https://download.pytorch.org/whl/cpu/torch_stable.html
-torch==1.13.1+cpu
+torch==2.13.0
 torchaudio==0.13.1+cpu
 torchvision==0.14.1+cpu
